@@ -5,11 +5,12 @@ import com.google.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
-import tv.twitch.moonmoon.rpengine2.Result;
 import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 @Singleton
@@ -27,6 +28,19 @@ public class RpPlayerRepo {
         this.plugin = Objects.requireNonNull(plugin);
         this.db = Objects.requireNonNull(db);
         log = plugin.getLogger();
+    }
+
+    public void setAttributeAsync(
+        RpPlayer player,
+        int attributeId,
+        Object value,
+        Consumer<Result<Void>> callback
+    ) {
+        db.insertPlayerAttribute(player.getId(), attributeId, value, callback);
+    }
+
+    public Set<RpPlayer> getPlayers() {
+        return Collections.unmodifiableSet(players);
     }
 
     public void load() {
@@ -49,7 +63,15 @@ public class RpPlayerRepo {
     }
 
     public void startJoinedPlayersWatcher() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(
+            plugin,
+            this::flushJoinedPlayers,
+            0, 20
+        );
+    }
+
+    public void flushJoinedPlayers() {
+        synchronized (joinedPlayers) {
             while (!joinedPlayers.isEmpty()) {
                 OfflinePlayer player = joinedPlayers.poll();
 
@@ -64,6 +86,6 @@ public class RpPlayerRepo {
                     players.add(newPlayer.get());
                 }
             }
-        }, 0, 20);
+        }
     }
 }

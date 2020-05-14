@@ -4,3 +4,8 @@ main: tv.twitch.moonmoon.rpengine2.RpEngine2
 api-version: 1.13
 authors: [Kasvot]
 description: RPEngine rewrite
+commands:
+  rpengine:
+    description: Root command for RPEngine2
+    permission: rpengine.admin
+    usage: /rpengine [ attribute ]

@@ -56,4 +56,15 @@ public class RpPlayerAttribute {
     public int hashCode() {
         return Objects.hash(id, created, display, name, value);
     }
+
+    @Override
+    public String toString() {
+        return "RpPlayerAttribute{" +
+            "id=" + id +
+            ", created=" + created +
+            ", display='" + display + '\'' +
+            ", name='" + name + '\'' +
+            ", value=" + value +
+            '}';
+    }
 }

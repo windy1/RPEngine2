@@ -5,10 +5,10 @@ import com.google.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
-import tv.twitch.moonmoon.rpengine2.Result;
 import tv.twitch.moonmoon.rpengine2.di.DbPath;
 import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.RpPlayerAttribute;
+import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -103,12 +103,36 @@ public class RpDb {
             stmt.setString(1, playerId.toString());
 
             try (ResultSet results = stmt.executeQuery()) {
+                results.next();
                 return Result.ok(readRpPlayer(results));
             }
         } catch (SQLException e) {
             String message = "error reading player from database: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
+    }
+
+    public void insertAttributeAsync(
+        String name,
+        String display,
+        String type,
+        String defaultValue,
+        Consumer<Result<Long>> callback
+    ) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(insertAttribute(name, display, type, defaultValue))
+        );
+    }
+
+    public void insertPlayerAttribute(
+        int playerId,
+        int attributeId,
+        Object value,
+        Consumer<Result<Void>> callback
+    ) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(insertPlayerAttribute(playerId, attributeId, value))
+        );
     }
 
     private Result<Void> connect() {
@@ -241,7 +265,7 @@ public class RpDb {
                         continue;
                     }
 
-                    Object parsedValue = r.get();
+                    Object parsedValue = r.orElse(null);
 
                     attributes.add(new RpPlayerAttribute(
                         results.getInt("instance_id"),
@@ -256,6 +280,71 @@ public class RpDb {
             }
         } catch (SQLException e) {
             String message = "error reading player attributes: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    private Result<Long> insertAttribute(
+        String name,
+        String display,
+        String type,
+        String defaultValue
+    ) {
+        // TODO: default value
+
+        final String query =
+            "INSERT OR IGNORE INTO rp_attribute (" +
+                "created, " +
+                "name, " +
+                "display, " +
+                "type" +
+            ") " +
+            "VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement stmt =
+                 conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, Instant.now().toString());
+            stmt.setString(2, name);
+            stmt.setString(3, display);
+            stmt.setString(4, type);
+
+            if (stmt.executeUpdate() == 0) {
+                return Result.ok(-1L);
+            }
+
+            try (ResultSet results = stmt.getGeneratedKeys()) {
+                results.next();
+                return Result.ok(results.getLong(1));
+            }
+        } catch (SQLException e) {
+            String message = "error inserting new attribute: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    private Result<Void> insertPlayerAttribute(int playerId, int attributeId, Object value) {
+        String rawValue = value != null ? value.toString() : null;
+
+        final String query =
+            "INSERT OR IGNORE INTO rp_player_attribute (" +
+                "created, " +
+                "player_id, " +
+                "attribute_id, " +
+                "value" +
+            ") " +
+            "VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, Instant.now().toString());
+            stmt.setLong(2, playerId);
+            stmt.setLong(3, attributeId);
+            stmt.setString(4, rawValue);
+
+            stmt.executeUpdate();
+
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error inserting player attribute: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }

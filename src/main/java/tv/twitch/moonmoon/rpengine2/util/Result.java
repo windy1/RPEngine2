@@ -1,4 +1,4 @@
-package tv.twitch.moonmoon.rpengine2;
+package tv.twitch.moonmoon.rpengine2.util;
 
 import java.util.Optional;
 
@@ -15,6 +15,10 @@ public class Result<T> {
     public T get() {
         return Optional.ofNullable(result)
             .orElseThrow(() -> new IllegalStateException("expected result"));
+    }
+
+    public T orElse(T t) {
+        return Optional.ofNullable(result).orElse(t);
     }
 
     public Optional<String> getError() {
