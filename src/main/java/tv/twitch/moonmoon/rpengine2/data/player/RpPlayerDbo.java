@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeDbo;
 import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.util.Result;
@@ -18,14 +19,14 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-public class PlayerDbo {
+public class RpPlayerDbo {
 
     private final Plugin plugin;
     private final RpDb db;
     private final Logger log;
 
     @Inject
-    public PlayerDbo(Plugin plugin, RpDb db) {
+    public RpPlayerDbo(Plugin plugin, RpDb db) {
         this.plugin = Objects.requireNonNull(plugin);
         this.db = Objects.requireNonNull(db);
         log = plugin.getLogger();
@@ -56,7 +57,7 @@ public class PlayerDbo {
                 if (results.next()) {
                     return Result.ok(results.getLong(1));
                 } else {
-                    return Result.ok(-1L);
+                    return Result.ok(0L);
                 }
             }
         } catch (SQLException e) {
@@ -72,8 +73,11 @@ public class PlayerDbo {
             stmt.setString(1, playerId.toString());
 
             try (ResultSet results = stmt.executeQuery()) {
-                results.next();
-                return Result.ok(readRpPlayer(results));
+                if (results.next()) {
+                    return Result.ok(readRpPlayer(results));
+                } else {
+                    return Result.error("player not found");
+                }
             }
         } catch (SQLException e) {
             String message = "error reading player from database: `%s`";
@@ -215,7 +219,7 @@ public class PlayerDbo {
                     String value = results.getString("value");
                     String type = results.getString("type");
 
-                    Result<Object> r = parseAttributeValue(value, type);
+                    Result<Object> r = AttributeDbo.parseAttributeValue(value, type);
 
                     Optional<String> err = r.getError();
                     if (err.isPresent()) {
@@ -267,7 +271,7 @@ public class PlayerDbo {
                 if (results.next()) {
                     return Result.ok(results.getLong(1));
                 } else {
-                    return Result.ok(-1L);
+                    return Result.ok(0L);
                 }
             }
         } catch (SQLException e) {
@@ -276,25 +280,4 @@ public class PlayerDbo {
         }
     }
 
-    private Result<Object> parseAttributeValue(String value, String type) {
-        switch (type) {
-            case "string":
-                return Result.ok(value);
-            case "number": {
-                try {
-                    return Result.ok(Float.parseFloat(value));
-                } catch (NumberFormatException e) {
-                    return Result.error("invalid number value on attribute");
-                }
-            }
-            case "group":
-                try {
-                    return Result.ok(Integer.parseInt(value));
-                } catch (NumberFormatException e) {
-                    return Result.error("invalid group value on attribute");
-                }
-            default:
-                return Result.error(String.format("unknown type: `%s`", type));
-        }
-    }
 }

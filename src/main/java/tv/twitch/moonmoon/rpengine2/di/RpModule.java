@@ -4,6 +4,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepoImpl;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepoImpl;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -37,5 +41,11 @@ public class RpModule extends AbstractModule {
     @DbPath
     public static Path provideDbPath(Plugin plugin) {
         return plugin.getDataFolder().toPath().resolve("plugin.db");
+    }
+
+    @Override
+    protected void configure() {
+        bind(RpPlayerRepo.class).to(RpPlayerRepoImpl.class);
+        bind(AttributeRepo.class).to(AttributeRepoImpl.class);
     }
 }

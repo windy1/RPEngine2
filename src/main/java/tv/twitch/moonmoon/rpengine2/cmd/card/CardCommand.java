@@ -45,7 +45,7 @@ public class CardCommand implements CommandExecutor {
 
         player.get().getAttributes().stream()
             .map(AttributeLabel::from)
-            .forEach(a -> sender.sendMessage(a.toString()));
+            .forEach(a -> sender.spigot().sendMessage(a.toTextComponent()));
 
         return true;
     }

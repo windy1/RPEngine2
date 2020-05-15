@@ -1,6 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.cmd.card;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import tv.twitch.moonmoon.rpengine2.model.RpPlayerAttribute;
 
 import java.util.Objects;
@@ -19,8 +20,21 @@ public class AttributeLabel {
         return new AttributeLabel(attribute.getName(), attribute.getStringValue());
     }
 
-    @Override
-    public String toString() {
-        return ChatColor.BLUE + "# " + ChatColor.GREEN + name + ": " + ChatColor.WHITE + value;
+    public TextComponent toTextComponent() {
+        TextComponent base = new TextComponent("# ");
+        TextComponent nameTag = new TextComponent(name + ": ");
+        TextComponent valueTag = new TextComponent(value);
+
+        base.setColor(net.md_5.bungee.api.ChatColor.BLUE);
+        nameTag.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+        valueTag.setColor(net.md_5.bungee.api.ChatColor.WHITE);
+
+        String command = String.format("/cardset %s %s", name, value);
+        base.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));
+
+        base.addExtra(nameTag);
+        base.addExtra(valueTag);
+
+        return base;
     }
 }

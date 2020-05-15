@@ -13,3 +13,7 @@ commands:
     description: Display RP character card
     usage: /card
     permission: rpengine.card
+  cardset:
+    description: Sets a card attribute
+    usage: /cardset help
+    permission: rpengine.cardset

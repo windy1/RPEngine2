@@ -1,4 +1,4 @@
-package tv.twitch.moonmoon.rpengine2.cmd;
+package tv.twitch.moonmoon.rpengine2.cmd.admin;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -49,8 +49,8 @@ public class AttributeAdmin {
         switch (args[0]) {
             case "add":
                 return handleAdd(sender, splicedArgs);
-            case "remove":
             case "set":
+            case "remove":
             default:
                 return false;
         }
@@ -58,8 +58,7 @@ public class AttributeAdmin {
 
     public boolean handleAdd(CommandSender sender, String[] args) {
         if (args.length == 0) {
-            HELP.handle(sender, new String[] { "help" });
-            return true;
+            return false;
         }
 
         String name = args[0];

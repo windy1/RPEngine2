@@ -3,7 +3,9 @@ package tv.twitch.moonmoon.rpengine2.cmd;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
+import tv.twitch.moonmoon.rpengine2.cmd.admin.AdminCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardCommand;
+import tv.twitch.moonmoon.rpengine2.cmd.card.CardSetCommand;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -16,10 +18,16 @@ public class Commands {
     private final Map<String, CommandExecutor> executors = new HashMap<>();
 
     @Inject
-    public Commands(JavaPlugin plugin, AdminCommand adminCommand, CardCommand cardCommand) {
+    public Commands(
+        JavaPlugin plugin,
+        AdminCommand adminCommand,
+        CardCommand cardCommand,
+        CardSetCommand cardSetCommand
+    ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("rpengine", adminCommand);
         executors.put("card", cardCommand);
+        executors.put("cardset", cardSetCommand);
     }
 
     public void register() {

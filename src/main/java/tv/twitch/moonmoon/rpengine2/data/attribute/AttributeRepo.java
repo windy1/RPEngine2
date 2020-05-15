@@ -1,70 +1,26 @@
 package tv.twitch.moonmoon.rpengine2.data.attribute;
 
-import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
+import tv.twitch.moonmoon.rpengine2.data.Repo;
 import tv.twitch.moonmoon.rpengine2.model.AttributeType;
-import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
-import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 
-@Singleton
-public class AttributeRepo {
+public interface AttributeRepo extends Repo {
 
-    private final AttributeDbo attributeDbo;
-    private final RpPlayerRepo playerRepo;
-    private final Logger log;
+    Set<Attribute> getAttributes();
 
-    @Inject
-    public AttributeRepo(
-        AttributeDbo attributeDbo,
-        RpPlayerRepo playerRepo,
-        @PluginLogger Logger log
-    ) {
-        this.attributeDbo = Objects.requireNonNull(attributeDbo);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
-        this.log = Objects.requireNonNull(log);
-    }
+    Optional<Attribute> getAttribute(String name);
 
-    public void createAttributeAsync(
+    void createAttributeAsync(
         String name,
         AttributeType type,
         String display,
         String defaultValue,
         Consumer<Result<Void>> callback
-    ) {
-        attributeDbo.insertAttributeAsync(name, display, type.getId(), defaultValue, r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                // insertion failed
-                log.warning(err.get());
-                callback.accept(Result.error(StringUtils.GENERIC_ERROR));
-                return;
-            }
+    );
 
-            long attributeId = r.get();
-            if (attributeId == -1) {
-                // attribute exists already
-                callback.accept(Result.error("Attribute already exists"));
-                return;
-            }
-
-            // add new attribute to each player
-            playerRepo.flushJoinedPlayers();
-
-            for (RpPlayer player : playerRepo.getPlayers()) {
-                playerRepo.setAttributeAsync(player, (int) attributeId, defaultValue, s ->
-                    s.getError().ifPresent(log::warning)
-                );
-            }
-
-            callback.accept(Result.ok(null));
-        });
-    }
+    void load();
 }

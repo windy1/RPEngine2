@@ -1,4 +1,4 @@
-package tv.twitch.moonmoon.rpengine2.cmd;
+package tv.twitch.moonmoon.rpengine2.cmd.admin;
 
 import com.google.inject.Inject;
 import org.bukkit.ChatColor;
@@ -22,15 +22,17 @@ public class AdminCommand implements CommandExecutor {
 
     static {
         USAGES.add(new CommandUsage("/rpengine attribute"));
-        USAGES.add(new CommandUsage("/card"));
+        USAGES.add(new CommandUsage("/rpengine dump"));
     }
 
     private final AttributeAdmin attributeAdmin;
+    private final Dump dump;
     private final Help help;
 
     @Inject
-    public AdminCommand(Plugin plugin, AttributeAdmin attributeAdmin) {
+    public AdminCommand(Plugin plugin, AttributeAdmin attributeAdmin, Dump dump) {
         this.attributeAdmin = Objects.requireNonNull(attributeAdmin);
+        this.dump = Objects.requireNonNull(dump);
 
         PluginDescriptionFile desc = plugin.getDescription();
         String version = desc.getVersion();
@@ -47,12 +49,15 @@ public class AdminCommand implements CommandExecutor {
             return help.handle(sender, new String[0]);
         }
 
-        if (args[0].equalsIgnoreCase("help")) {
-            return help.handle(sender, args);
-        } else if (args[0].equalsIgnoreCase("attribute")) {
-            return attributeAdmin.handle(sender, StringUtils.splice(args, 1));
+        switch(args[0]) {
+            case "help":
+                return help.handle(sender, args);
+            case "attribute":
+                return attributeAdmin.handle(sender, StringUtils.splice(args, 1));
+            case "dump":
+                return dump.handle(sender, StringUtils.splice(args, 1));
+            default:
+                return false;
         }
-
-        return false;
     }
 }
