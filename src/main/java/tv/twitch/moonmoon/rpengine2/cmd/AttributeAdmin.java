@@ -26,10 +26,9 @@ public class AttributeAdmin {
     static {
         List<ArgumentLabel> addArgs = new ArrayList<>();
         addArgs.add(new ArgumentLabel("name", true));
-        addArgs.add(new ArgumentLabel("display_name", false));
         addArgs.add(new ArgumentLabel("default_value", false));
+        addArgs.add(new ArgumentLabel("display_name", false));
         USAGES.add(new CommandUsage("add", addArgs));
-
     }
 
     private final AttributeRepo attributeRepo;
@@ -64,16 +63,16 @@ public class AttributeAdmin {
         }
 
         String name = args[0];
-        AttributeType type = AttributeType.String;
-        String displayName = name;
         String defaultValue = null;
+        String displayName = name;
+        AttributeType type = AttributeType.String;
 
         if (args.length > 1) {
-            displayName = args[1];
+            defaultValue = args[1];
         }
 
         if (args.length > 2) {
-            defaultValue = args[2];
+            displayName = args[2];
         }
 
         attributeRepo.createAttributeAsync(name, type, displayName, defaultValue, r -> {

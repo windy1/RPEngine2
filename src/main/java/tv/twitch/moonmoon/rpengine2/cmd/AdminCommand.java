@@ -15,20 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class RpCommand implements CommandExecutor {
+public class AdminCommand implements CommandExecutor {
 
     private static final String PLUGIN_DISPLAY_NAME = "RPEngine";
     private static final List<CommandUsage> USAGES = new ArrayList<>();
 
     static {
         USAGES.add(new CommandUsage("/rpengine attribute"));
+        USAGES.add(new CommandUsage("/card"));
     }
 
     private final AttributeAdmin attributeAdmin;
     private final Help help;
 
     @Inject
-    public RpCommand(Plugin plugin, AttributeAdmin attributeAdmin) {
+    public AdminCommand(Plugin plugin, AttributeAdmin attributeAdmin) {
         this.attributeAdmin = Objects.requireNonNull(attributeAdmin);
 
         PluginDescriptionFile desc = plugin.getDescription();

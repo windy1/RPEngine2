@@ -36,7 +36,7 @@ public class PlayerDbo {
             .runTaskAsynchronously(plugin, () -> callback.accept(selectPlayers()));
     }
 
-    public Result<Void> insertPlayer(OfflinePlayer player) {
+    public Result<Long> insertPlayer(OfflinePlayer player) {
         if (player.getName() == null || !player.hasPlayedBefore()) {
             return Result.error("player not yet seen on server");
         }
@@ -44,14 +44,21 @@ public class PlayerDbo {
         final String query =
             "INSERT OR IGNORE INTO rp_player (created, username, uuid) VALUES (?, ?, ?)";
 
-        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+        try (PreparedStatement stmt =
+                 db.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, Instant.now().toString());
             stmt.setString(2, player.getName());
             stmt.setString(3, player.getUniqueId().toString());
 
             stmt.executeUpdate();
 
-            return Result.ok(null);
+            try (ResultSet results = stmt.getGeneratedKeys()) {
+                if (results.next()) {
+                    return Result.ok(results.getLong(1));
+                } else {
+                    return Result.ok(-1L);
+                }
+            }
         } catch (SQLException e) {
             String message = "error inserting player into database: `%s`";
             return Result.error(String.format(message, e.getMessage()));
@@ -78,11 +85,34 @@ public class PlayerDbo {
         int playerId,
         int attributeId,
         Object value,
-        Consumer<Result<Void>> callback
+        Consumer<Result<Long>> callback
     ) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(insertPlayerAttributeAsync(playerId, attributeId, value))
         );
+    }
+
+    public Result<Void> updatePlayerAttribute(int playerId, int attributeId, Object value) {
+        String rawValue = value != null ? value.toString() : null;
+
+        final String query =
+            "UPDATE rp_player_attribute " +
+            "SET value = ? " +
+            "WHERE player_id = ? " +
+            "AND attribute_id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setString(1, rawValue);
+            stmt.setInt(2, playerId);
+            stmt.setInt(3, attributeId);
+
+            stmt.executeUpdate();
+
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error updating player attribute: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
     }
 
     private Result<Set<RpPlayer>> selectPlayers() {
@@ -212,7 +242,7 @@ public class PlayerDbo {
         }
     }
 
-    private Result<Void> insertPlayerAttributeAsync(int playerId, int attributeId, Object value) {
+    private Result<Long> insertPlayerAttributeAsync(int playerId, int attributeId, Object value) {
         String rawValue = value != null ? value.toString() : null;
 
         final String query =
@@ -221,10 +251,11 @@ public class PlayerDbo {
                 "player_id, " +
                 "attribute_id, " +
                 "value" +
-                ") " +
-                "VALUES (?, ?, ?, ?)";
+            ") " +
+            "VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+        try (PreparedStatement stmt =
+                 db.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, Instant.now().toString());
             stmt.setLong(2, playerId);
             stmt.setLong(3, attributeId);
@@ -232,7 +263,13 @@ public class PlayerDbo {
 
             stmt.executeUpdate();
 
-            return Result.ok(null);
+            try (ResultSet results = stmt.getGeneratedKeys()) {
+                if (results.next()) {
+                    return Result.ok(results.getLong(1));
+                } else {
+                    return Result.ok(-1L);
+                }
+            }
         } catch (SQLException e) {
             String message = "error inserting player attribute: `%s`";
             return Result.error(String.format(message, e.getMessage()));

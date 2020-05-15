@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -39,20 +40,10 @@ public class RpPlayerRepo {
     }
 
     public Result<RpPlayer> getPlayer(Player player) {
-        RpPlayer p = players.get(player.getUniqueId().toString());
-        if (p == null) {
-            Result<RpPlayer> r = createPlayer(player);
-
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                log.info(err.get());
-                return Result.error(StringUtils.GENERIC_ERROR);
-            } else {
-                return r;
-            }
-        } else {
-            return Result.ok(p);
-        }
+        Objects.requireNonNull(player);
+        return Optional.ofNullable(players.get(player.getUniqueId().toString()))
+            .map(Result::ok)
+            .orElseGet(() -> handleResult(() -> createPlayer(player)));
     }
 
     public void setAttributeAsync(
@@ -61,7 +52,35 @@ public class RpPlayerRepo {
         Object value,
         Consumer<Result<Void>> callback
     ) {
-        playerDbo.insertPlayerAttributeAsync(player.getId(), attributeId, value, callback);
+        // try to insert the attribute
+        addAttributeAsync(player, attributeId, value, r -> {
+            Result<Boolean> result = handleResult(() -> r);
+
+            Optional<String> err = result.getError();
+            if (err.isPresent()) {
+                // insertion failed
+                callback.accept(Result.error(err.get()));
+                return;
+            }
+
+            if (r.get()) {
+                // attribute inserted
+                callback.accept(handleReloadPlayer(player.getUUID()));
+                return;
+            }
+
+            // attribute already exists, update required
+            Result<Void> updateResult = handleResult(() ->
+                playerDbo.updatePlayerAttribute(player.getId(), attributeId, value)
+            );
+
+            err = updateResult.getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+            } else {
+                callback.accept(handleReloadPlayer(player.getUUID()));
+            }
+        });
     }
 
     public void load() {
@@ -85,14 +104,6 @@ public class RpPlayerRepo {
         joinedPlayers.add(player);
     }
 
-    public void startJoinedPlayersWatcher() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(
-            plugin,
-            this::flushJoinedPlayers,
-            0, 20
-        );
-    }
-
     public void flushJoinedPlayers() {
         synchronized (joinedPlayers) {
             while (!joinedPlayers.isEmpty()) {
@@ -102,19 +113,79 @@ public class RpPlayerRepo {
         }
     }
 
+    private void addAttributeAsync(
+        RpPlayer player,
+        int attributeId,
+        Object value,
+        Consumer<Result<Boolean>> callback
+    ) {
+        playerDbo.insertPlayerAttributeAsync(player.getId(), attributeId, value, r -> {
+            Optional<String> err = r.getError();
+            if (err.isPresent()) {
+                // insertion failed
+                callback.accept(Result.error(err.get()));
+                return;
+            }
+
+            // inserted or ignored
+            long playerAttributeId = r.get();
+            callback.accept(Result.ok(playerAttributeId != -1));
+        });
+    }
+
+    private void startJoinedPlayersWatcher() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(
+            plugin,
+            this::flushJoinedPlayers,
+            0, 20
+        );
+    }
+
     private Result<RpPlayer> createPlayer(OfflinePlayer player) {
-        playerDbo.insertPlayer(player).getError().ifPresent(log::warning);
-
-        Result<RpPlayer> newPlayer = playerDbo.selectPlayer(player.getUniqueId());
-
-        Optional<String> err = newPlayer.getError();
+        Result<Long> newPlayerId = playerDbo.insertPlayer(player);
+        Optional<String> err = newPlayerId.getError();
         if (err.isPresent()) {
             return Result.error(err.get());
         }
 
-        RpPlayer p = newPlayer.get();
-        players.put(p.getUUID().toString(), p);
+        UUID playerId = player.getUniqueId();
+
+        if (newPlayerId.get() == -1) {
+            // player already existed
+            return Result.ok(players.get(playerId.toString()));
+        }
+
+        // TODO: insert attributes
+
+        return reloadPlayer(playerId);
+    }
+
+    private Result<RpPlayer> reloadPlayer(UUID playerId) {
+        Result<RpPlayer> updatedPlayer = playerDbo.selectPlayer(playerId);
+
+        Optional<String> err = updatedPlayer.getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        RpPlayer p = updatedPlayer.get();
+        players.put(playerId.toString(), p);
 
         return Result.ok(p);
+    }
+
+    private <T> Result<T> handleResult(Supplier<Result<T>> f) {
+        Result<T> r = f.get();
+        Optional<String> err = r.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+            return Result.error(StringUtils.GENERIC_ERROR);
+        } else {
+            return r;
+        }
+    }
+
+    private Result<Void> handleReloadPlayer(UUID playerId) {
+        return handleResult(() -> reloadPlayer(playerId).mapOk(p -> null));
     }
 }

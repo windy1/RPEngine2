@@ -59,7 +59,7 @@ public class AttributeRepo {
             playerRepo.flushJoinedPlayers();
 
             for (RpPlayer player : playerRepo.getPlayers()) {
-                playerRepo.setAttributeAsync(player, (int) attributeId, null, s ->
+                playerRepo.setAttributeAsync(player, (int) attributeId, defaultValue, s ->
                     s.getError().ifPresent(log::warning)
                 );
             }

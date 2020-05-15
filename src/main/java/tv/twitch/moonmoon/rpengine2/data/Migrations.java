@@ -26,7 +26,8 @@ public final class Migrations {
                 "created TEXT NOT NULL, " +
                 "name VARCHAR(255) NOT NULL UNIQUE, " +
                 "display VARCHAR(255) NOT NULL, " +
-                "type VARCHAR(255) NOT NULL UNIQUE" +
+                "type VARCHAR(255) NOT NULL UNIQUE, " +
+                "default_value VARCHAR(255)" +
             ");"
         );
 

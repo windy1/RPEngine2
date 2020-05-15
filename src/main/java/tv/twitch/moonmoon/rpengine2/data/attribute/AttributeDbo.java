@@ -43,16 +43,15 @@ public class AttributeDbo {
         String type,
         String defaultValue
     ) {
-        // TODO: default value
-
         final String query =
             "INSERT OR IGNORE INTO rp_attribute (" +
                 "created, " +
                 "name, " +
                 "display, " +
-                "type" +
-                ") " +
-                "VALUES (?, ?, ?, ?)";
+                "type, " +
+                "default_value" +
+            ") " +
+            "VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt =
                  db.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -60,6 +59,7 @@ public class AttributeDbo {
             stmt.setString(2, name);
             stmt.setString(3, display);
             stmt.setString(4, type);
+            stmt.setString(5, defaultValue);
 
             stmt.executeUpdate();
 

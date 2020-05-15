@@ -16,9 +16,9 @@ public class Commands {
     private final Map<String, CommandExecutor> executors = new HashMap<>();
 
     @Inject
-    public Commands(JavaPlugin plugin, RpCommand rpCommand, CardCommand cardCommand) {
+    public Commands(JavaPlugin plugin, AdminCommand adminCommand, CardCommand cardCommand) {
         this.plugin = Objects.requireNonNull(plugin);
-        executors.put("rpengine", rpCommand);
+        executors.put("rpengine", adminCommand);
         executors.put("card", cardCommand);
     }
 
