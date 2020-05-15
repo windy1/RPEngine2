@@ -58,7 +58,7 @@ public class RpPlayerAttribute {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, created, display, name, value);
+        return Objects.hash(name);
     }
 
     @Override

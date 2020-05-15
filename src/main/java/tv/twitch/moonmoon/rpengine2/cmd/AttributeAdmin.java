@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
-import tv.twitch.moonmoon.rpengine2.data.RpAttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.model.AttributeType;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
@@ -32,10 +32,10 @@ public class AttributeAdmin {
 
     }
 
-    private final RpAttributeRepo attributeRepo;
+    private final AttributeRepo attributeRepo;
 
     @Inject
-    public AttributeAdmin(RpAttributeRepo attributeRepo) {
+    public AttributeAdmin(AttributeRepo attributeRepo) {
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
     }
 

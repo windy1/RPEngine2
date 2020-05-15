@@ -1,4 +1,4 @@
-package tv.twitch.moonmoon.rpengine2.data;
+package tv.twitch.moonmoon.rpengine2.data.player;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -21,16 +21,16 @@ import java.util.stream.Collectors;
 public class RpPlayerRepo {
 
     private final Plugin plugin;
-    private final RpDb db;
+    private final PlayerDbo playerDbo;
     private final Logger log;
     private Map<String, RpPlayer> players;
 
     private final Queue<OfflinePlayer> joinedPlayers = new ConcurrentLinkedQueue<>();
 
     @Inject
-    public RpPlayerRepo(Plugin plugin, RpDb db) {
+    public RpPlayerRepo(Plugin plugin, PlayerDbo playerDbo) {
         this.plugin = Objects.requireNonNull(plugin);
-        this.db = Objects.requireNonNull(db);
+        this.playerDbo = Objects.requireNonNull(playerDbo);
         log = plugin.getLogger();
     }
 
@@ -61,11 +61,11 @@ public class RpPlayerRepo {
         Object value,
         Consumer<Result<Void>> callback
     ) {
-        db.insertPlayerAttributeAsync(player.getId(), attributeId, value, callback);
+        playerDbo.insertPlayerAttributeAsync(player.getId(), attributeId, value, callback);
     }
 
     public void load() {
-        db.selectPlayersAsync(r -> {
+        playerDbo.selectPlayersAsync(r -> {
             Optional<String> err = r.getError();
             if (err.isPresent()) {
                 log.warning(err.get());
@@ -103,9 +103,9 @@ public class RpPlayerRepo {
     }
 
     private Result<RpPlayer> createPlayer(OfflinePlayer player) {
-        db.insertPlayer(player).getError().ifPresent(log::warning);
+        playerDbo.insertPlayer(player).getError().ifPresent(log::warning);
 
-        Result<RpPlayer> newPlayer = db.selectPlayer(player.getUniqueId());
+        Result<RpPlayer> newPlayer = playerDbo.selectPlayer(player.getUniqueId());
 
         Optional<String> err = newPlayer.getError();
         if (err.isPresent()) {

@@ -1,5 +1,6 @@
-package tv.twitch.moonmoon.rpengine2.data;
+package tv.twitch.moonmoon.rpengine2.data.attribute;
 
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.model.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
@@ -14,15 +15,19 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 @Singleton
-public class RpAttributeRepo {
+public class AttributeRepo {
 
-    private final RpDb db;
+    private final AttributeDbo attributeDbo;
     private final RpPlayerRepo playerRepo;
     private final Logger log;
 
     @Inject
-    public RpAttributeRepo(RpDb db, RpPlayerRepo playerRepo, @PluginLogger Logger log) {
-        this.db = Objects.requireNonNull(db);
+    public AttributeRepo(
+        AttributeDbo attributeDbo,
+        RpPlayerRepo playerRepo,
+        @PluginLogger Logger log
+    ) {
+        this.attributeDbo = Objects.requireNonNull(attributeDbo);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.log = Objects.requireNonNull(log);
     }
@@ -34,7 +39,7 @@ public class RpAttributeRepo {
         String defaultValue,
         Consumer<Result<Void>> callback
     ) {
-        db.insertAttributeAsync(name, display, type.getId(), defaultValue, r -> {
+        attributeDbo.insertAttributeAsync(name, display, type.getId(), defaultValue, r -> {
             Optional<String> err = r.getError();
             if (err.isPresent()) {
                 // insertion failed

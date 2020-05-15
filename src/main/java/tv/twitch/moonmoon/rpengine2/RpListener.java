@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import tv.twitch.moonmoon.rpengine2.data.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 
 import java.util.Objects;
 
