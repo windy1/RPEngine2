@@ -36,19 +36,7 @@ public class RpDb {
     }
 
     public void connectAsync(Consumer<Result<Void>> callback) {
-        Logger log = plugin.getLogger();
-
-        if (!Files.exists(path)) {
-            try {
-                Files.createDirectories(path.getParent());
-                Files.createFile(path);
-            } catch (IOException e) {
-                String message = "error creating database file: `%s`";
-                callback.accept(Result.error(String.format(message, e.getMessage())));
-                return;
-            }
-            log.info(String.format("Created empty database file at `%s`", path));
-        }
+        createFiles(callback);
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             Optional<String> err = connect().getError();
@@ -67,6 +55,20 @@ public class RpDb {
 
             callback.accept(Result.ok(null));
         });
+    }
+
+    private void createFiles(Consumer<Result<Void>> callback) {
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectories(path.getParent());
+                Files.createFile(path);
+            } catch (IOException e) {
+                String message = "error creating database file: `%s`";
+                callback.accept(Result.error(String.format(message, e.getMessage())));
+                return;
+            }
+            log.info(String.format("Created empty database file at `%s`", path));
+        }
     }
 
     public void selectPlayersAsync(Consumer<Result<Set<RpPlayer>>> callback) {
@@ -124,14 +126,14 @@ public class RpDb {
         );
     }
 
-    public void insertPlayerAttribute(
+    public void insertPlayerAttributeAsync(
         int playerId,
         int attributeId,
         Object value,
         Consumer<Result<Void>> callback
     ) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
-            callback.accept(insertPlayerAttribute(playerId, attributeId, value))
+            callback.accept(insertPlayerAttributeAsync(playerId, attributeId, value))
         );
     }
 
@@ -308,13 +310,14 @@ public class RpDb {
             stmt.setString(3, display);
             stmt.setString(4, type);
 
-            if (stmt.executeUpdate() == 0) {
-                return Result.ok(-1L);
-            }
+            stmt.executeUpdate();
 
             try (ResultSet results = stmt.getGeneratedKeys()) {
-                results.next();
-                return Result.ok(results.getLong(1));
+                if (results.next()) {
+                    return Result.ok(results.getLong(1));
+                } else {
+                    return Result.ok(-1L);
+                }
             }
         } catch (SQLException e) {
             String message = "error inserting new attribute: `%s`";
@@ -322,7 +325,7 @@ public class RpDb {
         }
     }
 
-    private Result<Void> insertPlayerAttribute(int playerId, int attributeId, Object value) {
+    private Result<Void> insertPlayerAttributeAsync(int playerId, int attributeId, Object value) {
         String rawValue = value != null ? value.toString() : null;
 
         final String query =

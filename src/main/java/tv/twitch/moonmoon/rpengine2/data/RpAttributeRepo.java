@@ -58,6 +58,8 @@ public class RpAttributeRepo {
                     s.getError().ifPresent(log::warning)
                 );
             }
+
+            callback.accept(Result.ok(null));
         });
     }
 }

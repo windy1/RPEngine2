@@ -2,24 +2,35 @@ package tv.twitch.moonmoon.rpengine2.cmd;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
+import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
+import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.data.RpAttributeRepo;
 import tv.twitch.moonmoon.rpengine2.model.AttributeType;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 public class AttributeAdmin {
 
-    private static final String USAGE = "/rpengine attribute [ add | remove | set ]";
+    private static final List<CommandUsage> USAGES = new ArrayList<>();
 
-    private static final String ADD_USAGE =
-        "/rpengine attribute add " +
-            "{ name } " +
-            "[ type(string|number|group) ] " +
-            "[ display_name ] " +
-            "[ default_value ]";
+    private static final Help HELP = new Help(
+        ChatColor.BLUE + "Attribute Sub Commands: ", USAGES
+    );
+
+    static {
+        List<ArgumentLabel> addArgs = new ArrayList<>();
+        addArgs.add(new ArgumentLabel("name", true));
+        addArgs.add(new ArgumentLabel("display_name", false));
+        addArgs.add(new ArgumentLabel("default_value", false));
+        USAGES.add(new CommandUsage("add", addArgs));
+
+    }
 
     private final RpAttributeRepo attributeRepo;
 
@@ -29,8 +40,8 @@ public class AttributeAdmin {
     }
 
     public boolean handle(CommandSender sender, String[] args) {
-        if (args.length == 0) {
-            sender.sendMessage(USAGE);
+        if (args.length == 0 || (args.length == 1 && args[0].equalsIgnoreCase("help"))) {
+            HELP.handle(sender, new String[] { "help" });
             return true;
         }
 
@@ -48,7 +59,7 @@ public class AttributeAdmin {
 
     public boolean handleAdd(CommandSender sender, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ADD_USAGE);
+            HELP.handle(sender, new String[] { "help" });
             return true;
         }
 
@@ -58,19 +69,11 @@ public class AttributeAdmin {
         String defaultValue = null;
 
         if (args.length > 1) {
-            type = AttributeType.findById(args[2]).orElse(null);
-            if (type == null) {
-                sender.sendMessage(ChatColor.RED + "Invalid attribute type");
-                return false;
-            }
+            displayName = args[1];
         }
 
         if (args.length > 2) {
-            displayName = args[3];
-        }
-
-        if (args.length > 3) {
-            defaultValue = args[4];
+            defaultValue = args[2];
         }
 
         attributeRepo.createAttributeAsync(name, type, displayName, defaultValue, r -> {
@@ -82,6 +85,6 @@ public class AttributeAdmin {
             }
         });
 
-        return false;
+        return true;
     }
 }

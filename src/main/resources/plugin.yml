@@ -8,4 +8,8 @@ commands:
   rpengine:
     description: Root command for RPEngine2
     permission: rpengine.admin
-    usage: /rpengine [ attribute ]
+    usage: /rpengine help
+  card:
+    description: Display RP character card
+    usage: /card
+    permission: rpengine.card

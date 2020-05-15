@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.cmd.RpCommand;
+import tv.twitch.moonmoon.rpengine2.cmd.card.CardCommand;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.data.RpPlayerRepo;
 
@@ -21,6 +22,7 @@ public class Bootstrap {
     private final RpPlayerRepo playerRepo;
     private final RpListener listener;
     private final RpCommand rpCommand;
+    private final CardCommand cardCommand;
     private final Logger log;
 
     @Inject
@@ -29,13 +31,15 @@ public class Bootstrap {
         RpDb db,
         RpPlayerRepo playerRepo,
         RpListener listener,
-        RpCommand rpCommand
+        RpCommand rpCommand,
+        CardCommand cardCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         this.db = Objects.requireNonNull(db);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.listener = Objects.requireNonNull(listener);
         this.rpCommand = Objects.requireNonNull(rpCommand);
+        this.cardCommand = Objects.requireNonNull(cardCommand);
         log = plugin.getLogger();
     }
 
@@ -45,6 +49,8 @@ public class Bootstrap {
 
         Objects.requireNonNull(plugin.getCommand("rpengine"))
             .setExecutor(rpCommand);
+        Objects.requireNonNull(plugin.getCommand("card"))
+            .setExecutor(cardCommand);
 
         db.connectAsync(r -> {
             Optional<String> err = r.getError();

@@ -40,6 +40,10 @@ public class RpPlayerAttribute {
         return Optional.ofNullable(value);
     }
 
+    public String getStringValue() {
+        return getValue().map(Object::toString).orElse("");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

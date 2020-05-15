@@ -1,6 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.model;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -42,8 +43,12 @@ public class RpPlayer {
         return username;
     }
 
-    public UUID getUuid() {
+    public UUID getUUID() {
         return uuid;
+    }
+
+    public Set<RpPlayerAttribute> getAttributes() {
+        return Collections.unmodifiableSet(attributes);
     }
 
     @Override
