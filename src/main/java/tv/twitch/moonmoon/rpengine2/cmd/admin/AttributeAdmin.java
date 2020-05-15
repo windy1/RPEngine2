@@ -10,10 +10,7 @@ import tv.twitch.moonmoon.rpengine2.model.AttributeType;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class AttributeAdmin {
 
@@ -24,11 +21,15 @@ public class AttributeAdmin {
     );
 
     static {
-        List<ArgumentLabel> addArgs = new ArrayList<>();
-        addArgs.add(new ArgumentLabel("name", true));
-        addArgs.add(new ArgumentLabel("default_value", false));
-        addArgs.add(new ArgumentLabel("display_name", false));
-        USAGES.add(new CommandUsage("add", addArgs));
+        USAGES.add(new CommandUsage("add", Arrays.asList(
+            new ArgumentLabel("name", true),
+            new ArgumentLabel("default_value", false),
+            new ArgumentLabel("display_name", false)
+        )));
+
+        USAGES.add(new CommandUsage("remove", Collections.singletonList(
+            new ArgumentLabel("name", true)
+        )));
     }
 
     private final AttributeRepo attributeRepo;
@@ -49,14 +50,15 @@ public class AttributeAdmin {
         switch (args[0]) {
             case "add":
                 return handleAdd(sender, splicedArgs);
-            case "set":
             case "remove":
+                return handleRemove(sender, splicedArgs);
+            case "set":
             default:
                 return false;
         }
     }
 
-    public boolean handleAdd(CommandSender sender, String[] args) {
+    private boolean handleAdd(CommandSender sender, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -80,6 +82,25 @@ public class AttributeAdmin {
                 sender.sendMessage(ChatColor.RED + err.get());
             } else {
                 sender.sendMessage(ChatColor.GREEN + "Attribute added");
+            }
+        });
+
+        return true;
+    }
+
+    private boolean handleRemove(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+
+        String name = args[0];
+
+        attributeRepo.removeAttributeAsync(name, r -> {
+            Optional<String> err = r.getError();
+            if (err.isPresent()) {
+                sender.sendMessage(ChatColor.RED + err.get());
+            } else {
+                sender.sendMessage(ChatColor.GREEN + "Attribute removed");
             }
         });
 

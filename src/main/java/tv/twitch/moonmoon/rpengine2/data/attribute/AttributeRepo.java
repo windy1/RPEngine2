@@ -22,5 +22,7 @@ public interface AttributeRepo extends Repo {
         Consumer<Result<Void>> callback
     );
 
+    void removeAttributeAsync(String name, Consumer<Result<Void>> callback);
+
     void load();
 }

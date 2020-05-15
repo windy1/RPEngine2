@@ -1,7 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.data.player;
 
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import tv.twitch.moonmoon.rpengine2.data.Repo;
 import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
@@ -24,6 +23,8 @@ public interface RpPlayerRepo extends Repo {
         Object value,
         Consumer<Result<Void>> callback
     );
+
+    void removeAttributesAsync(int attributeId, Consumer<Result<Void>> callback);
 
     void load();
 

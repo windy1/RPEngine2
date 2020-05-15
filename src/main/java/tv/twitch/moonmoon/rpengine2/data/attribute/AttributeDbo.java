@@ -77,6 +77,20 @@ public class AttributeDbo {
         }
     }
 
+    public Result<Void> deleteAttribute(int attributeId) {
+        final String query = "DELETE FROM rp_attribute WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, attributeId);
+
+            stmt.executeUpdate();
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error deleting attribute: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
     private Result<Set<Attribute>> selectAttributes() {
         final String query =
             "SELECT id, created, name, display, type, default_value FROM rp_attribute";

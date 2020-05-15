@@ -90,6 +90,32 @@ public class AttributeRepoImpl implements AttributeRepo {
     }
 
     @Override
+    public void removeAttributeAsync(String name, Consumer<Result<Void>> callback) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            callback.accept(Result.error("Attribute not found"));
+            return;
+        }
+
+        int attributeId = attribute.getId();
+
+        playerRepo.removeAttributesAsync(attributeId, r -> {
+            Optional<String> err = r.getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+                return;
+            }
+
+            err = attributeDbo.deleteAttribute(attributeId).getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+            } else {
+                callback.accept(Result.ok(null));
+            }
+        });
+    }
+
+    @Override
     public void load() {
         attributeDbo.selectAttributesAsync(r -> {
             Optional<String> err = r.getError();

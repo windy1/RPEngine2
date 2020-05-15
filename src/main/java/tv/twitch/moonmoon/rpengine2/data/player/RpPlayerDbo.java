@@ -37,6 +37,24 @@ public class RpPlayerDbo {
             .runTaskAsynchronously(plugin, () -> callback.accept(selectPlayers()));
     }
 
+    public Result<Set<RpPlayer>> selectPlayers() {
+        final String query = "SELECT id, created, username, uuid FROM rp_player";
+
+        Set<RpPlayer> players = new HashSet<>();
+
+        try (Statement stmt = db.getConnection().createStatement();
+             ResultSet results = stmt.executeQuery(query)) {
+            while (results.next()) {
+                players.add(readRpPlayer(results));
+            }
+
+            return Result.ok(players);
+        } catch (SQLException e) {
+            String message = "error reading players: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
     public Result<Long> insertPlayer(OfflinePlayer player) {
         if (player.getName() == null || !player.hasPlayedBefore()) {
             return Result.error("player not yet seen on server");
@@ -119,20 +137,22 @@ public class RpPlayerDbo {
         }
     }
 
-    private Result<Set<RpPlayer>> selectPlayers() {
-        final String query = "SELECT id, created, username, uuid FROM rp_player";
+    public void deletePlayerAttributesAsync(int attributeId, Consumer<Result<Void>> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(deletePlayerAttributes(attributeId))
+        );
+    }
 
-        Set<RpPlayer> players = new HashSet<>();
+    private Result<Void> deletePlayerAttributes(int attributeId) {
+        final String query = "DELETE FROM rp_player_attribute WHERE attribute_id = ?";
 
-        try (Statement stmt = db.getConnection().createStatement();
-             ResultSet results = stmt.executeQuery(query)) {
-            while (results.next()) {
-                players.add(readRpPlayer(results));
-            }
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, attributeId);
 
-            return Result.ok(players);
+            stmt.executeUpdate();
+            return Result.ok(null);
         } catch (SQLException e) {
-            String message = "error reading players: `%s`";
+            String message = "error deleting player attributes: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }

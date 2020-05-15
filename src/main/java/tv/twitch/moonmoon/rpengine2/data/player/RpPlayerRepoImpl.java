@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.data.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
@@ -100,6 +99,29 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     }
 
     @Override
+    public void removeAttributesAsync(int attributeId, Consumer<Result<Void>> callback) {
+        playerDbo.deletePlayerAttributesAsync(attributeId, r -> {
+            // delete attributes
+            Optional<String> err = handleResult(() -> r).getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+                return;
+            }
+
+            // reload players
+            Result<Set<RpPlayer>> reloadedPlayers = handleResult(playerDbo::selectPlayers);
+
+            err = reloadedPlayers.getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+            } else {
+                onLoad(reloadedPlayers.get());
+                callback.accept(Result.ok(null));
+            }
+        });
+    }
+
+    @Override
     public void load() {
         playerDbo.selectPlayersAsync(r -> {
             Optional<String> err = r.getError();
@@ -108,13 +130,15 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
                 return;
             }
 
-            players = r.get().stream()
-                .collect(Collectors.toMap(p -> p.getUUID().toString(), Function.identity()));
-
-            log.info("loaded players " + players);
-
+            onLoad(r.get());
             startJoinedPlayersWatcher();
         });
+    }
+
+    private void onLoad(Set<RpPlayer> loadedPlayers) {
+        players = loadedPlayers.stream()
+            .collect(Collectors.toMap(p -> p.getUUID().toString(), Function.identity()));
+        log.info("loaded players " + players);
     }
 
     @Override
@@ -148,7 +172,7 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
 
             // inserted or ignored
             long playerAttributeId = r.get();
-            
+
             callback.accept(Result.ok(playerAttributeId != 0));
         });
     }
