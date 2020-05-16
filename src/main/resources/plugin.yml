@@ -6,7 +6,7 @@ authors: [Kasvot]
 description: RPEngine rewrite
 commands:
   rpengine:
-    description: Root command for RPEngine2
+    description: Admin command for RPEngine2
     permission: rpengine.admin
     usage: /rpengine help
   card:
@@ -17,3 +17,11 @@ commands:
     description: Sets a card attribute
     usage: /cardset help
     permission: rpengine.cardset
+  cardselect:
+    description: Lists options for a select
+    usage: /cardselect help
+    permission: rpengine.cardselect
+  colorlist:
+    description: Lists available colors
+    usage: /colorlist
+    permission: rpengine.colorlist

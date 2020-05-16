@@ -8,6 +8,8 @@ import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepoImpl;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepoImpl;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectRepoImpl;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -47,5 +49,6 @@ public class RpModule extends AbstractModule {
     protected void configure() {
         bind(RpPlayerRepo.class).to(RpPlayerRepoImpl.class);
         bind(AttributeRepo.class).to(AttributeRepoImpl.class);
+        bind(SelectRepo.class).to(SelectRepoImpl.class);
     }
 }

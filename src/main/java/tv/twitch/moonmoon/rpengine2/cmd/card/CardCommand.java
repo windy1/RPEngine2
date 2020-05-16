@@ -6,7 +6,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
@@ -19,11 +20,16 @@ public class CardCommand implements CommandExecutor {
     private static final String HEADER =
         ChatColor.BLUE + "========== " + ChatColor.GREEN + "%s " + ChatColor.BLUE + "==========";
 
+    private static final String SUB_HEADER =
+        "" + ChatColor.GRAY + ChatColor.ITALIC + "Click a line to edit";
+
     private final RpPlayerRepo playerRepo;
+    private final SelectRepo selectRepo;
 
     @Inject
-    public CardCommand(RpPlayerRepo playerRepo) {
+    public CardCommand(RpPlayerRepo playerRepo, SelectRepo selectRepo) {
         this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.selectRepo = Objects.requireNonNull(selectRepo);
     }
 
     @Override
@@ -42,9 +48,10 @@ public class CardCommand implements CommandExecutor {
         }
 
         sender.sendMessage(String.format(HEADER, sender.getName()));
+        sender.sendMessage(SUB_HEADER);
 
         player.get().getAttributes().stream()
-            .map(AttributeLabel::from)
+            .map(a -> AttributeLabel.from(a, selectRepo))
             .forEach(a -> sender.spigot().sendMessage(a.toTextComponent()));
 
         return true;

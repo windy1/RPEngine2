@@ -1,7 +1,8 @@
 package tv.twitch.moonmoon.rpengine2.data.attribute;
 
 import tv.twitch.moonmoon.rpengine2.data.Repo;
-import tv.twitch.moonmoon.rpengine2.model.AttributeType;
+import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
+import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.Optional;
@@ -22,7 +23,7 @@ public interface AttributeRepo extends Repo {
         Consumer<Result<Void>> callback
     );
 
-    void removeAttributeAsync(String name, Consumer<Result<Void>> callback);
+    void createAttribute(String name, AttributeType type, String display, String defaultValue);
 
-    void load();
+    void removeAttributeAsync(String name, Consumer<Result<Void>> callback);
 }

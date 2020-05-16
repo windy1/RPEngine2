@@ -5,7 +5,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.cmd.admin.AdminCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardCommand;
+import tv.twitch.moonmoon.rpengine2.cmd.card.CardSelectCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardSetCommand;
+import tv.twitch.moonmoon.rpengine2.cmd.help.ColorListCommand;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -22,12 +24,16 @@ public class Commands {
         JavaPlugin plugin,
         AdminCommand adminCommand,
         CardCommand cardCommand,
-        CardSetCommand cardSetCommand
+        CardSetCommand cardSetCommand,
+        CardSelectCommand cardSelectCommand,
+        ColorListCommand colorListCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("rpengine", adminCommand);
         executors.put("card", cardCommand);
         executors.put("cardset", cardSetCommand);
+        executors.put("cardselect", cardSelectCommand);
+        executors.put("colorlist", colorListCommand);
     }
 
     public void register() {

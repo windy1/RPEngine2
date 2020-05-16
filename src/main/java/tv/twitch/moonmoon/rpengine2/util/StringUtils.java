@@ -1,6 +1,9 @@
 package tv.twitch.moonmoon.rpengine2.util;
 
+import org.bukkit.ChatColor;
+
 import java.util.Arrays;
+import java.util.Optional;
 
 public class StringUtils {
 
@@ -14,6 +17,18 @@ public class StringUtils {
             return new String[0];
         } else {
             return Arrays.copyOfRange(args, start, args.length);
+        }
+    }
+
+    public static Optional<ChatColor> getChatColor(String name) {
+        if (name == null) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(ChatColor.valueOf(name.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
         }
     }
 }

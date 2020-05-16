@@ -2,49 +2,36 @@ package tv.twitch.moonmoon.rpengine2.data;
 
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.logging.Logger;
 
 public class DataManager {
 
     private final RpDb db;
-    private final RpPlayerRepo playerRepo;
-    private final AttributeRepo attributeRepo;
-    private final Logger log;
+    private final Defaults defaults;
+    private final List<Repo> repos;
 
     @Inject
     public DataManager(
         RpDb db,
         RpPlayerRepo playerRepo,
         AttributeRepo attributeRepo,
-        @PluginLogger Logger log
+        SelectRepo selectRepo,
+        Defaults defaults
     ) {
         this.db = Objects.requireNonNull(db);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
-        this.attributeRepo = Objects.requireNonNull(attributeRepo);
-        this.log = Objects.requireNonNull(log);
+        this.defaults = Objects.requireNonNull(defaults);
+        repos = new ArrayList<>(Arrays.asList(playerRepo, attributeRepo, selectRepo));
     }
 
     public void init() {
-        db.connectAsync(r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                log.warning(err.get());
-                // TODO: must do this on main thread
-//                pluginManager.disablePlugin(plugin);
-            } else {
-                this.onDbConnect();
-            }
-        });
-    }
-
-    private void onDbConnect() {
-        log.info("Connected to database");
-        playerRepo.load();
-        attributeRepo.load();
+        db.connect();
+        repos.forEach(Repo::load);
+        defaults.saveDefaults();
     }
 }

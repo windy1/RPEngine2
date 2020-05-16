@@ -8,10 +8,11 @@ import org.bukkit.entity.Player;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
-import tv.twitch.moonmoon.rpengine2.data.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.util.CommandDispatcher;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
@@ -34,11 +35,17 @@ public class CardSetCommand implements CommandExecutor {
 
     private final RpPlayerRepo playerRepo;
     private final AttributeRepo attributeRepo;
+    private final CommandDispatcher commandDispatcher;
 
     @Inject
-    public CardSetCommand(RpPlayerRepo playerRepo, AttributeRepo attributeRepo) {
+    public CardSetCommand(
+        RpPlayerRepo playerRepo,
+        AttributeRepo attributeRepo,
+        CommandDispatcher commandDispatcher
+    ) {
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
+        this.commandDispatcher = Objects.requireNonNull(commandDispatcher);
     }
 
     @Override
@@ -53,15 +60,15 @@ public class CardSetCommand implements CommandExecutor {
         }
 
         String name = args[0];
-        String value = args[1];
+        String value = String.join(" ", StringUtils.splice(args, 1));
+        Player mcPlayer = (Player) sender;
+        Result<RpPlayer> p = playerRepo.getPlayer(mcPlayer);
 
         Optional<Attribute> a = attributeRepo.getAttribute(name);
         if (!a.isPresent()) {
             sender.sendMessage(ChatColor.RED + "Unknown attribute");
             return true;
         }
-
-        Result<RpPlayer> p = playerRepo.getPlayer((Player) sender);
 
         Optional<String> err = p.getError();
         if (err.isPresent()) {
@@ -74,7 +81,7 @@ public class CardSetCommand implements CommandExecutor {
             if (setErr.isPresent()) {
                 sender.sendMessage(ChatColor.RED + setErr.get());
             } else {
-                sender.sendMessage(ChatColor.GREEN + "Card updated");
+                commandDispatcher.add(mcPlayer.getUniqueId(), "card");
             }
         });
 

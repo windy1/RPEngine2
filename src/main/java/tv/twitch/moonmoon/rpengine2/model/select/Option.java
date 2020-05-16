@@ -1,38 +1,42 @@
-package tv.twitch.moonmoon.rpengine2.data.attribute;
+package tv.twitch.moonmoon.rpengine2.model.select;
 
-import tv.twitch.moonmoon.rpengine2.model.AttributeType;
+import org.bukkit.ChatColor;
 
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Attribute {
+public class Option {
 
     private final int id;
+    private final int selectId;
     private final Instant created;
     private final String name;
     private final String display;
-    private final AttributeType type;
-    private final Object defaultValue;
+    private final ChatColor color;
 
-    public Attribute(
+    public Option(
         int id,
+        int selectId,
         Instant created,
         String name,
         String display,
-        AttributeType type,
-        Object defaultValue
+        ChatColor color
     ) {
         this.id = id;
+        this.selectId = selectId;
         this.created = Objects.requireNonNull(created);
         this.name = Objects.requireNonNull(name);
         this.display = Objects.requireNonNull(display);
-        this.type = Objects.requireNonNull(type);
-        this.defaultValue = defaultValue;
+        this.color = color;
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getSelectId() {
+        return selectId;
     }
 
     public Instant getCreated() {
@@ -47,25 +51,21 @@ public class Attribute {
         return display;
     }
 
-    public AttributeType getType() {
-        return type;
-    }
-
-    public Optional<Object> getDefaultValue() {
-        return Optional.ofNullable(defaultValue);
+    public Optional<ChatColor> getColor() {
+        return Optional.ofNullable(color);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Attribute attribute = (Attribute) o;
-        return id == attribute.id &&
-            Objects.equals(created, attribute.created) &&
-            Objects.equals(name, attribute.name) &&
-            Objects.equals(display, attribute.display) &&
-            type == attribute.type &&
-            Objects.equals(defaultValue, attribute.defaultValue);
+        Option option = (Option) o;
+        return id == option.id &&
+            selectId == option.selectId &&
+            Objects.equals(created, option.created) &&
+            Objects.equals(name, option.name) &&
+            Objects.equals(display, option.display) &&
+            color == option.color;
     }
 
     @Override
@@ -75,13 +75,13 @@ public class Attribute {
 
     @Override
     public String toString() {
-        return "Attribute{" +
+        return "Option{" +
             "id=" + id +
+            ", selectId=" + selectId +
             ", created=" + created +
             ", name='" + name + '\'' +
             ", display='" + display + '\'' +
-            ", type=" + type +
-            ", defaultValue=" + defaultValue +
+            ", color=" + color.name() +
             '}';
     }
 }

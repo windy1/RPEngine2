@@ -15,7 +15,7 @@ public final class Migrations {
                 "uuid VARCHAR(255) NOT NULL UNIQUE" +
             "); " +
 
-            "CREATE TABLE IF NOT EXISTS rp_group (" +
+            "CREATE TABLE IF NOT EXISTS rp_select (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "created TEXT NOT NULL, " +
                 "name VARCHAR(255) NOT NULL UNIQUE" +
@@ -32,14 +32,14 @@ public final class Migrations {
         );
 
         MIGRATIONS.add(
-            "CREATE TABLE IF NOT EXISTS rp_player_group (" +
+            "CREATE TABLE IF NOT EXISTS rp_select_option (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "select_id INTEGER NOT NULL, " +
                 "created TEXT NOT NULL, " +
-                "player_id INTEGER NOT NULL, " +
-                "group_id INTEGER NOT NULL, " +
-                "FOREIGN KEY (player_id) REFERENCES rp_player, " +
-                "FOREIGN KEY (group_id) REFERENCES rp_group, " +
-                "UNIQUE (player_id, group_id) ON CONFLICT IGNORE" +
+                "name VARCHAR(255) NOT NULL UNIQUE, " +
+                "display VARCHAR(255) NOT NULL, " +
+                "color VARCHAR(255), " +
+                "FOREIGN KEY (select_id) REFERENCES rp_select" +
             "); " +
 
             "CREATE TABLE IF NOT EXISTS rp_player_attribute (" +

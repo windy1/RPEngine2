@@ -22,16 +22,24 @@ public class AdminCommand implements CommandExecutor {
 
     static {
         USAGES.add(new CommandUsage("/rpengine attribute"));
+        USAGES.add(new CommandUsage("/rpengine select"));
         USAGES.add(new CommandUsage("/rpengine dump"));
     }
 
     private final AttributeAdmin attributeAdmin;
+    private final SelectAdmin selectAdmin;
     private final Dump dump;
     private final Help help;
 
     @Inject
-    public AdminCommand(Plugin plugin, AttributeAdmin attributeAdmin, Dump dump) {
+    public AdminCommand(
+        Plugin plugin,
+        AttributeAdmin attributeAdmin,
+        SelectAdmin selectAdmin,
+        Dump dump
+    ) {
         this.attributeAdmin = Objects.requireNonNull(attributeAdmin);
+        this.selectAdmin = Objects.requireNonNull(selectAdmin);
         this.dump = Objects.requireNonNull(dump);
 
         PluginDescriptionFile desc = plugin.getDescription();
@@ -54,6 +62,8 @@ public class AdminCommand implements CommandExecutor {
                 return help.handle(sender, args);
             case "attribute":
                 return attributeAdmin.handle(sender, StringUtils.splice(args, 1));
+            case "select":
+                return selectAdmin.handle(sender, StringUtils.splice(args, 1));
             case "dump":
                 return dump.handle(sender, StringUtils.splice(args, 1));
             default:

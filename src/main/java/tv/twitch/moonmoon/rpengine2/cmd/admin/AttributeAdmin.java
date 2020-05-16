@@ -6,7 +6,7 @@ import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
-import tv.twitch.moonmoon.rpengine2.model.AttributeType;
+import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
@@ -15,15 +15,23 @@ import java.util.*;
 public class AttributeAdmin {
 
     private static final List<CommandUsage> USAGES = new ArrayList<>();
-
     private static final Help HELP = new Help(
         ChatColor.BLUE + "Attribute Sub Commands: ", USAGES
     );
 
     static {
-        USAGES.add(new CommandUsage("add", Arrays.asList(
+        List<ArgumentLabel> addArgs = Arrays.asList(
             new ArgumentLabel("name", true),
             new ArgumentLabel("default_value", false),
+            new ArgumentLabel("display_name", false)
+        );
+
+        USAGES.add(new CommandUsage("add", addArgs));
+        USAGES.add(new CommandUsage("addnum", addArgs));
+
+        USAGES.add(new CommandUsage("addselect", Arrays.asList(
+            new ArgumentLabel("name", true),
+            new ArgumentLabel("default_value", true),
             new ArgumentLabel("display_name", false)
         )));
 
@@ -49,24 +57,36 @@ public class AttributeAdmin {
 
         switch (args[0]) {
             case "add":
-                return handleAdd(sender, splicedArgs);
+                return handleAdd(AttributeType.String, sender, splicedArgs);
+            case "addnum":
+                return handleAdd(AttributeType.Number, sender, splicedArgs);
+            case "addselect":
+                return handleAdd(AttributeType.Select, sender, splicedArgs);
             case "remove":
                 return handleRemove(sender, splicedArgs);
-            case "set":
             default:
                 return false;
         }
     }
 
-    private boolean handleAdd(CommandSender sender, String[] args) {
+    private boolean handleAdd(AttributeType type, CommandSender sender, String[] args) {
         if (args.length == 0) {
             return false;
+        }
+
+        if (args.length < 2 && type == AttributeType.Select) {
+            sender.sendMessage(ChatColor.RED + "A default value is required for selects");
+            return true;
         }
 
         String name = args[0];
         String defaultValue = null;
         String displayName = name;
-        AttributeType type = AttributeType.String;
+
+        if (attributeRepo.getAttribute(name).isPresent()) {
+            sender.sendMessage(ChatColor.RED + "Attribute already exists");
+            return true;
+        }
 
         if (args.length > 1) {
             defaultValue = args[1];

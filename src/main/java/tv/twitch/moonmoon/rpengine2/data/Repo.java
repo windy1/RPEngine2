@@ -21,4 +21,6 @@ public interface Repo {
             return r;
         }
     }
+
+    void load();
 }

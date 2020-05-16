@@ -5,9 +5,11 @@ import com.google.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
-import tv.twitch.moonmoon.rpengine2.data.attribute.Attribute;
+import org.bukkit.scheduler.BukkitTask;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
-import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.*;
@@ -24,9 +26,11 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     private final RpPlayerDbo playerDbo;
     private final AttributeRepo attributeRepo;
     private final Logger log;
-    private Map<String, RpPlayer> players;
-
     private final Queue<OfflinePlayer> joinedPlayers = new ConcurrentLinkedQueue<>();
+
+    private Map<String, RpPlayer> players;
+    private Map<String, RpPlayer> playerNameMap;
+    private BukkitTask joinedPlayersWatcher;
 
     @Inject
     public RpPlayerRepoImpl(Plugin plugin, RpPlayerDbo playerDbo, AttributeRepo attributeRepo) {
@@ -51,13 +55,7 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
 
     @Override
     public Optional<RpPlayer> getPlayer(String name) {
-        for (RpPlayer player : players.values()) {
-            if (player.getUsername().equals(name)) {
-                return Optional.of(player);
-            }
-        }
-
-        return Optional.empty();
+        return Optional.ofNullable(playerNameMap.get(name));
     }
 
     @Override
@@ -67,78 +65,51 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
         Object value,
         Consumer<Result<Void>> callback
     ) {
-        // try to insert the attribute
-        addAttributeAsync(player, attributeId, value, r -> {
-            Result<Boolean> result = handleResult(() -> r);
+        UUID playerId = player.getUUID();
+        Optional<RpPlayerAttribute> existing = player.getAttribute(attributeId);
 
-            Optional<String> err = result.getError();
-            if (err.isPresent()) {
-                // insertion failed
-                callback.accept(Result.error(err.get()));
-                return;
-            }
-
-            if (result.get()) {
-                // attribute inserted
-                callback.accept(handleReloadPlayer(player.getUUID()));
-                return;
-            }
-
-            // attribute already exists, update required
-            Result<Void> updateResult = handleResult(() ->
-                playerDbo.updatePlayerAttribute(player.getId(), attributeId, value)
+        if (existing.isPresent()) {
+            playerDbo.updatePlayerAttributeAsync(player.getId(), attributeId, value, r ->
+                callback.accept(handleAndReloadPlayer(playerId, r))
             );
-
-            err = updateResult.getError();
-            if (err.isPresent()) {
-                callback.accept(Result.error(err.get()));
-            } else {
-                callback.accept(handleReloadPlayer(player.getUUID()));
-            }
-        });
+        } else {
+            playerDbo.insertPlayerAttributeAsync(player.getId(), attributeId, value, r ->
+                callback.accept(handleAndReloadPlayer(playerId, r))
+            );
+        }
     }
 
     @Override
     public void removeAttributesAsync(int attributeId, Consumer<Result<Void>> callback) {
-        playerDbo.deletePlayerAttributesAsync(attributeId, r -> {
-            // delete attributes
-            Optional<String> err = handleResult(() -> r).getError();
-            if (err.isPresent()) {
-                callback.accept(Result.error(err.get()));
-                return;
-            }
-
-            // reload players
-            Result<Set<RpPlayer>> reloadedPlayers = handleResult(playerDbo::selectPlayers);
-
-            err = reloadedPlayers.getError();
-            if (err.isPresent()) {
-                callback.accept(Result.error(err.get()));
-            } else {
-                onLoad(reloadedPlayers.get());
-                callback.accept(Result.ok(null));
-            }
-        });
+        playerDbo.deletePlayerAttributesAsync(attributeId, r ->
+            callback.accept(handleAndReloadPlayers(r))
+        );
     }
 
     @Override
     public void load() {
-        playerDbo.selectPlayersAsync(r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                log.warning(err.get());
-                return;
-            }
+        Result<Set<RpPlayer>> r = playerDbo.selectPlayers();
 
+        Optional<String> err = r.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+        } else {
             onLoad(r.get());
             startJoinedPlayersWatcher();
-        });
+        }
     }
 
-    private void onLoad(Set<RpPlayer> loadedPlayers) {
-        players = loadedPlayers.stream()
-            .collect(Collectors.toMap(p -> p.getUUID().toString(), Function.identity()));
-        log.info("loaded players " + players);
+    @Override
+    public Result<Void> reloadPlayers() {
+        Result<Set<RpPlayer>> reloadedPlayers = handleResult(playerDbo::selectPlayers);
+
+        Optional<String> err = reloadedPlayers.getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        } else {
+            onLoad(reloadedPlayers.get());
+            return Result.ok(null);
+        }
     }
 
     @Override
@@ -154,35 +125,6 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
                     .ifPresent(log::info);
             }
         }
-    }
-
-    private void addAttributeAsync(
-        RpPlayer player,
-        int attributeId,
-        Object value,
-        Consumer<Result<Boolean>> callback
-    ) {
-        playerDbo.insertPlayerAttributeAsync(player.getId(), attributeId, value, r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                // insertion failed
-                callback.accept(Result.error(err.get()));
-                return;
-            }
-
-            // inserted or ignored
-            long playerAttributeId = r.get();
-
-            callback.accept(Result.ok(playerAttributeId != 0));
-        });
-    }
-
-    private void startJoinedPlayersWatcher() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(
-            plugin,
-            this::flushJoinedPlayers,
-            0, 20
-        );
     }
 
     private Result<RpPlayer> createPlayer(OfflinePlayer player) {
@@ -218,6 +160,37 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
         return Result.ok(newPlayer);
     }
 
+    private <T> Result<Void> handleAndReloadPlayer(UUID playerId, Result<T> r) {
+        Optional<String> err = handleResult(() -> r).getError();
+        return err
+            .<Result<Void>>map(Result::error)
+            .orElseGet(() -> handleResult(() -> reloadPlayer(playerId)).getError()
+                .<Result<Void>>map(Result::error)
+                .orElseGet(() -> Result.ok(null))
+            );
+    }
+
+    private <T> Result<Void> handleAndReloadPlayers(Result<T> r) {
+        Optional<String> err = handleResult(() -> r).getError();
+        return err
+            .<Result<Void>>map(Result::error)
+            .orElseGet(this::reloadPlayers);
+
+    }
+
+    private void updatePlayer(RpPlayer player) {
+        players.put(player.getUUID().toString(), player);
+        playerNameMap.put(player.getUsername(), player);
+    }
+
+    private void startJoinedPlayersWatcher() {
+        joinedPlayersWatcher = Bukkit.getScheduler().runTaskTimerAsynchronously(
+            plugin,
+            this::flushJoinedPlayers,
+            0, 20
+        );
+    }
+
     private Result<RpPlayer> reloadPlayer(UUID playerId) {
         Result<RpPlayer> updatedPlayer = playerDbo.selectPlayer(playerId);
 
@@ -227,17 +200,28 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
         }
 
         RpPlayer p = updatedPlayer.get();
-        players.put(playerId.toString(), p);
+        updatePlayer(p);
 
         return Result.ok(p);
     }
 
-    private Result<Void> handleReloadPlayer(UUID playerId) {
-        return handleResult(() -> reloadPlayer(playerId).mapOk(p -> null));
+    private void onLoad(Set<RpPlayer> loadedPlayers) {
+        players = Collections.synchronizedMap(loadedPlayers.stream()
+            .collect(Collectors.toMap(p -> p.getUUID().toString(), Function.identity())));
+        playerNameMap = Collections.synchronizedMap(loadedPlayers.stream()
+            .collect(Collectors.toMap(RpPlayer::getUsername, Function.identity())));
     }
 
     @Override
     public Logger getLogger() {
         return log;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if (joinedPlayersWatcher != null && !joinedPlayersWatcher.isCancelled()) {
+            joinedPlayersWatcher.cancel();
+        }
     }
 }

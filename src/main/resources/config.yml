@@ -2,3 +2,5 @@ commands:
   rpengine: true
   card: true
   cardset: true
+  cardselect: true
+  colorlist: true

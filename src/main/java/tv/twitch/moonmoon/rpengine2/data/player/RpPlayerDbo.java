@@ -4,9 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
-import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeDbo;
-import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.model.RpPlayerAttribute;
+import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -30,11 +30,6 @@ public class RpPlayerDbo {
         this.plugin = Objects.requireNonNull(plugin);
         this.db = Objects.requireNonNull(db);
         log = plugin.getLogger();
-    }
-
-    public void selectPlayersAsync(Consumer<Result<Set<RpPlayer>>> callback) {
-        Bukkit.getScheduler()
-            .runTaskAsynchronously(plugin, () -> callback.accept(selectPlayers()));
     }
 
     public Result<Set<RpPlayer>> selectPlayers() {
@@ -107,10 +102,21 @@ public class RpPlayerDbo {
         int playerId,
         int attributeId,
         Object value,
-        Consumer<Result<Long>> callback
+        Consumer<Result<Void>> callback
     ) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(insertPlayerAttributeAsync(playerId, attributeId, value))
+        );
+    }
+
+    public void updatePlayerAttributeAsync(
+        int playerId,
+        int attributeId,
+        Object value,
+        Consumer<Result<Void>> callback
+    ) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(updatePlayerAttribute(playerId, attributeId, value))
         );
     }
 
@@ -159,22 +165,11 @@ public class RpPlayerDbo {
 
     private RpPlayer readRpPlayer(ResultSet results) throws SQLException {
         int playerId = results.getInt("id");
-        Set<Integer> groupIds;
         Set<RpPlayerAttribute> attributes;
-
-        Result<Set<Integer>> groupIdsResult = selectPlayerGroupIds(playerId);
-
-        Optional<String> err = groupIdsResult.getError();
-        if (err.isPresent()) {
-            log.warning(err.get());
-            groupIds = new HashSet<>();
-        } else {
-            groupIds = groupIdsResult.get();
-        }
 
         Result<Set<RpPlayerAttribute>> attributesResult = selectPlayerAttributes(playerId);
 
-        err = attributesResult.getError();
+        Optional<String> err = attributesResult.getError();
         if (err.isPresent()) {
             log.warning(err.get());
             attributes = new HashSet<>();
@@ -187,46 +182,24 @@ public class RpPlayerDbo {
             Instant.parse(results.getString("created")),
             results.getString("username"),
             UUID.fromString(results.getString("uuid")),
-            attributes,
-            groupIds
+            attributes
         );
-    }
-
-    private Result<Set<Integer>> selectPlayerGroupIds(int playerId) {
-        final String query = "SELECT group_id FROM rp_player_group WHERE player_id = ?";
-
-        Set<Integer> groupIds = new HashSet<>();
-
-        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
-            stmt.setInt(1, playerId);
-
-            try (ResultSet results = stmt.executeQuery()) {
-                while (results.next()) {
-                    groupIds.add(results.getInt("group_id"));
-                }
-            }
-
-            return Result.ok(groupIds);
-        } catch (SQLException e) {
-            String message = "error reading player groups: `%s`";
-            return Result.error(String.format(message, e.getMessage()));
-        }
     }
 
     private Result<Set<RpPlayerAttribute>> selectPlayerAttributes(int playerId) {
         final String query =
             "SELECT " +
-                "A.id, " +
+                "A.id AS attribute_id, " +
                 "A.name, " +
                 "A.display, " +
                 "A.type, " +
                 "P.id AS instance_id, " +
                 "P.created, " +
                 "P.value " +
-                "FROM rp_attribute A " +
-                "LEFT JOIN rp_player_attribute P " +
-                "ON A.id = P.attribute_id " +
-                "WHERE P.player_id = ?";
+            "FROM rp_attribute A " +
+            "LEFT JOIN rp_player_attribute P " +
+            "ON A.id = P.attribute_id " +
+            "WHERE P.player_id = ?";
 
         Set<RpPlayerAttribute> attributes = new HashSet<>();
 
@@ -235,23 +208,31 @@ public class RpPlayerDbo {
 
             try (ResultSet results = stmt.executeQuery()) {
                 while (results.next()) {
-
                     String value = results.getString("value");
-                    String type = results.getString("type");
 
-                    Result<Object> r = AttributeDbo.parseAttributeValue(value, type);
+                    String typeId = results.getString("type");
+                    AttributeType type = AttributeType.findById(typeId)
+                        .orElse(AttributeType.String);
+                    Object parsedValue = null;
 
-                    Optional<String> err = r.getError();
-                    if (err.isPresent()) {
-                        log.warning(err.get());
-                        continue;
+                    if (value != null) {
+                        Result<Object> r = type.parse(value);
+
+                        Optional<String> err = r.getError();
+                        if (err.isPresent()) {
+                            log.warning(err.get());
+                            continue;
+                        }
+
+                        parsedValue = r.orElse(null);
                     }
 
-                    Object parsedValue = r.orElse(null);
 
                     attributes.add(new RpPlayerAttribute(
                         results.getInt("instance_id"),
+                        results.getInt("attribute_id"),
                         Instant.parse(results.getString("created")),
+                        type,
                         results.getString("display"),
                         results.getString("name"),
                         parsedValue
@@ -266,7 +247,7 @@ public class RpPlayerDbo {
         }
     }
 
-    private Result<Long> insertPlayerAttributeAsync(int playerId, int attributeId, Object value) {
+    private Result<Void> insertPlayerAttributeAsync(int playerId, int attributeId, Object value) {
         String rawValue = value != null ? value.toString() : null;
 
         final String query =
@@ -278,8 +259,7 @@ public class RpPlayerDbo {
             ") " +
             "VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement stmt =
-                 db.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
             stmt.setString(1, Instant.now().toString());
             stmt.setLong(2, playerId);
             stmt.setLong(3, attributeId);
@@ -287,13 +267,7 @@ public class RpPlayerDbo {
 
             stmt.executeUpdate();
 
-            try (ResultSet results = stmt.getGeneratedKeys()) {
-                if (results.next()) {
-                    return Result.ok(results.getLong(1));
-                } else {
-                    return Result.ok(0L);
-                }
-            }
+            return Result.ok(null);
         } catch (SQLException e) {
             String message = "error inserting player attribute: `%s`";
             return Result.error(String.format(message, e.getMessage()));

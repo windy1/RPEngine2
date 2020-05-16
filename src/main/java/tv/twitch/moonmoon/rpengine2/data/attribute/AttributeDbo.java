@@ -3,7 +3,8 @@ package tv.twitch.moonmoon.rpengine2.data.attribute;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
-import tv.twitch.moonmoon.rpengine2.model.AttributeType;
+import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
+import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -42,11 +43,6 @@ public class AttributeDbo {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(insertAttribute(name, display, type, defaultValue))
         );
-    }
-
-    public void selectAttributesAsync(Consumer<Result<Set<Attribute>>> callback) {
-        Bukkit.getScheduler()
-            .runTaskAsynchronously(plugin, () -> callback.accept(selectAttributes()));
     }
 
     public Result<Attribute> selectAttribute(String name) {
@@ -91,57 +87,7 @@ public class AttributeDbo {
         }
     }
 
-    private Result<Set<Attribute>> selectAttributes() {
-        final String query =
-            "SELECT id, created, name, display, type, default_value FROM rp_attribute";
-
-        Set<Attribute> attributes = new HashSet<>();
-
-        try (Statement stmt = db.getConnection().createStatement();
-                ResultSet results = stmt.executeQuery(query)) {
-            while (results.next()) {
-                attributes.add(readAttribute(results));
-            }
-
-            return Result.ok(attributes);
-        } catch (SQLException e) {
-            String message = "error reading attributes: `%s`";
-            return Result.error(String.format(message, e.getMessage()));
-        }
-    }
-
-    private Attribute readAttribute(ResultSet results) throws SQLException {
-        Optional<AttributeType> t = AttributeType.findById(results.getString("type"));
-        AttributeType type;
-        if (!t.isPresent()) {
-            log.warning("invalid attribute type, defaulting to string");
-            type = AttributeType.String;
-        } else {
-            type = t.get();
-        }
-
-        String rawDefault = results.getString("default_value");
-        Result<Object> d = parseAttributeValue(rawDefault, type.getId());
-
-        Optional<String> err = d.getError();
-        Object defaultValue = null;
-        if (err.isPresent()) {
-            log.warning(err.get());
-        } else {
-            defaultValue = d.get();
-        }
-
-        return new Attribute(
-            results.getInt("id"),
-            Instant.parse(results.getString("created")),
-            results.getString("name"),
-            results.getString("display"),
-            type,
-            defaultValue
-        );
-    }
-
-    private Result<Long> insertAttribute(
+    public Result<Long> insertAttribute(
         String name,
         String display,
         String type,
@@ -180,25 +126,56 @@ public class AttributeDbo {
         }
     }
 
-    public static Result<Object> parseAttributeValue(String value, String type) {
-        switch (type) {
-            case "string":
-                return Result.ok(value);
-            case "number": {
-                try {
-                    return Result.ok(Float.parseFloat(value));
-                } catch (NumberFormatException e) {
-                    return Result.error("invalid number value on attribute");
-                }
+    public Result<Set<Attribute>> selectAttributes() {
+        final String query =
+            "SELECT id, created, name, display, type, default_value FROM rp_attribute";
+
+        Set<Attribute> attributes = new HashSet<>();
+
+        try (Statement stmt = db.getConnection().createStatement();
+                ResultSet results = stmt.executeQuery(query)) {
+            while (results.next()) {
+                attributes.add(readAttribute(results));
             }
-            case "group":
-                try {
-                    return Result.ok(Integer.parseInt(value));
-                } catch (NumberFormatException e) {
-                    return Result.error("invalid group value on attribute");
-                }
-            default:
-                return Result.error(String.format("unknown type: `%s`", type));
+
+            return Result.ok(attributes);
+        } catch (SQLException e) {
+            String message = "error reading attributes: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
         }
+    }
+
+    private Attribute readAttribute(ResultSet results) throws SQLException {
+        Optional<AttributeType> t = AttributeType.findById(results.getString("type"));
+        AttributeType type;
+        if (!t.isPresent()) {
+            log.warning("invalid attribute type, defaulting to string");
+            type = AttributeType.String;
+        } else {
+            type = t.get();
+        }
+
+        String def = results.getString("default_value");
+        Object defaultValue = null;
+
+        if (def != null) {
+            Result<Object> d = type.parse(results.getString("default_value"));
+
+            Optional<String> err = d.getError();
+            if (err.isPresent()) {
+                log.warning(err.get());
+            } else {
+                defaultValue = d.get();
+            }
+        }
+
+        return new Attribute(
+            results.getInt("id"),
+            Instant.parse(results.getString("created")),
+            results.getString("name"),
+            results.getString("display"),
+            type,
+            defaultValue
+        );
     }
 }

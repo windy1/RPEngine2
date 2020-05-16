@@ -2,9 +2,8 @@ package tv.twitch.moonmoon.rpengine2.data;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.di.DbPath;
+import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.io.IOException;
@@ -16,23 +15,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 @Singleton
 public class RpDb {
 
-    private final Plugin plugin;
     private final Path path;
     private final Logger log;
 
     private Connection conn;
 
     @Inject
-    public RpDb(Plugin plugin, @DbPath Path path) {
-        this.plugin = Objects.requireNonNull(plugin);
+    public RpDb(@DbPath Path path, @PluginLogger Logger log) {
         this.path = Objects.requireNonNull(path);
-        log = plugin.getLogger();
+        this.log = log;
     }
 
     public Connection getConnection() {
@@ -40,43 +36,28 @@ public class RpDb {
             .orElseThrow(() -> new IllegalStateException("not connected"));
     }
 
-    public void connectAsync(Consumer<Result<Void>> callback) {
-        createFiles(callback);
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            Optional<String> err = connect().getError();
-            if (err.isPresent()) {
-                callback.accept(Result.error(err.get()));
-                return;
-            }
-
-            for (String query : Migrations.MIGRATIONS) {
-                err = migrate(query).getError();
-                if (err.isPresent()) {
-                    callback.accept(Result.error(err.get()));
-                    return;
-                }
-            }
-
-            callback.accept(Result.ok(null));
-        });
-    }
-
-    private void createFiles(Consumer<Result<Void>> callback) {
-        if (!Files.exists(path)) {
-            try {
-                Files.createDirectories(path.getParent());
-                Files.createFile(path);
-            } catch (IOException e) {
-                String message = "error creating database file: `%s`";
-                callback.accept(Result.error(String.format(message, e.getMessage())));
-                return;
-            }
-            log.info(String.format("Created empty database file at `%s`", path));
+    public Result<Void> connect() {
+        Optional<String> err = createFiles().getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
         }
+
+        err = _connect().getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        for (String query : Migrations.MIGRATIONS) {
+            err = migrate(query).getError();
+            if (err.isPresent()) {
+                return Result.error(err.get());
+            }
+        }
+
+        return Result.ok(null);
     }
 
-    private Result<Void> connect() {
+    private Result<Void> _connect() {
         String url = "jdbc:sqlite:" + path.toString();
 
         try {
@@ -84,6 +65,22 @@ public class RpDb {
             return Result.ok(null);
         } catch (SQLException e) {
             String message = "error connecting to database: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    private Result<Void> createFiles() {
+        if (Files.exists(path)) {
+            return Result.ok(null);
+        }
+
+        try {
+            Files.createDirectories(path.getParent());
+            Files.createFile(path);
+            log.info(String.format("Created empty database file at `%s`", path));
+            return Result.ok(null);
+        } catch (IOException e) {
+            String message = "error creating database file: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }

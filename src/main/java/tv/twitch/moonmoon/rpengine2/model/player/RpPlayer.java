@@ -1,10 +1,9 @@
-package tv.twitch.moonmoon.rpengine2.model;
+package tv.twitch.moonmoon.rpengine2.model.player;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class RpPlayer {
 
@@ -12,23 +11,21 @@ public class RpPlayer {
     private final Instant created;
     private final String username;
     private final UUID uuid;
-    private final Set<RpPlayerAttribute> attributes;
-    private final Set<Integer> groupIds;
+    private final Map<Integer, RpPlayerAttribute> attributes;
 
     public RpPlayer(
         int id,
         Instant created,
         String username,
         UUID uuid,
-        Set<RpPlayerAttribute> attributes,
-        Set<Integer> groupIds
+        Set<RpPlayerAttribute> attributes
     ) {
         this.id = id;
         this.created = Objects.requireNonNull(created);
         this.username = Objects.requireNonNull(username);
         this.uuid = Objects.requireNonNull(uuid);
-        this.attributes = Objects.requireNonNull(attributes);
-        this.groupIds = Objects.requireNonNull(groupIds);
+        this.attributes = Objects.requireNonNull(attributes).stream()
+            .collect(Collectors.toMap(RpPlayerAttribute::getAttributeId, Function.identity()));
     }
 
     public int getId() {
@@ -48,7 +45,11 @@ public class RpPlayer {
     }
 
     public Set<RpPlayerAttribute> getAttributes() {
-        return Collections.unmodifiableSet(attributes);
+        return Collections.unmodifiableSet(new HashSet<>(attributes.values()));
+    }
+
+    public Optional<RpPlayerAttribute> getAttribute(int attributeId) {
+        return Optional.ofNullable(attributes.get(attributeId));
     }
 
     @Override
@@ -60,8 +61,7 @@ public class RpPlayer {
             Objects.equals(created, rpPlayer.created) &&
             Objects.equals(username, rpPlayer.username) &&
             Objects.equals(uuid, rpPlayer.uuid) &&
-            Objects.equals(attributes, rpPlayer.attributes) &&
-            Objects.equals(groupIds, rpPlayer.groupIds);
+            Objects.equals(attributes, rpPlayer.attributes);
     }
 
     @Override
@@ -77,7 +77,6 @@ public class RpPlayer {
             ", username='" + username + '\'' +
             ", uuid=" + uuid +
             ", attributes=" + attributes +
-            ", groupIds=" + groupIds +
             '}';
     }
 }

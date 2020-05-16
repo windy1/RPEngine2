@@ -1,9 +1,12 @@
 package tv.twitch.moonmoon.rpengine2.data.attribute;
 
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
-import tv.twitch.moonmoon.rpengine2.model.AttributeType;
-import tv.twitch.moonmoon.rpengine2.model.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
+import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeArgs;
+import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -19,6 +22,7 @@ public class AttributeRepoImpl implements AttributeRepo {
 
     private final AttributeDbo attributeDbo;
     private final RpPlayerRepo playerRepo;
+    private final SelectRepo selectRepo;
     private final Logger log;
     private Map<String, Attribute> attributes;
 
@@ -26,10 +30,12 @@ public class AttributeRepoImpl implements AttributeRepo {
     public AttributeRepoImpl(
         AttributeDbo attributeDbo,
         RpPlayerRepo playerRepo,
+        SelectRepo selectRepo,
         @PluginLogger Logger log
     ) {
         this.attributeDbo = Objects.requireNonNull(attributeDbo);
         this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.selectRepo = Objects.requireNonNull(selectRepo);
         this.log = Objects.requireNonNull(log);
     }
 
@@ -51,42 +57,49 @@ public class AttributeRepoImpl implements AttributeRepo {
         String defaultValue,
         Consumer<Result<Void>> callback
     ) {
-        attributeDbo.insertAttributeAsync(name, display, type.getId(), defaultValue, r -> {
+        Result<AttributeArgs> a = new AttributeArgs(
+            name, type, display, defaultValue, selectRepo
+        ).clean();
 
-            Result<Long> result = handleResult(() -> r);
+        Optional<String> err = a.getError();
+        if (err.isPresent()) {
+            callback.accept(Result.error(err.get()));
+            return;
+        }
 
-            Optional<String> err = result.getError();
-            if (err.isPresent()) {
-                // insertion failed
-                callback.accept(Result.error(err.get()));
-                return;
-            }
+        AttributeArgs args = a.get();
+        String def = args.getDefaultValue().orElse(null);
+        String typeId = args.getType().getId();
 
-            long attributeId = result.get();
-            if (attributeId == -1) {
-                // attribute exists already
-                callback.accept(Result.error("Attribute already exists"));
-                return;
-            }
+        attributeDbo.insertAttributeAsync(args.getName(), args.getDisplay(), typeId, def, r ->
+            callback.accept(handleCreateAttribute(name, def, r))
+        );
+    }
 
-            // load new attribute
-            err = handleResult(() -> reloadAttribute(name)).getError();
-            if (err.isPresent()) {
-                callback.accept(Result.error(err.get()));
-                return;
-            }
+    @Override
+    public void createAttribute(
+        String name,
+        AttributeType type,
+        String display,
+        String defaultValue
+    ) {
+        Result<AttributeArgs> a = new AttributeArgs(
+            name, type, display, defaultValue, selectRepo
+        ).clean();
 
-            // add new attribute to each player
-            playerRepo.flushJoinedPlayers();
+        Optional<String> err = a.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+            return;
+        }
 
-            for (RpPlayer player : playerRepo.getPlayers()) {
-                playerRepo.setAttributeAsync(player, (int) attributeId, defaultValue, s ->
-                    s.getError().ifPresent(log::warning)
-                );
-            }
+        AttributeArgs args = a.get();
+        String def = args.getDefaultValue().orElse(null);
+        String typeId = args.getType().getId();
+        String newDisplay = args.getDisplay();
 
-            callback.accept(Result.ok(null));
-        });
+        Result<Long> r = attributeDbo.insertAttribute(args.getName(), newDisplay, typeId, def);
+        handleCreateAttribute(name, def, r).getError().ifPresent(log::warning);
     }
 
     @Override
@@ -99,36 +112,22 @@ public class AttributeRepoImpl implements AttributeRepo {
 
         int attributeId = attribute.getId();
 
-        playerRepo.removeAttributesAsync(attributeId, r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                callback.accept(Result.error(err.get()));
-                return;
-            }
-
-            err = attributeDbo.deleteAttribute(attributeId).getError();
-            if (err.isPresent()) {
-                callback.accept(Result.error(err.get()));
-            } else {
-                callback.accept(Result.ok(null));
-            }
-        });
+        playerRepo.removeAttributesAsync(attributeId, r ->
+            callback.accept(handleRemoveAttribute(attributeId, name, r))
+        );
     }
 
     @Override
     public void load() {
-        attributeDbo.selectAttributesAsync(r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                log.warning(err.get());
-                return;
-            }
+        Result<Set<Attribute>> r = attributeDbo.selectAttributes();
 
-            attributes = r.get().stream()
-                .collect(Collectors.toMap(Attribute::getName, Function.identity()));
-
-            log.info("loaded attributes " + attributes);
-        });
+        Optional<String> err = r.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+        } else {
+            attributes = Collections.synchronizedMap(r.get().stream()
+                .collect(Collectors.toMap(Attribute::getName, Function.identity())));
+        }
     }
 
     private Result<Attribute> reloadAttribute(String name) {
@@ -143,6 +142,68 @@ public class AttributeRepoImpl implements AttributeRepo {
         attributes.put(a.getName(), a);
 
         return Result.ok(a);
+    }
+
+    private Result<Void> handleRemoveAttribute(
+        int attributeId,
+        String attributeName,
+        Result<Void> r
+    ) {
+        Result<Void> deleteResult = handleResult(() -> r).getError()
+            .<Result<Void>>map(Result::error)
+            .orElseGet(() -> handleResult(playerRepo::reloadPlayers).getError()
+                .<Result<Void>>map(Result::error)
+                .orElseGet(() ->
+                    handleResult(() -> attributeDbo.deleteAttribute(attributeId)).getError()
+                        .<Result<Void>>map(Result::error)
+                        .orElseGet(() -> Result.ok(null))
+                )
+            );
+
+        Optional<String> err = deleteResult.getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        } else {
+            attributes.remove(attributeName);
+            return Result.ok(null);
+        }
+    }
+
+    private Result<Void> handleCreateAttribute(
+        String name,
+        String def,
+        Result<Long> r
+    ) {
+        Result<Long> result = handleResult(() -> r);
+
+        Optional<String> err = result.getError();
+        if (err.isPresent()) {
+            // insertion failed
+            return Result.error(err.get());
+        }
+
+        long attributeId = result.get();
+        if (attributeId == 0) {
+            // attribute exists already
+            return Result.error("Attribute already exists");
+        }
+
+        // load new attribute
+        err = handleResult(() -> reloadAttribute(name)).getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        // add new attribute to each player
+        playerRepo.flushJoinedPlayers();
+
+        for (RpPlayer player : playerRepo.getPlayers()) {
+            playerRepo.setAttributeAsync(player, (int) attributeId, def, s ->
+                s.getError().ifPresent(log::warning)
+            );
+        }
+
+        return Result.ok(null);
     }
 
     @Override
