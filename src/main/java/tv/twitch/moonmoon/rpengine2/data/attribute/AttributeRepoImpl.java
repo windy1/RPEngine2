@@ -58,7 +58,7 @@ public class AttributeRepoImpl implements AttributeRepo {
         Callback<Void> callback
     ) {
         Result<AttributeArgs> a = new AttributeArgs(
-            name, type, defaultValue, selectRepo,this
+            name, type, defaultValue, null, selectRepo,this
         ).canCreate();
 
         Optional<String> err = a.getError();
@@ -84,7 +84,7 @@ public class AttributeRepoImpl implements AttributeRepo {
         String defaultValue
     ) {
         Result<AttributeArgs> a = new AttributeArgs(
-            name, type, defaultValue, selectRepo, this
+            name, type, defaultValue, null, selectRepo, this
         ).canCreate();
 
         Optional<String> err = a.getError();
@@ -125,7 +125,7 @@ public class AttributeRepoImpl implements AttributeRepo {
         }
 
         Result<AttributeArgs> a = new AttributeArgs(
-            name, attribute.getType(), defaultValue, selectRepo, this
+            name, attribute.getType(), defaultValue, null, selectRepo, this
         ).canUpdate();
 
         Optional<String> err = a.getError();
@@ -155,6 +155,42 @@ public class AttributeRepoImpl implements AttributeRepo {
         }
 
         attributeDbo.updateDisplayAsync(attribute.getId(), display, r -> {
+            Optional<String> updateErr = handleResult(() -> r).getError();
+            if (updateErr.isPresent()) {
+                callback.accept(Result.error(updateErr.get()));
+            } else {
+                callback.accept(reloadAttribute(name).mapOk(v -> null));
+            }
+        });
+    }
+
+    @Override
+    public void setFormatAsync(String name, String formatString, Callback<Void> callback) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            callback.accept(Result.error("Attribute not found"));
+            return;
+        }
+
+        String def = attribute.getDefaultValue()
+            .map(Object::toString)
+            .orElse(null);
+
+        // validate format string
+        Result<AttributeArgs> a = new AttributeArgs(
+            name, attribute.getType(), def, formatString, selectRepo, this
+        ).canUpdate();
+
+        Optional<String> err = a.getError();
+        if (err.isPresent()) {
+            callback.accept(Result.error(err.get()));
+            return;
+        }
+
+        AttributeArgs args = a.get();
+        String fmt = args.getFormatString().orElse(null);
+
+        attributeDbo.updateFormatAsync(attribute.getId(), fmt, r -> {
             Optional<String> updateErr = handleResult(() -> r).getError();
             if (updateErr.isPresent()) {
                 callback.accept(Result.error(updateErr.get()));

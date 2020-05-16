@@ -12,6 +12,7 @@ public class Attribute {
     private final String display;
     private final AttributeType type;
     private final Object defaultValue;
+    private final String formatString;
 
     public Attribute(
         int id,
@@ -19,7 +20,8 @@ public class Attribute {
         String name,
         String display,
         AttributeType type,
-        Object defaultValue
+        Object defaultValue,
+        String formatString
     ) {
         this.id = id;
         this.created = Objects.requireNonNull(created);
@@ -27,6 +29,7 @@ public class Attribute {
         this.display = Objects.requireNonNull(display);
         this.type = Objects.requireNonNull(type);
         this.defaultValue = defaultValue;
+        this.formatString = formatString;
     }
 
     public int getId() {
@@ -53,6 +56,10 @@ public class Attribute {
         return Optional.ofNullable(defaultValue);
     }
 
+    public Optional<String> getFormatString() {
+        return Optional.ofNullable(formatString);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -63,7 +70,8 @@ public class Attribute {
             Objects.equals(name, attribute.name) &&
             Objects.equals(display, attribute.display) &&
             type == attribute.type &&
-            Objects.equals(defaultValue, attribute.defaultValue);
+            Objects.equals(defaultValue, attribute.defaultValue) &&
+            Objects.equals(formatString, attribute.formatString);
     }
 
     @Override
@@ -80,6 +88,7 @@ public class Attribute {
             ", display='" + display + '\'' +
             ", type=" + type +
             ", defaultValue=" + defaultValue +
+            ", formatString='" + formatString + '\'' +
             '}';
     }
 }

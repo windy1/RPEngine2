@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
+import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
@@ -57,15 +58,17 @@ public class CardCommand implements CommandExecutor {
         sender.sendMessage(String.format(HEADER, sender.getName()));
         sender.sendMessage(SUB_HEADER);
 
-        //noinspection OptionalGetWithoutIsPresent
         player.get().getAttributes().stream()
-            .map(a ->
-                AttributeLabel.from(
+            .map(a -> {
+                //noinspection OptionalGetWithoutIsPresent
+                Attribute attribute = attributeRepo.getAttribute(a.getName()).get();
+                return AttributeLabel.from(
                     a,
-                    attributeRepo.getAttribute(a.getName()).get().getDisplay(),
+                    attribute.getDisplay(),
+                    attribute.getFormatString().orElse(null),
                     selectRepo
-                )
-            )
+                );
+            })
             .forEach(a -> sender.spigot().sendMessage(a.toTextComponent()));
 
         return true;

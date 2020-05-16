@@ -17,5 +17,6 @@ CREATE TABLE IF NOT EXISTS rp_attribute (
     name VARCHAR(255) NOT NULL UNIQUE,
     display VARCHAR(255) NOT NULL,
     type VARCHAR(255) NOT NULL,
-    default_value VARCHAR(255)
+    default_value VARCHAR(255),
+    format VARCHAR(255) DEFAULT NULL
 );

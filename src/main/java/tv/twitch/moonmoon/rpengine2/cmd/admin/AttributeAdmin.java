@@ -52,6 +52,11 @@ public class AttributeAdmin {
             new ArgumentLabel("name", true),
             new ArgumentLabel("display_name", true)
         )));
+
+        USAGES.add(new CommandUsage("setformat", Arrays.asList(
+            new ArgumentLabel("name", true),
+            new ArgumentLabel("format_string", true)
+        )));
     }
 
     private final AttributeRepo attributeRepo;
@@ -87,6 +92,9 @@ public class AttributeAdmin {
                 return handleSetDefault(sender, StringUtils.splice(args, 1));
             case "setdisplay":
                 return handleSetDisplay(sender, StringUtils.splice(args, 1));
+            case "setformat":
+            case "setfmt":
+                return handleSetFormat(sender, StringUtils.splice(args, 1));
             default:
                 return false;
         }
@@ -171,9 +179,24 @@ public class AttributeAdmin {
         String name = args[0];
         String display = args[1];
 
-        attributeRepo.setDisplayAsync(name, display, r -> {
-            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"));
-        });
+        attributeRepo.setDisplayAsync(name, display, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
+        );
+
+        return true;
+    }
+
+    private boolean handleSetFormat(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            return false;
+        }
+
+        String name = args[0];
+        String formatString = String.join(" ", StringUtils.splice(args, 1));
+
+        attributeRepo.setFormatAsync(name, formatString, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
+        );
 
         return true;
     }

@@ -53,7 +53,8 @@ public class AttributeDbo {
                 "name, " +
                 "display, " +
                 "type, " +
-                "default_value " +
+                "default_value, " +
+                "format " +
             "FROM rp_attribute " +
             "WHERE name = ?";
 
@@ -128,7 +129,7 @@ public class AttributeDbo {
 
     public Result<Set<Attribute>> selectAttributes() {
         final String query =
-            "SELECT id, created, name, display, type, default_value FROM rp_attribute";
+            "SELECT id, created, name, display, type, default_value, format FROM rp_attribute";
 
         Set<Attribute> attributes = new HashSet<>();
 
@@ -155,6 +156,28 @@ public class AttributeDbo {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(updateDisplay(attributeId, display))
         );
+    }
+
+    public void updateFormatAsync(int attributeId, String formatString, Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(updateFormat(attributeId, formatString))
+        );
+    }
+
+    private Result<Void> updateFormat(int attributeId, String formatString) {
+        final String query = "UPDATE rp_attribute SET format = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setString(1, formatString);
+            stmt.setInt(2, attributeId);
+
+            stmt.executeUpdate();
+
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error updating attribute format: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
     }
 
     private Result<Void> updateDisplay(int attributeId, String display) {
@@ -219,7 +242,8 @@ public class AttributeDbo {
             results.getString("name"),
             results.getString("display"),
             type,
-            defaultValue
+            defaultValue,
+            results.getString("format")
         );
     }
 }

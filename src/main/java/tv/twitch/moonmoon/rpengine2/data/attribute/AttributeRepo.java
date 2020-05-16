@@ -29,4 +29,6 @@ public interface AttributeRepo extends Repo {
     void setDefaultAsync(String name, String defaultValue, Callback<Void> callback);
 
     void setDisplayAsync(String name, String display, Callback<Void> callback);
+
+    void setFormatAsync(String name, String formatString, Callback<Void> callback);
 }

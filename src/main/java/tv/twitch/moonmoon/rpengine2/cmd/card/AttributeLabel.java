@@ -16,6 +16,7 @@ public class AttributeLabel {
     private final String name;
     private final String display;
     private final Object value;
+    private final String formatString;
     private final AttributeType type;
     private final SelectRepo selectRepo;
 
@@ -23,12 +24,13 @@ public class AttributeLabel {
         String name,
         String display,
         Object value,
-        AttributeType type,
+        String formatString, AttributeType type,
         SelectRepo selectRepo
     ) {
         this.name = Objects.requireNonNull(name);
         this.display = Objects.requireNonNull(display);
         this.value = value;
+        this.formatString = formatString;
         this.type = Objects.requireNonNull(type);
         this.selectRepo = Objects.requireNonNull(selectRepo);
     }
@@ -36,12 +38,14 @@ public class AttributeLabel {
     public static AttributeLabel from(
         RpPlayerAttribute attribute,
         String display,
+        String formatString,
         SelectRepo selectRepo
     ) {
         return new AttributeLabel(
             attribute.getName(),
             display,
             attribute.getValue().orElse(null),
+            formatString,
             attribute.getType(),
             selectRepo
         );
@@ -50,6 +54,10 @@ public class AttributeLabel {
     private String getStringValue() {
         if (type == AttributeType.Select) {
             return getOption().map(Option::getDisplay).orElse("???");
+        }
+
+        if (value != null && formatString != null) {
+            return String.format(formatString, value);
         }
 
         return value != null ? value.toString() : "???";
