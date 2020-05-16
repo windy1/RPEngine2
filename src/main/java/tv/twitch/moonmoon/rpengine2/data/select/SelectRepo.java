@@ -30,4 +30,6 @@ public interface SelectRepo extends Repo {
     );
 
     void createOption(String selectName, String option, String display, ChatColor color);
+
+    void removeOptionAsync(String selectName, String option, Consumer<Result<Void>> callback);
 }

@@ -1,5 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.model.attribute;
 
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
@@ -16,19 +17,22 @@ public class AttributeArgs {
     private final String defaultValue;
 
     private final SelectRepo selectRepo;
+    private final AttributeRepo attributeRepo;
 
     public AttributeArgs(
         String name,
         AttributeType type,
         String display,
         String defaultValue,
-        SelectRepo selectRepo
+        SelectRepo selectRepo,
+        AttributeRepo attributeRepo
     ) {
         this.name = Objects.requireNonNull(name);
         this.type = Objects.requireNonNull(type);
         this.display = Objects.requireNonNull(display);
         this.defaultValue = defaultValue;
         this.selectRepo = Objects.requireNonNull(selectRepo);
+        this.attributeRepo = Objects.requireNonNull(attributeRepo);
     }
 
     public String getName() {
@@ -48,6 +52,10 @@ public class AttributeArgs {
     }
 
     public Result<AttributeArgs> clean() {
+        if (attributeRepo.getAttribute(name).isPresent()) {
+            return Result.error("Attribute already exists");
+        }
+
         String newDefault = defaultValue;
 
         if (type == AttributeType.Select) {
@@ -76,8 +84,8 @@ public class AttributeArgs {
             type,
             display,
             newDefault,
-            selectRepo
-        ));
+            selectRepo,
+            attributeRepo));
     }
 
     @Override

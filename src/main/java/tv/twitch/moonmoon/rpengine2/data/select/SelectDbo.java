@@ -146,7 +146,26 @@ public class SelectDbo {
         );
     }
 
-    public Result<Void> deleteSelect(int selectId) {
+    public void deleteOptionAsync(int optionId, Consumer<Result<Void>> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(deleteOption(optionId))
+        );
+    }
+
+    private Result<Void> deleteOption(int optionId) {
+        final String query = "DELETE FROM rp_select_option WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, optionId);
+            stmt.executeUpdate();
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error deleting option: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    private Result<Void> deleteSelect(int selectId) {
         final String query = "DELETE FROM rp_select WHERE id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {

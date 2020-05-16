@@ -58,7 +58,7 @@ public class AttributeRepoImpl implements AttributeRepo {
         Consumer<Result<Void>> callback
     ) {
         Result<AttributeArgs> a = new AttributeArgs(
-            name, type, display, defaultValue, selectRepo
+            name, type, display, defaultValue, selectRepo,this
         ).clean();
 
         Optional<String> err = a.getError();
@@ -84,7 +84,7 @@ public class AttributeRepoImpl implements AttributeRepo {
         String defaultValue
     ) {
         Result<AttributeArgs> a = new AttributeArgs(
-            name, type, display, defaultValue, selectRepo
+            name, type, display, defaultValue, selectRepo, this
         ).clean();
 
         Optional<String> err = a.getError();

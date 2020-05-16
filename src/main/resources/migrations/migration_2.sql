@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS rp_select_option (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     select_id INTEGER NOT NULL,
     created TEXT NOT NULL,
-    name VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
     display VARCHAR(255) NOT NULL,
     color VARCHAR(255),
     FOREIGN KEY (select_id) REFERENCES rp_select ON DELETE CASCADE

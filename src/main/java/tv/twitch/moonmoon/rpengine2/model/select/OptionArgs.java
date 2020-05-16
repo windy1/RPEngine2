@@ -71,6 +71,10 @@ public class OptionArgs {
             return Result.error("Select not found");
         }
 
+        if (select.getOption(option).isPresent()) {
+            return Result.error("Option already exists");
+        }
+
         return Result.ok(new OptionArgs(
            selectName,
            option,

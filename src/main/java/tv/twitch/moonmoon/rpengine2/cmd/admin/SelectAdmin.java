@@ -33,6 +33,11 @@ public class SelectAdmin {
         USAGES.add(new CommandUsage("remove", Collections.singletonList(
             new ArgumentLabel("name", true)
         )));
+
+        USAGES.add(new CommandUsage("removeopt", Arrays.asList(
+            new ArgumentLabel("select_name", true),
+            new ArgumentLabel("name", true)
+        )));
     }
 
     private final SelectRepo selectRepo;
@@ -55,6 +60,8 @@ public class SelectAdmin {
                 return handleAddOpt(sender, StringUtils.splice(args, 1));
             case "remove":
                 return handleRemove(sender, StringUtils.splice(args, 1));
+            case "removeopt":
+                return handleRemoveOpt(sender, StringUtils.splice(args, 1));
             default:
                 return false;
         }
@@ -126,6 +133,26 @@ public class SelectAdmin {
                 sender.sendMessage(ChatColor.RED + err.get());
             } else {
                 sender.sendMessage(ChatColor.GREEN + "Option created");
+            }
+        });
+
+        return true;
+    }
+
+    private boolean handleRemoveOpt(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            return false;
+        }
+
+        String selectName = args[0];
+        String name = args[1];
+
+        selectRepo.removeOptionAsync(selectName, name, r -> {
+            Optional<String> err = r.getError();
+            if (err.isPresent()) {
+                sender.sendMessage(ChatColor.RED + err.get());
+            } else {
+                sender.sendMessage(ChatColor.GREEN + "Option removed");
             }
         });
 

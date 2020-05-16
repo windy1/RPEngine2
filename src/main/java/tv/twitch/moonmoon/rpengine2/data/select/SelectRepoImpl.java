@@ -3,6 +3,7 @@ package tv.twitch.moonmoon.rpengine2.data.select;
 import org.bukkit.ChatColor;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
+import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionArgs;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.util.Result;
@@ -46,11 +47,18 @@ public class SelectRepoImpl implements SelectRepo {
 
     @Override
     public void createSelectAsync(String name, Consumer<Result<Void>> callback) {
+        if (selects.get(name) != null) {
+            callback.accept(Result.error("Select already exists"));
+            return;
+        }
         selectDbo.insertSelectAsync(name, r -> callback.accept(handleCreateSelect(r)));
     }
 
     @Override
     public void createSelect(String name) {
+        if (selects.get(name) != null) {
+            return;
+        }
         handleCreateSelect(selectDbo.insertSelect(name)).getError().ifPresent(log::warning);
     }
 
@@ -65,16 +73,10 @@ public class SelectRepoImpl implements SelectRepo {
         int selectId = select.getId();
 
         if (attributeRepo.getAttribute(name).isPresent()) {
-            attributeRepo.removeAttributeAsync(name, r -> {
-                Optional<String> err = handleResult(() -> r).getError();
-                if (err.isPresent()) {
-                    callback.accept(Result.error(err.get()));
-                } else {
-                    selectDbo.deleteSelect(selectId);
-                    selects.remove(name);
-                    callback.accept(Result.ok(null));
-                }
-            });
+            String message =
+                "Cannot remove select that is currently added to attributes " +
+                    "(/rpengine attribute remove)";
+            callback.accept(Result.error(message));
             return;
         }
 
@@ -136,6 +138,41 @@ public class SelectRepoImpl implements SelectRepo {
             .getError().ifPresent(log::warning);
     }
 
+    @Override
+    public void removeOptionAsync(
+        String selectName,
+        String optionName,
+        Consumer<Result<Void>> callback
+    ) {
+        Select select = selects.get(selectName);
+        if (select == null) {
+            callback.accept(Result.error("Select not found"));
+            return;
+        }
+
+        Optional<Option> option = select.getOption(optionName);
+        if (!option.isPresent()) {
+            callback.accept(Result.error("Option not found"));
+            return;
+        }
+
+        if (attributeRepo.getAttribute(selectName).isPresent()) {
+            String message =
+                "Cannot remove an option on a select that is currently added to attributes";
+            callback.accept(Result.error(message));
+            return;
+        }
+
+        selectDbo.deleteOptionAsync(option.get().getId(), r -> {
+            Optional<String> err = handleResult(() -> r).getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+            } else {
+                callback.accept(reloadSelect(select.getId()));
+            }
+        });
+    }
+
     private Result<Void> handleCreateOption(int selectId, Result<Void> r) {
         return handleResult(() -> r).getError()
             .<Result<Void>>map(Result::error)
@@ -187,7 +224,7 @@ public class SelectRepoImpl implements SelectRepo {
             // already exists
             return Result.ok(null);
         } else {
-            return handleResult(() -> reloadSelect((int) selectId));
+            return reloadSelect((int) selectId);
         }
     }
 
