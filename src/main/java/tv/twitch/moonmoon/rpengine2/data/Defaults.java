@@ -3,10 +3,12 @@ package tv.twitch.moonmoon.rpengine2.data;
 import org.bukkit.ChatColor;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
+import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 
 import javax.inject.Inject;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class Defaults {
 
@@ -36,23 +38,20 @@ public class Defaults {
 
         if (attributeRepo.getAttributes().isEmpty()) {
             attributeRepo.createAttribute(
-                "Caste", AttributeType.Select, "Caste", "Serf", null
+                "Caste", AttributeType.Select, "Caste", "Serf"
             );
 
             attributeRepo.createAttribute(
-                "Name", AttributeType.String, "Name", null, null
+                "Name", AttributeType.String, "Name", null
             );
             attributeRepo.createAttribute(
-                "Age", AttributeType.Number, "Age", null, "%d"
+                "Age", AttributeType.Number, "Age", null
             );
             attributeRepo.createAttribute(
-                "Gender", AttributeType.String, "Gender", null, null
+                "Gender", AttributeType.String, "Gender", null
             );
             attributeRepo.createAttribute(
-                "Description",
-                AttributeType.String,
-                "Description",
-                null, null
+                "Description", AttributeType.String, "Description", null
             );
         }
     }
