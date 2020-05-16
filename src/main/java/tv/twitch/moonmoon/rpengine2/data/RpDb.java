@@ -37,24 +37,12 @@ public class RpDb {
     }
 
     public Result<Void> connect() {
-        Optional<String> err = createFiles().getError();
-        if (err.isPresent()) {
-            return Result.error(err.get());
-        }
-
-        err = _connect().getError();
-        if (err.isPresent()) {
-            return Result.error(err.get());
-        }
-
-        for (String query : Migrations.MIGRATIONS) {
-            err = migrate(query).getError();
-            if (err.isPresent()) {
-                return Result.error(err.get());
-            }
-        }
-
-        return Result.ok(null);
+        return createFiles().getError()
+            .<Result<Void>>map(Result::error)
+            .orElseGet(() -> _connect().getError()
+                .<Result<Void>>map(Result::error)
+                .orElseGet(() -> Result.ok(null))
+            );
     }
 
     private Result<Void> _connect() {
@@ -81,16 +69,6 @@ public class RpDb {
             return Result.ok(null);
         } catch (IOException e) {
             String message = "error creating database file: `%s`";
-            return Result.error(String.format(message, e.getMessage()));
-        }
-    }
-
-    private Result<Void> migrate(String query) {
-        try (Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(query);
-            return Result.ok(null);
-        } catch (SQLException e) {
-            String message = "error updating database schema: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }

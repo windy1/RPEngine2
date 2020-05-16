@@ -2,13 +2,13 @@ package tv.twitch.moonmoon.rpengine2;
 
 import com.google.inject.Guice;
 import org.bukkit.plugin.java.JavaPlugin;
-import tv.twitch.moonmoon.rpengine2.di.RpModule;
+import tv.twitch.moonmoon.rpengine2.di.CoreModule;
 
 public final class RpEngine2 extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Guice.createInjector(new RpModule(this))
+        Guice.createInjector(new CoreModule(this))
             .getInstance(Bootstrap.class)
             .init();
     }

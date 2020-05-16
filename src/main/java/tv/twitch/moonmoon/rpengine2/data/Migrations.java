@@ -1,57 +1,114 @@
 package tv.twitch.moonmoon.rpengine2.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import tv.twitch.moonmoon.rpengine2.util.Result;
 
-public final class Migrations {
-    static final List<String> MIGRATIONS = new ArrayList<>();
+import javax.inject.Inject;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-    static {
-        MIGRATIONS.add(
-            "CREATE TABLE IF NOT EXISTS rp_player (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "created TEXT NOT NULL, " +
-                "username VARCHAR(255) NOT NULL UNIQUE, " +
-                "uuid VARCHAR(255) NOT NULL UNIQUE" +
-            "); " +
+public class Migrations {
 
-            "CREATE TABLE IF NOT EXISTS rp_select (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "created TEXT NOT NULL, " +
-                "name VARCHAR(255) NOT NULL UNIQUE" +
-            "); " +
+    private final RpDb db;
 
-            "CREATE TABLE IF NOT EXISTS rp_attribute (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "created TEXT NOT NULL, " +
-                "name VARCHAR(255) NOT NULL UNIQUE, " +
-                "display VARCHAR(255) NOT NULL, " +
-                "type VARCHAR(255) NOT NULL, " +
-                "default_value VARCHAR(255)" +
-            ");"
-        );
+    @Inject
+    public Migrations(RpDb db) {
+        this.db = Objects.requireNonNull(db);
+    }
 
-        MIGRATIONS.add(
-            "CREATE TABLE IF NOT EXISTS rp_select_option (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "select_id INTEGER NOT NULL, " +
-                "created TEXT NOT NULL, " +
-                "name VARCHAR(255) NOT NULL UNIQUE, " +
-                "display VARCHAR(255) NOT NULL, " +
-                "color VARCHAR(255), " +
-                "FOREIGN KEY (select_id) REFERENCES rp_select" +
-            "); " +
+    public Result<Void> migrate() {
+        Result<Queue<Migration>> m = load();
 
-            "CREATE TABLE IF NOT EXISTS rp_player_attribute (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "created TEXT NOT NULL, " +
-                "player_id INTEGER NOT NULL, " +
-                "attribute_id INTEGER NOT NULL, " +
-                "value VARCHAR(255), " +
-                "FOREIGN KEY (player_id) REFERENCES rp_player, " +
-                "FOREIGN KEY (attribute_id) REFERENCES rp_attribute, " +
-                "UNIQUE (player_id, attribute_id) ON CONFLICT IGNORE" +
-            ");"
-        );
+        Optional<String> err = m.getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        for (Migration migration : m.get()) {
+            err = migrate(migration.query).getError();
+            if (err.isPresent()) {
+                return Result.error(err.get());
+            }
+        }
+
+        return Result.ok(null);
+    }
+
+    private Result<Void> migrate(String query) {
+        try (Statement stmt = db.getConnection().createStatement()) {
+            stmt.executeUpdate(query);
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error updating database schema: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    private Result<Queue<Migration>> load() {
+        try {
+            URI uri = Migrations.class.getResource("/migrations").toURI();
+            FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+
+            return Result.ok(Files
+                .list(fileSystem.getPath("/migrations"))
+                .map(this::readMigration)
+                .collect(Collectors.toCollection(PriorityQueue::new))
+            );
+        } catch (URISyntaxException | IOException e) {
+            String message = "error loading migrations: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private Migration readMigration(Path path) {
+        String fileName = path.getFileName().toString();
+        String baseName = com.google.common.io.Files.getNameWithoutExtension(fileName);
+        int sep = baseName.indexOf("_");
+        int priority;
+
+        Supplier<IllegalArgumentException> err = () ->
+            new IllegalArgumentException(String.format("invalid migration file: `%s`", path));
+
+        if (sep == -1 || sep == baseName.length() - 1) {
+            throw err.get();
+        }
+
+        try {
+            priority = Integer.parseInt(baseName.substring(sep + 1));
+        } catch (NumberFormatException e) {
+            throw err.get();
+        }
+
+        try {
+            return new Migration(priority, new String(Files.readAllBytes(path)));
+        } catch (IOException e) {
+            throw new RuntimeException("failed to read migration file", e);
+        }
+    }
+
+    static class Migration implements Comparable<Migration> {
+
+        final int priority;
+        final String query;
+
+        Migration(int priority, String query) {
+            this.priority = priority;
+            this.query = Objects.requireNonNull(query);
+        }
+
+        @Override
+        public int compareTo(Migration migration) {
+            return Integer.compare(priority, migration.priority);
+        }
     }
 }

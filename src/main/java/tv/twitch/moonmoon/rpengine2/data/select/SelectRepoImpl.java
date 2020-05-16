@@ -118,15 +118,16 @@ public class SelectRepoImpl implements SelectRepo {
     }
 
     @Override
-    public void load() {
+    public Result<Void> load() {
         Result<Set<Select>> r = selectDbo.selectSelects();
 
         Optional<String> err = r.getError();
         if (err.isPresent()) {
-            log.warning(err.get());
+            return Result.error(err.get());
         } else {
             selects = Collections.synchronizedMap(r.get().stream()
                 .collect(Collectors.toMap(Select::getName, Function.identity())));
+            return Result.ok(null);
         }
     }
 

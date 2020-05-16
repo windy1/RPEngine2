@@ -38,6 +38,8 @@ public class Bootstrap {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(listener, plugin);
 
-        dataManager.init();
+        if (dataManager.init().getError().isPresent()) {
+            pluginManager.disablePlugin(plugin);
+        }
     }
 }

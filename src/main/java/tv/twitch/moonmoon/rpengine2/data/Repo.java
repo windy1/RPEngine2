@@ -22,5 +22,5 @@ public interface Repo {
         }
     }
 
-    void load();
+    Result<Void> load();
 }

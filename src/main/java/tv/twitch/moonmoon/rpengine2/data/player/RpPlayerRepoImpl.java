@@ -87,15 +87,16 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     }
 
     @Override
-    public void load() {
+    public Result<Void> load() {
         Result<Set<RpPlayer>> r = playerDbo.selectPlayers();
 
         Optional<String> err = r.getError();
         if (err.isPresent()) {
-            log.warning(err.get());
+            return Result.error(err.get());
         } else {
             onLoad(r.get());
             startJoinedPlayersWatcher();
+            return Result.ok(null);
         }
     }
 

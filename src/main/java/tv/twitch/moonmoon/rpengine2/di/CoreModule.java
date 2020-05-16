@@ -15,11 +15,11 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-public class RpModule extends AbstractModule {
+public class CoreModule extends AbstractModule {
 
     private final JavaPlugin plugin;
 
-    public RpModule(JavaPlugin plugin) {
+    public CoreModule(JavaPlugin plugin) {
         this.plugin = Objects.requireNonNull(plugin);
     }
 
