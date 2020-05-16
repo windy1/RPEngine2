@@ -29,6 +29,10 @@ public class SelectAdmin {
             new ArgumentLabel("color", false),
             new ArgumentLabel("display_name", false)
         )));
+
+        USAGES.add(new CommandUsage("remove", Collections.singletonList(
+            new ArgumentLabel("name", true)
+        )));
     }
 
     private final SelectRepo selectRepo;
@@ -50,6 +54,7 @@ public class SelectAdmin {
             case "addopt":
                 return handleAddOpt(sender, StringUtils.splice(args, 1));
             case "remove":
+                return handleRemove(sender, StringUtils.splice(args, 1));
             default:
                 return false;
         }
@@ -68,6 +73,25 @@ public class SelectAdmin {
                 sender.sendMessage(ChatColor.RED + err.get());
             } else {
                 sender.sendMessage(ChatColor.GREEN + "Select created");
+            }
+        });
+
+        return true;
+    }
+
+    private boolean handleRemove(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+
+        String name = args[0];
+
+        selectRepo.removeSelectAsync(name, r -> {
+            Optional<String> err = r.getError();
+            if (err.isPresent()) {
+                sender.sendMessage(ChatColor.RED + err.get());
+            } else {
+                sender.sendMessage(ChatColor.GREEN + "Select removed");
             }
         });
 

@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS rp_select_option (
     name VARCHAR(255) NOT NULL UNIQUE,
     display VARCHAR(255) NOT NULL,
     color VARCHAR(255),
-    FOREIGN KEY (select_id) REFERENCES rp_select
+    FOREIGN KEY (select_id) REFERENCES rp_select ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS rp_player_attribute (
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS rp_player_attribute (
     player_id INTEGER NOT NULL,
     attribute_id INTEGER NOT NULL,
     value VARCHAR(255),
-    FOREIGN KEY (player_id) REFERENCES rp_player,
-    FOREIGN KEY (attribute_id) REFERENCES rp_attribute,
+    FOREIGN KEY (player_id) REFERENCES rp_player ON DELETE CASCADE,
+    FOREIGN KEY (attribute_id) REFERENCES rp_attribute ON DELETE CASCADE,
     UNIQUE (player_id, attribute_id) ON CONFLICT IGNORE
 );

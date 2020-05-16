@@ -140,6 +140,25 @@ public class SelectDbo {
         }
     }
 
+    public void deleteSelectAsync(int selectId, Consumer<Result<Void>> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(deleteSelect(selectId))
+        );
+    }
+
+    public Result<Void> deleteSelect(int selectId) {
+        final String query = "DELETE FROM rp_select WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, selectId);
+            stmt.executeUpdate();
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error deleting select: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
     private Select readSelect(ResultSet results) throws SQLException {
         int selectId = results.getInt("id");
         Result<Set<Option>> o = selectOptions(selectId);

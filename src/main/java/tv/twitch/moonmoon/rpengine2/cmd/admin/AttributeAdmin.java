@@ -6,6 +6,7 @@ import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
@@ -41,10 +42,12 @@ public class AttributeAdmin {
     }
 
     private final AttributeRepo attributeRepo;
+    private final SelectRepo selectRepo;
 
     @Inject
-    public AttributeAdmin(AttributeRepo attributeRepo) {
+    public AttributeAdmin(AttributeRepo attributeRepo, SelectRepo selectRepo) {
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
+        this.selectRepo = Objects.requireNonNull(selectRepo);
     }
 
     public boolean handle(CommandSender sender, String[] args) {
@@ -85,6 +88,14 @@ public class AttributeAdmin {
 
         if (attributeRepo.getAttribute(name).isPresent()) {
             sender.sendMessage(ChatColor.RED + "Attribute already exists");
+            return true;
+        }
+
+        if (type != AttributeType.Select && selectRepo.getSelect(name).isPresent()) {
+            String message = ChatColor.RED +
+                "Cannot create attribute because a select exists with the same name " +
+                "(/rpengine attribute addselect)";
+            sender.sendMessage(message);
             return true;
         }
 

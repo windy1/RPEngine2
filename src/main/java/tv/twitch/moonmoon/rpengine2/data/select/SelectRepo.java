@@ -19,6 +19,8 @@ public interface SelectRepo extends Repo {
 
     void createSelect(String name);
 
+    void removeSelectAsync(String name, Consumer<Result<Void>> callback);
+
     void createOptionAsync(
         String selectName,
         String option,

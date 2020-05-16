@@ -44,7 +44,7 @@ public class Dump {
 
     public boolean handle(CommandSender sender, String[] args) {
         if (args.length == 0 || (args.length == 1 && args[0].equalsIgnoreCase("help"))) {
-            return HELP.handle(sender, args);
+            return HELP.handle(sender, new String[] { "help" });
         }
 
         switch (args[0]) {

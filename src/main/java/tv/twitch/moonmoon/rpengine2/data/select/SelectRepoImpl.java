@@ -1,6 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.data.select;
 
 import org.bukkit.ChatColor;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionArgs;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
@@ -18,12 +19,18 @@ import java.util.stream.Collectors;
 public class SelectRepoImpl implements SelectRepo {
 
     private final SelectDbo selectDbo;
+    private final AttributeRepo attributeRepo;
     private final Logger log;
     private Map<String, Select> selects;
 
     @Inject
-    public SelectRepoImpl(SelectDbo selectDbo, @PluginLogger Logger log) {
+    public SelectRepoImpl(
+        SelectDbo selectDbo,
+        AttributeRepo attributeRepo,
+        @PluginLogger Logger log
+    ) {
         this.selectDbo = Objects.requireNonNull(selectDbo);
+        this.attributeRepo = Objects.requireNonNull(attributeRepo);
         this.log = Objects.requireNonNull(log);
     }
 
@@ -45,6 +52,41 @@ public class SelectRepoImpl implements SelectRepo {
     @Override
     public void createSelect(String name) {
         handleCreateSelect(selectDbo.insertSelect(name)).getError().ifPresent(log::warning);
+    }
+
+    @Override
+    public void removeSelectAsync(String name, Consumer<Result<Void>> callback) {
+        Select select = selects.get(name);
+        if (select == null) {
+            callback.accept(Result.error("Select not found"));
+            return;
+        }
+
+        int selectId = select.getId();
+
+        if (attributeRepo.getAttribute(name).isPresent()) {
+            attributeRepo.removeAttributeAsync(name, r -> {
+                Optional<String> err = handleResult(() -> r).getError();
+                if (err.isPresent()) {
+                    callback.accept(Result.error(err.get()));
+                } else {
+                    selectDbo.deleteSelect(selectId);
+                    selects.remove(name);
+                    callback.accept(Result.ok(null));
+                }
+            });
+            return;
+        }
+
+        selectDbo.deleteSelectAsync(selectId, r -> {
+            Optional<String> err = handleResult(() -> r).getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+            } else {
+                selects.remove(name);
+                callback.accept(Result.ok(null));
+            }
+        });
     }
 
     @Override

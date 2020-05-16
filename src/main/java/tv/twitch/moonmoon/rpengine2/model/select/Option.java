@@ -81,7 +81,7 @@ public class Option {
             ", created=" + created +
             ", name='" + name + '\'' +
             ", display='" + display + '\'' +
-            ", color=" + color.name() +
+            ", color=" + (color != null ? color.name() : "") +
             '}';
     }
 }

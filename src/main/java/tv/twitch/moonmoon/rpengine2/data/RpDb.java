@@ -50,6 +50,7 @@ public class RpDb {
 
         try {
             conn = DriverManager.getConnection(url);
+            conn.createStatement().execute("PRAGMA foreign_keys = ON");
             return Result.ok(null);
         } catch (SQLException e) {
             String message = "error connecting to database: `%s`";
