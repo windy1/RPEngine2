@@ -3,12 +3,10 @@ package tv.twitch.moonmoon.rpengine2.data;
 import org.bukkit.ChatColor;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
-import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 
 import javax.inject.Inject;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 public class Defaults {
 
