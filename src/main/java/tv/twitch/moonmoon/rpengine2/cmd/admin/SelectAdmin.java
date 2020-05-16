@@ -38,6 +38,8 @@ public class SelectAdmin {
             new ArgumentLabel("select_name", true),
             new ArgumentLabel("name", true)
         )));
+
+        USAGES.add(new CommandUsage("list"));
     }
 
     private final SelectRepo selectRepo;
@@ -62,6 +64,8 @@ public class SelectAdmin {
                 return handleRemove(sender, StringUtils.splice(args, 1));
             case "removeopt":
                 return handleRemoveOpt(sender, StringUtils.splice(args, 1));
+            case "list":
+                return handleList(sender);
             default:
                 return false;
         }
@@ -156,6 +160,14 @@ public class SelectAdmin {
             }
         });
 
+        return true;
+    }
+
+    private boolean handleList(CommandSender sender) {
+        sender.sendMessage(ChatColor.BLUE + "Selects:");
+        selectRepo.getSelects().stream()
+            .map(SelectLabel::from)
+            .forEach(s -> s.sendTo(sender));
         return true;
     }
 }
