@@ -54,7 +54,8 @@ public class AttributeDbo {
                 "display, " +
                 "type, " +
                 "default_value, " +
-                "format " +
+                "format, " +
+                "identity " +
             "FROM rp_attribute " +
             "WHERE name = ?";
 
@@ -129,7 +130,16 @@ public class AttributeDbo {
 
     public Result<Set<Attribute>> selectAttributes() {
         final String query =
-            "SELECT id, created, name, display, type, default_value, format FROM rp_attribute";
+            "SELECT " +
+                "id, " +
+                "created, " +
+                "name, " +
+                "display, " +
+                "type, " +
+                "default_value, " +
+                "format, " +
+                "identity " +
+            "FROM rp_attribute";
 
         Set<Attribute> attributes = new HashSet<>();
 
@@ -162,6 +172,48 @@ public class AttributeDbo {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(updateFormat(attributeId, formatString))
         );
+    }
+
+    public void setIdentityAsync(int attributeId, Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(setIdentity(attributeId))
+        );
+    }
+
+    public void clearIdentityAsync(Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(clearIdentity())
+        );
+    }
+
+    public Result<Void> setIdentity(int attributeId) {
+        Optional<String> err = clearIdentity().getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        final String query = "UPDATE rp_attribute SET identity = 1 WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, attributeId);
+            stmt.executeUpdate();
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error setting identity attribute: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    private Result<Void> clearIdentity() {
+        final String query = "UPDATE rp_attribute SET identity = 0";
+
+        try (Statement stmt = db.getConnection().createStatement()) {
+            stmt.executeUpdate(query);
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error clearing identity: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
     }
 
     private Result<Void> updateFormat(int attributeId, String formatString) {
@@ -243,7 +295,8 @@ public class AttributeDbo {
             results.getString("display"),
             type,
             defaultValue,
-            results.getString("format")
+            results.getString("format"),
+            results.getInt("identity") > 0
         );
     }
 }

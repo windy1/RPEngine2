@@ -19,12 +19,13 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class AttributeRepoImpl implements AttributeRepo {
-
+    
     private final AttributeDbo attributeDbo;
     private final RpPlayerRepo playerRepo;
     private final SelectRepo selectRepo;
     private final Logger log;
     private Map<String, Attribute> attributes;
+    private Attribute identity;
 
     @Inject
     public AttributeRepoImpl(
@@ -47,6 +48,11 @@ public class AttributeRepoImpl implements AttributeRepo {
     @Override
     public Optional<Attribute> getAttribute(String name) {
         return Optional.ofNullable(attributes.get(name));
+    }
+
+    @Override
+    public Optional<Attribute> getIdentity() {
+        return Optional.ofNullable(identity);
     }
 
     @Override
@@ -201,6 +207,106 @@ public class AttributeRepoImpl implements AttributeRepo {
     }
 
     @Override
+    public void setIdentityAsync(String name, Callback<Void> callback) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            callback.accept(Result.error("Attribute not found"));
+            return;
+        }
+
+        Optional<String> check = checkIdent(attribute);
+        if (check.isPresent()) {
+            callback.accept(Result.error(check.get()));
+            return;
+        }
+
+        attributeDbo.setIdentityAsync(attribute.getId(), r -> {
+            Optional<String> err = handleIdentityUpdate(r).getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+                return;
+            }
+
+            Result<Attribute> newIdent = reloadAttribute(name);
+
+            err = newIdent.getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+            } else {
+                identity = newIdent.get();
+                callback.accept(Result.ok(null));
+            }
+        });
+    }
+
+    @Override
+    public void setIdentity(String name) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            return;
+        }
+
+        Optional<String> check = checkIdent(attribute);
+        if (check.isPresent()) {
+            return;
+        }
+
+        Result<Void> update = attributeDbo.setIdentity(attribute.getId());
+
+        Optional<String> err = handleIdentityUpdate(update).getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+            return;
+        }
+
+        Result<Attribute> newIdent = reloadAttribute(name);
+
+        err = newIdent.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+        } else {
+            identity = newIdent.get();
+        }
+    }
+
+    private Optional<String> checkIdent(Attribute attribute) {
+        if (attribute.getType() != AttributeType.String) {
+            String message = "The identity attribute may only be on attributes of type: string";
+            return Optional.of(message);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public void clearIdentityAsync(Callback<Void> callback) {
+        attributeDbo.clearIdentityAsync(r -> {
+            Optional<String> err = handleIdentityUpdate(r).getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+            } else {
+                identity = null;
+                callback.accept(Result.ok(null));
+            }
+        });
+    }
+
+    private Result<Void> handleIdentityUpdate(Result<Void> r) {
+        Optional<String> err = handleResult(() -> r).getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        if (identity != null) {
+            err = reloadAttribute(identity.getName()).getError();
+            if (err.isPresent()) {
+                return Result.error(err.get());
+            }
+        }
+
+        return Result.ok(null);
+    }
+
+    @Override
     public Result<Void> load() {
         Result<Set<Attribute>> r = attributeDbo.selectAttributes();
 
@@ -210,6 +316,12 @@ public class AttributeRepoImpl implements AttributeRepo {
         } else {
             attributes = Collections.synchronizedMap(r.get().stream()
                 .collect(Collectors.toMap(Attribute::getName, Function.identity())));
+
+            identity = attributes.values().stream()
+                .filter(Attribute::isIdentity)
+                .findFirst()
+                .orElse(null);
+
             return Result.ok(null);
         }
     }
@@ -284,6 +396,7 @@ public class AttributeRepoImpl implements AttributeRepo {
         playerRepo.flushJoinedPlayers();
 
         for (RpPlayer player : playerRepo.getPlayers()) {
+            // TODO: bad
             playerRepo.setAttributeAsync(player, (int) attributeId, def, s ->
                 s.getError().ifPresent(log::warning)
             );

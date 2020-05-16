@@ -57,6 +57,14 @@ public class AttributeAdmin {
             new ArgumentLabel("name", true),
             new ArgumentLabel("format_string", true)
         )));
+
+        USAGES.add(new CommandUsage("setidentity", Collections.singletonList(
+            new ArgumentLabel("name", true)
+        )));
+
+        USAGES.add(new CommandUsage("clearidentity", Collections.singletonList(
+            new ArgumentLabel("name", true)
+        )));
     }
 
     private final AttributeRepo attributeRepo;
@@ -95,6 +103,12 @@ public class AttributeAdmin {
             case "setformat":
             case "setfmt":
                 return handleSetFormat(sender, StringUtils.splice(args, 1));
+            case "setidentity":
+            case "setident":
+                return handleSetIdentity(sender, StringUtils.splice(args, 1));
+            case "clearidentity":
+            case "clearident":
+                return handleClearIdentity(sender);
             default:
                 return false;
         }
@@ -198,6 +212,27 @@ public class AttributeAdmin {
             sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
         );
 
+        return true;
+    }
+
+    private boolean handleSetIdentity(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+
+        String name = args[0];
+
+        attributeRepo.setIdentityAsync(name, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
+        );
+
+        return true;
+    }
+
+    private boolean handleClearIdentity(CommandSender sender) {
+        attributeRepo.clearIdentityAsync(r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Identity cleared"))
+        );
         return true;
     }
 }

@@ -59,6 +59,13 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     }
 
     @Override
+    public Optional<String> getIdentity(RpPlayer player) {
+        return attributeRepo.getIdentity()
+            .flatMap(i -> player.getAttribute(i.getId()))
+            .flatMap(i -> i.getValue().map(Object::toString));
+    }
+
+    @Override
     public void setAttributeAsync(
         RpPlayer player,
         int attributeId,

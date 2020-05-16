@@ -14,6 +14,8 @@ public interface AttributeRepo extends Repo {
 
     Optional<Attribute> getAttribute(String name);
 
+    Optional<Attribute> getIdentity();
+
     void createAttributeAsync(
         String name,
         AttributeType type,
@@ -31,4 +33,10 @@ public interface AttributeRepo extends Repo {
     void setDisplayAsync(String name, String display, Callback<Void> callback);
 
     void setFormatAsync(String name, String formatString, Callback<Void> callback);
+
+    void setIdentityAsync(String name, Callback<Void> callback);
+
+    void setIdentity(String name);
+
+    void clearIdentityAsync(Callback<Void> callback);
 }

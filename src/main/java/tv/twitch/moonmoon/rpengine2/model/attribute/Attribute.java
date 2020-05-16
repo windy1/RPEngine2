@@ -13,6 +13,7 @@ public class Attribute {
     private final AttributeType type;
     private final Object defaultValue;
     private final String formatString;
+    private final boolean identity;
 
     public Attribute(
         int id,
@@ -21,7 +22,8 @@ public class Attribute {
         String display,
         AttributeType type,
         Object defaultValue,
-        String formatString
+        String formatString,
+        boolean identity
     ) {
         this.id = id;
         this.created = Objects.requireNonNull(created);
@@ -30,6 +32,7 @@ public class Attribute {
         this.type = Objects.requireNonNull(type);
         this.defaultValue = defaultValue;
         this.formatString = formatString;
+        this.identity = identity;
     }
 
     public int getId() {
@@ -60,12 +63,17 @@ public class Attribute {
         return Optional.ofNullable(formatString);
     }
 
+    public boolean isIdentity() {
+        return identity;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Attribute attribute = (Attribute) o;
         return id == attribute.id &&
+            identity == attribute.identity &&
             Objects.equals(created, attribute.created) &&
             Objects.equals(name, attribute.name) &&
             Objects.equals(display, attribute.display) &&
@@ -89,6 +97,7 @@ public class Attribute {
             ", type=" + type +
             ", defaultValue=" + defaultValue +
             ", formatString='" + formatString + '\'' +
+            ", identity=" + identity +
             '}';
     }
 }

@@ -17,6 +17,8 @@ public interface RpPlayerRepo extends Repo {
 
     Optional<RpPlayer> getPlayer(String name);
 
+    Optional<String> getIdentity(RpPlayer player);
+
     void setAttributeAsync(
         RpPlayer player,
         int attributeId,

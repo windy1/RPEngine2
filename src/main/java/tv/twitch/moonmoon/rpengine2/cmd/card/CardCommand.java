@@ -47,18 +47,22 @@ public class CardCommand implements CommandExecutor {
             return true;
         }
 
-        Result<RpPlayer> player = playerRepo.getPlayer((Player) sender);
+        Result<RpPlayer> p = playerRepo.getPlayer((Player) sender);
+        RpPlayer player;
+        String displayName;
 
-        Optional<String> err = player.getError();
+        Optional<String> err = p.getError();
         if (err.isPresent()) {
             sender.sendMessage(ChatColor.RED + err.get());
             return true;
         }
+        player = p.get();
 
-        sender.sendMessage(String.format(HEADER, sender.getName()));
+        displayName = playerRepo.getIdentity(player).orElse(sender.getName());
+        sender.sendMessage(String.format(HEADER, displayName));
         sender.sendMessage(SUB_HEADER);
 
-        player.get().getAttributes().stream()
+        player.getAttributes().stream()
             .map(a -> {
                 //noinspection OptionalGetWithoutIsPresent
                 Attribute attribute = attributeRepo.getAttribute(a.getName()).get();

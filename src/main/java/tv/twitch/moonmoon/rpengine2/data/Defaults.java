@@ -42,6 +42,9 @@ public class Defaults {
             attributeRepo.createAttribute(
                 "Name", AttributeType.String, "Name", null
             );
+
+            attributeRepo.setIdentity("Name");
+
             attributeRepo.createAttribute(
                 "Age", AttributeType.Number, "Age", null
             );
