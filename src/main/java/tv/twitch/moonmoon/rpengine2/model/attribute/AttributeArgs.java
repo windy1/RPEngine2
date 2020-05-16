@@ -13,7 +13,6 @@ public class AttributeArgs {
 
     private final String name;
     private final AttributeType type;
-    private final String display;
     private final String defaultValue;
 
     private final SelectRepo selectRepo;
@@ -22,14 +21,12 @@ public class AttributeArgs {
     public AttributeArgs(
         String name,
         AttributeType type,
-        String display,
         String defaultValue,
         SelectRepo selectRepo,
         AttributeRepo attributeRepo
     ) {
         this.name = Objects.requireNonNull(name);
         this.type = Objects.requireNonNull(type);
-        this.display = Objects.requireNonNull(display);
         this.defaultValue = defaultValue;
         this.selectRepo = Objects.requireNonNull(selectRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
@@ -43,19 +40,19 @@ public class AttributeArgs {
         return type;
     }
 
-    public String getDisplay() {
-        return display;
-    }
-
     public Optional<String> getDefaultValue() {
         return Optional.ofNullable(defaultValue);
     }
 
-    public Result<AttributeArgs> clean() {
+    public Result<AttributeArgs> canCreate() {
         if (attributeRepo.getAttribute(name).isPresent()) {
             return Result.error("Attribute already exists");
         }
 
+        return canUpdate();
+    }
+
+    public Result<AttributeArgs> canUpdate() {
         String newDefault = defaultValue;
 
         if (type == AttributeType.Select) {
@@ -82,10 +79,10 @@ public class AttributeArgs {
         return Result.ok(new AttributeArgs(
             name,
             type,
-            display,
             newDefault,
             selectRepo,
-            attributeRepo));
+            attributeRepo
+        ));
     }
 
     @Override
@@ -95,8 +92,9 @@ public class AttributeArgs {
         AttributeArgs that = (AttributeArgs) o;
         return Objects.equals(name, that.name) &&
             type == that.type &&
-            Objects.equals(display, that.display) &&
-            Objects.equals(defaultValue, that.defaultValue);
+            Objects.equals(defaultValue, that.defaultValue) &&
+            Objects.equals(selectRepo, that.selectRepo) &&
+            Objects.equals(attributeRepo, that.attributeRepo);
     }
 
     @Override
@@ -109,8 +107,9 @@ public class AttributeArgs {
         return "AttributeArgs{" +
             "name='" + name + '\'' +
             ", type=" + type +
-            ", display='" + display + '\'' +
             ", defaultValue='" + defaultValue + '\'' +
+            ", selectRepo=" + selectRepo +
+            ", attributeRepo=" + attributeRepo +
             '}';
     }
 }

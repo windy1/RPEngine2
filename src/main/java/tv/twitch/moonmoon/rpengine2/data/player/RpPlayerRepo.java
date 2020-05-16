@@ -3,11 +3,11 @@ package tv.twitch.moonmoon.rpengine2.data.player;
 import org.bukkit.OfflinePlayer;
 import tv.twitch.moonmoon.rpengine2.data.Repo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public interface RpPlayerRepo extends Repo {
 
@@ -21,10 +21,10 @@ public interface RpPlayerRepo extends Repo {
         RpPlayer player,
         int attributeId,
         Object value,
-        Consumer<Result<Void>> callback
+        Callback<Void> callback
     );
 
-    void removeAttributesAsync(int attributeId, Consumer<Result<Void>> callback);
+    void removeAttributesAsync(int attributeId, Callback<Void> callback);
 
     Result<Void> reloadPlayers();
 

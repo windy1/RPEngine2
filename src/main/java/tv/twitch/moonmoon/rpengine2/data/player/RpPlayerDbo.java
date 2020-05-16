@@ -7,6 +7,7 @@ import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
+import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -16,7 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class RpPlayerDbo {
@@ -102,7 +102,7 @@ public class RpPlayerDbo {
         int playerId,
         int attributeId,
         Object value,
-        Consumer<Result<Void>> callback
+        Callback<Void> callback
     ) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(insertPlayerAttributeAsync(playerId, attributeId, value))
@@ -113,7 +113,7 @@ public class RpPlayerDbo {
         int playerId,
         int attributeId,
         Object value,
-        Consumer<Result<Void>> callback
+        Callback<Void> callback
     ) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(updatePlayerAttribute(playerId, attributeId, value))
@@ -143,7 +143,7 @@ public class RpPlayerDbo {
         }
     }
 
-    public void deletePlayerAttributesAsync(int attributeId, Consumer<Result<Void>> callback) {
+    public void deletePlayerAttributesAsync(int attributeId, Callback<Void> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(deletePlayerAttributes(attributeId))
         );
@@ -191,7 +191,6 @@ public class RpPlayerDbo {
             "SELECT " +
                 "A.id AS attribute_id, " +
                 "A.name, " +
-                "A.display, " +
                 "A.type, " +
                 "P.id AS instance_id, " +
                 "P.created, " +
@@ -233,7 +232,6 @@ public class RpPlayerDbo {
                         results.getInt("attribute_id"),
                         Instant.parse(results.getString("created")),
                         type,
-                        results.getString("display"),
                         results.getString("name"),
                         parsedValue
                     ));

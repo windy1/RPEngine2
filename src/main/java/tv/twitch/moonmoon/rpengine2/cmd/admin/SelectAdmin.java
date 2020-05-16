@@ -2,6 +2,7 @@ package tv.twitch.moonmoon.rpengine2.cmd.admin;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import tv.twitch.moonmoon.rpengine2.cmd.Commands;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
@@ -15,7 +16,9 @@ public class SelectAdmin {
 
     private static final List<CommandUsage> USAGES = new ArrayList<>();
     private static final Help HELP = new Help(
-        ChatColor.BLUE + "Select Sub Commands: ", USAGES
+        "Select Sub Commands: ",
+        "Selects allow you to create attributes that must be one of the pre-determined values",
+        USAGES
     );
 
     static {
@@ -61,8 +64,10 @@ public class SelectAdmin {
             case "addopt":
                 return handleAddOpt(sender, StringUtils.splice(args, 1));
             case "remove":
+            case "rm":
                 return handleRemove(sender, StringUtils.splice(args, 1));
             case "removeopt":
+            case "rmopt":
                 return handleRemoveOpt(sender, StringUtils.splice(args, 1));
             case "list":
                 return handleList(sender);
@@ -78,14 +83,9 @@ public class SelectAdmin {
 
         String name = args[0];
 
-        selectRepo.createSelectAsync(name, r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                sender.sendMessage(ChatColor.RED + err.get());
-            } else {
-                sender.sendMessage(ChatColor.GREEN + "Select created");
-            }
-        });
+        selectRepo.createSelectAsync(name, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Select created"))
+        );
 
         return true;
     }
@@ -97,14 +97,9 @@ public class SelectAdmin {
 
         String name = args[0];
 
-        selectRepo.removeSelectAsync(name, r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                sender.sendMessage(ChatColor.RED + err.get());
-            } else {
-                sender.sendMessage(ChatColor.GREEN + "Select removed");
-            }
-        });
+        selectRepo.removeSelectAsync(name, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Select removed"))
+        );
 
         return true;
     }
@@ -131,14 +126,9 @@ public class SelectAdmin {
             displayName = args[3];
         }
 
-        selectRepo.createOptionAsync(selectName, name, displayName, color, r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                sender.sendMessage(ChatColor.RED + err.get());
-            } else {
-                sender.sendMessage(ChatColor.GREEN + "Option created");
-            }
-        });
+        selectRepo.createOptionAsync(selectName, name, displayName, color, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Option created"))
+        );
 
         return true;
     }
@@ -151,14 +141,9 @@ public class SelectAdmin {
         String selectName = args[0];
         String name = args[1];
 
-        selectRepo.removeOptionAsync(selectName, name, r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                sender.sendMessage(ChatColor.RED + err.get());
-            } else {
-                sender.sendMessage(ChatColor.GREEN + "Option removed");
-            }
-        });
+        selectRepo.removeOptionAsync(selectName, name, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Option removed"))
+        );
 
         return true;
     }

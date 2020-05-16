@@ -6,6 +6,7 @@ import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
+import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
@@ -19,7 +20,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class SelectDbo {
@@ -35,7 +35,7 @@ public class SelectDbo {
         log = plugin.getLogger();
     }
 
-    public void insertSelectAsync(String name, Consumer<Result<Long>> callback) {
+    public void insertSelectAsync(String name, Callback<Long> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(insertSelect(name))
         );
@@ -46,7 +46,7 @@ public class SelectDbo {
         String name,
         String display,
         ChatColor color,
-        Consumer<Result<Void>> callback
+        Callback<Void> callback
     ) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(insertOption(selectId, name, display, color))
@@ -140,13 +140,13 @@ public class SelectDbo {
         }
     }
 
-    public void deleteSelectAsync(int selectId, Consumer<Result<Void>> callback) {
+    public void deleteSelectAsync(int selectId, Callback<Void> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(deleteSelect(selectId))
         );
     }
 
-    public void deleteOptionAsync(int optionId, Consumer<Result<Void>> callback) {
+    public void deleteOptionAsync(int optionId, Callback<Void> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(deleteOption(optionId))
         );

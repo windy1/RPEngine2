@@ -8,7 +8,9 @@ import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
+import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
@@ -18,11 +20,21 @@ public class Dump {
 
     private static final List<CommandUsage> USAGES = new ArrayList<>();
     private static final Help HELP = new Help(
-        ChatColor.BLUE + "Dump Sub Commands: ", USAGES
+        "Dump Sub Commands: ",
+        "RPEngine raw data",
+        USAGES
     );
 
     static {
         USAGES.add(new CommandUsage("player", Collections.singletonList(
+            new ArgumentLabel("name", true)
+        )));
+
+        USAGES.add(new CommandUsage("attribute", Collections.singletonList(
+            new ArgumentLabel("name", true)
+        )));
+
+        USAGES.add(new CommandUsage("select", Collections.singletonList(
             new ArgumentLabel("name", true)
         )));
 
@@ -49,19 +61,29 @@ public class Dump {
 
         switch (args[0]) {
             case "player":
+            case "p":
                 return handleDumpPlayer(sender, StringUtils.splice(args, 1));
-            case "players": {
+            case "players":
+            case "ps": {
                 sender.sendMessage(playerRepo.getPlayers().toString());
                 return true;
             }
-            case "attributes": {
+            case "attribute":
+            case "at":
+                return handleDumpAttribute(sender, StringUtils.splice(args, 1));
+            case "attributes":
+            case "ats": {
                 sender.sendMessage(attributeRepo.getAttributes().toString());
                 return true;
             }
-            case "selects": {
+            case "selects":
+            case "sels": {
                 sender.sendMessage(selectRepo.getSelects().toString());
                 return true;
             }
+            case "select":
+            case "sel":
+                return handleDumpSelect(sender, StringUtils.splice(args, 1));
             default:
                 return false;
         }
@@ -79,6 +101,40 @@ public class Dump {
             sender.sendMessage(ChatColor.RED + "Player not found");
         } else {
             sender.sendMessage(p.get().toString());
+        }
+
+        return true;
+    }
+
+    private boolean handleDumpAttribute(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+
+        String name = args[0];
+
+        Optional<Attribute> a = attributeRepo.getAttribute(name);
+        if (!a.isPresent()) {
+            sender.sendMessage(ChatColor.RED + "Attribute not found");
+        } else {
+            sender.sendMessage(a.get().toString());
+        }
+
+        return true;
+    }
+
+    private boolean handleDumpSelect(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+
+        String name = args[0];
+
+        Optional<Select> s = selectRepo.getSelect(name);
+        if (!s.isPresent()) {
+            sender.sendMessage(ChatColor.RED + "Select not found");
+        } else {
+            sender.sendMessage(s.get().toString());
         }
 
         return true;

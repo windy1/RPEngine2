@@ -10,11 +10,11 @@ import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
+import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -63,7 +63,7 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
         RpPlayer player,
         int attributeId,
         Object value,
-        Consumer<Result<Void>> callback
+        Callback<Void> callback
     ) {
         UUID playerId = player.getUUID();
         Optional<RpPlayerAttribute> existing = player.getAttribute(attributeId);
@@ -80,7 +80,7 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     }
 
     @Override
-    public void removeAttributesAsync(int attributeId, Consumer<Result<Void>> callback) {
+    public void removeAttributesAsync(int attributeId, Callback<Void> callback) {
         playerDbo.deletePlayerAttributesAsync(attributeId, r ->
             callback.accept(handleAndReloadPlayers(r))
         );

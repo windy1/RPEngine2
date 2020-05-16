@@ -1,6 +1,8 @@
 package tv.twitch.moonmoon.rpengine2.cmd;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.cmd.admin.AdminCommand;
@@ -8,6 +10,7 @@ import tv.twitch.moonmoon.rpengine2.cmd.card.CardCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardSelectCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardSetCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ColorListCommand;
+import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -50,5 +53,11 @@ public class Commands {
                     .setExecutor(executors.get(cmd));
             }
         }
+    }
+
+    public static <T> String mapResult(Result<T> r, CommandSender sender, String success) {
+        return r.getError()
+            .map(e -> ChatColor.RED + e)
+            .orElseGet(() -> ChatColor.GREEN + success);
     }
 }

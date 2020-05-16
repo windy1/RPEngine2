@@ -6,12 +6,12 @@ import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionArgs;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
+import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -46,7 +46,7 @@ public class SelectRepoImpl implements SelectRepo {
     }
 
     @Override
-    public void createSelectAsync(String name, Consumer<Result<Void>> callback) {
+    public void createSelectAsync(String name, Callback<Void> callback) {
         if (selects.get(name) != null) {
             callback.accept(Result.error("Select already exists"));
             return;
@@ -63,7 +63,7 @@ public class SelectRepoImpl implements SelectRepo {
     }
 
     @Override
-    public void removeSelectAsync(String name, Consumer<Result<Void>> callback) {
+    public void removeSelectAsync(String name, Callback<Void> callback) {
         Select select = selects.get(name);
         if (select == null) {
             callback.accept(Result.error("Select not found"));
@@ -97,7 +97,7 @@ public class SelectRepoImpl implements SelectRepo {
         String option,
         String display,
         ChatColor color,
-        Consumer<Result<Void>> callback
+        Callback<Void> callback
     ) {
         Result<OptionArgs> args = new OptionArgs(
             selectName, option, display, color, selects.get(selectName)
@@ -142,7 +142,7 @@ public class SelectRepoImpl implements SelectRepo {
     public void removeOptionAsync(
         String selectName,
         String optionName,
-        Consumer<Result<Void>> callback
+        Callback<Void> callback
     ) {
         Select select = selects.get(selectName);
         if (select == null) {

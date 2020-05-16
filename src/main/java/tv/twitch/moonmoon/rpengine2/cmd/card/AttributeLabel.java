@@ -33,10 +33,14 @@ public class AttributeLabel {
         this.selectRepo = Objects.requireNonNull(selectRepo);
     }
 
-    public static AttributeLabel from(RpPlayerAttribute attribute, SelectRepo selectRepo) {
+    public static AttributeLabel from(
+        RpPlayerAttribute attribute,
+        String display,
+        SelectRepo selectRepo
+    ) {
         return new AttributeLabel(
             attribute.getName(),
-            attribute.getDisplay(),
+            display,
             attribute.getValue().orElse(null),
             attribute.getType(),
             selectRepo

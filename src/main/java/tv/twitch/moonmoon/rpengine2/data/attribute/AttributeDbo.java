@@ -5,6 +5,7 @@ import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
+import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -17,7 +18,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class AttributeDbo {
@@ -38,7 +38,7 @@ public class AttributeDbo {
         String display,
         String type,
         String defaultValue,
-        Consumer<Result<Long>> callback
+        Callback<Long> callback
     ) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
             callback.accept(insertAttribute(name, display, type, defaultValue))
@@ -141,6 +141,50 @@ public class AttributeDbo {
             return Result.ok(attributes);
         } catch (SQLException e) {
             String message = "error reading attributes: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    public void updateDefaultAsync(int attributeId, String defaultValue, Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(updateDefault(attributeId, defaultValue))
+        );
+    }
+
+    public void updateDisplayAsync(int attributeId, String display, Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(updateDisplay(attributeId, display))
+        );
+    }
+
+    private Result<Void> updateDisplay(int attributeId, String display) {
+        final String query = "UPDATE rp_attribute SET display = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setString(1, display);
+            stmt.setInt(2, attributeId);
+
+            stmt.executeUpdate();
+
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error updating attribute display: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    private Result<Void> updateDefault(int attributeId, String defaultValue) {
+        final String query = "UPDATE rp_attribute SET default_value = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setString(1, defaultValue);
+            stmt.setInt(2, attributeId);
+
+            stmt.executeUpdate();
+
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error updating attribute default: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }

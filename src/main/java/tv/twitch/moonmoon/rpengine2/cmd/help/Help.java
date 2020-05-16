@@ -13,11 +13,17 @@ public class Help {
             + " to view available admin commands.";
 
     private final String header;
+    private final String subheader;
     private final List<CommandUsage> usages;
 
-    public Help(String header, List<CommandUsage> usages) {
+    public Help(String header, String subheader, List<CommandUsage> usages) {
         this.header = Objects.requireNonNull(header);
+        this.subheader = subheader;
         this.usages = Objects.requireNonNull(usages);
+    }
+
+    public Help(String header, List<CommandUsage> usages) {
+        this(header, null, usages);
     }
 
     public boolean handle(CommandSender sender, String[] args) {
@@ -35,10 +41,16 @@ public class Help {
     }
 
     public boolean showHelp(CommandSender sender) {
-        sender.sendMessage(header);
+        sender.sendMessage(ChatColor.BLUE + header);
+
+        if (subheader != null) {
+            sender.sendMessage("" + ChatColor.GRAY + ChatColor.ITALIC + subheader);
+        }
+
         for (CommandUsage usage : usages) {
             sender.sendMessage(usage.toString());
         }
+
         return true;
     }
 }

@@ -3,11 +3,10 @@ package tv.twitch.moonmoon.rpengine2.data.attribute;
 import tv.twitch.moonmoon.rpengine2.data.Repo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
-import tv.twitch.moonmoon.rpengine2.util.Result;
+import tv.twitch.moonmoon.rpengine2.util.Callback;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public interface AttributeRepo extends Repo {
 
@@ -20,10 +19,14 @@ public interface AttributeRepo extends Repo {
         AttributeType type,
         String display,
         String defaultValue,
-        Consumer<Result<Void>> callback
+        Callback<Void> callback
     );
 
     void createAttribute(String name, AttributeType type, String display, String defaultValue);
 
-    void removeAttributeAsync(String name, Consumer<Result<Void>> callback);
+    void removeAttributeAsync(String name, Callback<Void> callback);
+
+    void setDefaultAsync(String name, String defaultValue, Callback<Void> callback);
+
+    void setDisplayAsync(String name, String display, Callback<Void> callback);
 }

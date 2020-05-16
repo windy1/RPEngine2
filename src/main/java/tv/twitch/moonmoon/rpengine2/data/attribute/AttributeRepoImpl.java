@@ -7,12 +7,12 @@ import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeArgs;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -55,11 +55,11 @@ public class AttributeRepoImpl implements AttributeRepo {
         AttributeType type,
         String display,
         String defaultValue,
-        Consumer<Result<Void>> callback
+        Callback<Void> callback
     ) {
         Result<AttributeArgs> a = new AttributeArgs(
-            name, type, display, defaultValue, selectRepo,this
-        ).clean();
+            name, type, defaultValue, selectRepo,this
+        ).canCreate();
 
         Optional<String> err = a.getError();
         if (err.isPresent()) {
@@ -71,7 +71,7 @@ public class AttributeRepoImpl implements AttributeRepo {
         String def = args.getDefaultValue().orElse(null);
         String typeId = args.getType().getId();
 
-        attributeDbo.insertAttributeAsync(args.getName(), args.getDisplay(), typeId, def, r ->
+        attributeDbo.insertAttributeAsync(args.getName(), display, typeId, def, r ->
             callback.accept(handleCreateAttribute(name, def, r))
         );
     }
@@ -84,8 +84,8 @@ public class AttributeRepoImpl implements AttributeRepo {
         String defaultValue
     ) {
         Result<AttributeArgs> a = new AttributeArgs(
-            name, type, display, defaultValue, selectRepo, this
-        ).clean();
+            name, type, defaultValue, selectRepo, this
+        ).canCreate();
 
         Optional<String> err = a.getError();
         if (err.isPresent()) {
@@ -96,14 +96,13 @@ public class AttributeRepoImpl implements AttributeRepo {
         AttributeArgs args = a.get();
         String def = args.getDefaultValue().orElse(null);
         String typeId = args.getType().getId();
-        String newDisplay = args.getDisplay();
 
-        Result<Long> r = attributeDbo.insertAttribute(args.getName(), newDisplay, typeId, def);
+        Result<Long> r = attributeDbo.insertAttribute(args.getName(), display, typeId, def);
         handleCreateAttribute(name, def, r).getError().ifPresent(log::warning);
     }
 
     @Override
-    public void removeAttributeAsync(String name, Consumer<Result<Void>> callback) {
+    public void removeAttributeAsync(String name, Callback<Void> callback) {
         Attribute attribute = attributes.get(name);
         if (attribute == null) {
             callback.accept(Result.error("Attribute not found"));
@@ -115,6 +114,54 @@ public class AttributeRepoImpl implements AttributeRepo {
         playerRepo.removeAttributesAsync(attributeId, r ->
             callback.accept(handleRemoveAttribute(attributeId, name, r))
         );
+    }
+
+    @Override
+    public void setDefaultAsync(String name, String defaultValue, Callback<Void> callback) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            callback.accept(Result.error("Attribute not found"));
+            return;
+        }
+
+        Result<AttributeArgs> a = new AttributeArgs(
+            name, attribute.getType(), defaultValue, selectRepo, this
+        ).canUpdate();
+
+        Optional<String> err = a.getError();
+        if (err.isPresent()) {
+            callback.accept(Result.error(err.get()));
+            return;
+        }
+
+        String def = a.get().getDefaultValue().orElse(null);
+
+        attributeDbo.updateDefaultAsync(attribute.getId(), def, r -> {
+            Optional<String> updateErr = handleResult(() -> r).getError();
+            if (updateErr.isPresent()) {
+                callback.accept(Result.error(updateErr.get()));
+            } else {
+                callback.accept(reloadAttribute(name).mapOk(v -> null));
+            }
+        });
+    }
+
+    @Override
+    public void setDisplayAsync(String name, String display, Callback<Void> callback) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            callback.accept(Result.error("Attribute not found"));
+            return;
+        }
+
+        attributeDbo.updateDisplayAsync(attribute.getId(), display, r -> {
+            Optional<String> updateErr = handleResult(() -> r).getError();
+            if (updateErr.isPresent()) {
+                callback.accept(Result.error(updateErr.get()));
+            } else {
+                callback.accept(reloadAttribute(name).mapOk(v -> null));
+            }
+        });
     }
 
     @Override
@@ -132,7 +179,9 @@ public class AttributeRepoImpl implements AttributeRepo {
     }
 
     private Result<Attribute> reloadAttribute(String name) {
-        Result<Attribute> updatedAttribute = attributeDbo.selectAttribute(name);
+        Result<Attribute> updatedAttribute = handleResult(() ->
+            attributeDbo.selectAttribute(name)
+        );
 
         Optional<String> err = updatedAttribute.getError();
         if (err.isPresent()) {
@@ -190,7 +239,7 @@ public class AttributeRepoImpl implements AttributeRepo {
         }
 
         // load new attribute
-        err = handleResult(() -> reloadAttribute(name)).getError();
+        err = reloadAttribute(name).getError();
         if (err.isPresent()) {
             return Result.error(err.get());
         }

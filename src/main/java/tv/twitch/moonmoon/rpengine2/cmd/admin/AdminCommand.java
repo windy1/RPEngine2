@@ -45,7 +45,7 @@ public class AdminCommand implements CommandExecutor {
         PluginDescriptionFile desc = plugin.getDescription();
         String version = desc.getVersion();
         String helpHeader = String.format(
-            "%s%s %s", ChatColor.BLUE, PLUGIN_DISPLAY_NAME, version
+            ChatColor.BLUE + "%s %s", PLUGIN_DISPLAY_NAME, version
         );
 
         help = new Help(helpHeader, USAGES);
@@ -61,8 +61,10 @@ public class AdminCommand implements CommandExecutor {
             case "help":
                 return help.handle(sender, args);
             case "attribute":
+            case "at":
                 return attributeAdmin.handle(sender, StringUtils.splice(args, 1));
             case "select":
+            case "sel":
                 return selectAdmin.handle(sender, StringUtils.splice(args, 1));
             case "dump":
                 return dump.handle(sender, StringUtils.splice(args, 1));

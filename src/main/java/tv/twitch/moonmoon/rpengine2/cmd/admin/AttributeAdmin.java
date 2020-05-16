@@ -2,6 +2,7 @@ package tv.twitch.moonmoon.rpengine2.cmd.admin;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import tv.twitch.moonmoon.rpengine2.cmd.Commands;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
@@ -17,7 +18,9 @@ public class AttributeAdmin {
 
     private static final List<CommandUsage> USAGES = new ArrayList<>();
     private static final Help HELP = new Help(
-        ChatColor.BLUE + "Attribute Sub Commands: ", USAGES
+        "Attribute Sub Commands: ",
+        "Attributes are the key-value pairs that appear on player cards (/card)",
+        USAGES
     );
 
     static {
@@ -38,6 +41,16 @@ public class AttributeAdmin {
 
         USAGES.add(new CommandUsage("remove", Collections.singletonList(
             new ArgumentLabel("name", true)
+        )));
+
+        USAGES.add(new CommandUsage("setdefault", Arrays.asList(
+            new ArgumentLabel("name", true),
+            new ArgumentLabel("default_value", true)
+        )));
+
+        USAGES.add(new CommandUsage("setdisplay", Arrays.asList(
+            new ArgumentLabel("name", true),
+            new ArgumentLabel("display_name", true)
         )));
     }
 
@@ -64,9 +77,16 @@ public class AttributeAdmin {
             case "addnum":
                 return handleAdd(AttributeType.Number, sender, splicedArgs);
             case "addselect":
+            case "addsel":
                 return handleAdd(AttributeType.Select, sender, splicedArgs);
             case "remove":
+            case "rm":
                 return handleRemove(sender, splicedArgs);
+            case "setdefault":
+            case "setdef":
+                return handleSetDefault(sender, StringUtils.splice(args, 1));
+            case "setdisplay":
+                return handleSetDisplay(sender, StringUtils.splice(args, 1));
             default:
                 return false;
         }
@@ -107,14 +127,9 @@ public class AttributeAdmin {
             displayName = args[2];
         }
 
-        attributeRepo.createAttributeAsync(name, type, displayName, defaultValue, r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                sender.sendMessage(ChatColor.RED + err.get());
-            } else {
-                sender.sendMessage(ChatColor.GREEN + "Attribute added");
-            }
-        });
+        attributeRepo.createAttributeAsync(name, type, displayName, defaultValue, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Attribute added"))
+        );
 
         return true;
     }
@@ -126,13 +141,38 @@ public class AttributeAdmin {
 
         String name = args[0];
 
-        attributeRepo.removeAttributeAsync(name, r -> {
-            Optional<String> err = r.getError();
-            if (err.isPresent()) {
-                sender.sendMessage(ChatColor.RED + err.get());
-            } else {
-                sender.sendMessage(ChatColor.GREEN + "Attribute removed");
-            }
+        attributeRepo.removeAttributeAsync(name, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Attribute removed"))
+        );
+
+        return true;
+    }
+
+    private boolean handleSetDefault(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            return false;
+        }
+
+        String name = args[0];
+        String defaultValue = args[1];
+
+        attributeRepo.setDefaultAsync(name, defaultValue, r ->
+            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
+        );
+
+        return true;
+    }
+
+    private boolean handleSetDisplay(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            return false;
+        }
+
+        String name = args[0];
+        String display = args[1];
+
+        attributeRepo.setDisplayAsync(name, display, r -> {
+            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"));
         });
 
         return true;

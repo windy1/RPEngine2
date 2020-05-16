@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
@@ -25,11 +26,17 @@ public class CardCommand implements CommandExecutor {
 
     private final RpPlayerRepo playerRepo;
     private final SelectRepo selectRepo;
+    private final AttributeRepo attributeRepo;
 
     @Inject
-    public CardCommand(RpPlayerRepo playerRepo, SelectRepo selectRepo) {
+    public CardCommand(
+        RpPlayerRepo playerRepo,
+        SelectRepo selectRepo,
+        AttributeRepo attributeRepo
+    ) {
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.selectRepo = Objects.requireNonNull(selectRepo);
+        this.attributeRepo = Objects.requireNonNull(attributeRepo);
     }
 
     @Override
@@ -50,8 +57,15 @@ public class CardCommand implements CommandExecutor {
         sender.sendMessage(String.format(HEADER, sender.getName()));
         sender.sendMessage(SUB_HEADER);
 
+        //noinspection OptionalGetWithoutIsPresent
         player.get().getAttributes().stream()
-            .map(a -> AttributeLabel.from(a, selectRepo))
+            .map(a ->
+                AttributeLabel.from(
+                    a,
+                    attributeRepo.getAttribute(a.getName()).get().getDisplay(),
+                    selectRepo
+                )
+            )
             .forEach(a -> sender.spigot().sendMessage(a.toTextComponent()));
 
         return true;
