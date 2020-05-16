@@ -13,7 +13,9 @@ public class ColorListCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         sender.sendMessage(HEADER);
         for (ChatColor color : ChatColor.values()) {
-            sender.sendMessage(ChatColor.BLUE + "# " + color + color.name().toLowerCase());
+            String line =
+                ChatColor.BLUE + "# " + ChatColor.RESET + color + color.name().toLowerCase();
+            sender.sendMessage(line);
         }
         return true;
     }

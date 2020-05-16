@@ -27,7 +27,7 @@ public class Defaults {
                 "Caste", "Serf", "Serf", ChatColor.GRAY
             );
             selectRepo.createOption(
-                "Caste", "Brother", "Brother", ChatColor.GRAY
+                "Caste", "Brother", "Brother", ChatColor.BLUE
             );
             selectRepo.createOption(
                 "Caste", "Acolyte", "Acolyte", ChatColor.GREEN
