@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
+import tv.twitch.moonmoon.rpengine2.chat.cmd.ChatCommands;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 
@@ -19,6 +20,7 @@ public class ChatImpl implements Chat {
     private final JavaPlugin plugin;
     private final RpPlayerRepo playerRepo;
     private final ChatListener listener;
+    private final ChatCommands commands;
     private final Logger log;
 
     private final Map<String, ChatChannel> channels = new HashMap<>();
@@ -28,10 +30,16 @@ public class ChatImpl implements Chat {
     private int birdSpeed;
 
     @Inject
-    public ChatImpl(JavaPlugin plugin, RpPlayerRepo playerRepo, ChatListener listener) {
+    public ChatImpl(
+        JavaPlugin plugin,
+        RpPlayerRepo playerRepo,
+        ChatListener listener,
+        ChatCommands commands
+    ) {
         this.plugin = Objects.requireNonNull(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.listener = Objects.requireNonNull(listener);
+        this.commands = Objects.requireNonNull(commands);
         log = plugin.getLogger();
     }
 
@@ -58,6 +66,7 @@ public class ChatImpl implements Chat {
 
     @Override
     public void load() {
+        commands.register();
         Bukkit.getPluginManager().registerEvents(listener, plugin);
 
         ConfigurationSection c = plugin.getConfig().getConfigurationSection("chat");

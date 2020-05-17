@@ -9,7 +9,7 @@ public final class RpEngine2 extends JavaPlugin {
     @Override
     public void onEnable() {
         Guice.createInjector(new CoreModule(this))
-            .getInstance(Bootstrap.class)
+            .getInstance(Engine.class)
             .init();
     }
 

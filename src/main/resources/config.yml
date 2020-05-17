@@ -1,3 +1,4 @@
+# Core module
 commands:
   rpengine: true
   card: true
@@ -5,6 +6,7 @@ commands:
   cardselect: true
   colorlist: true
 
+# Chat module
 chat:
   enabled: true
   whisperRange: 5
@@ -19,3 +21,6 @@ chat:
     ooc:
       enabled: true
       prefix: '[OOC]'
+
+  commands:
+    channel: true

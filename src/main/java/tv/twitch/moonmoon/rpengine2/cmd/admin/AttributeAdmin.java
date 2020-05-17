@@ -164,7 +164,7 @@ public class AttributeAdmin {
         }
 
         attributeRepo.createAttributeAsync(name, type, displayName, defaultValue, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Attribute added"))
+            sender.sendMessage(Commands.mapResult(r, "Attribute added"))
         );
 
         return true;
@@ -178,7 +178,7 @@ public class AttributeAdmin {
         String name = args[0];
 
         attributeRepo.removeAttributeAsync(name, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Attribute removed"))
+            sender.sendMessage(Commands.mapResult(r, "Attribute removed"))
         );
 
         return true;
@@ -193,7 +193,7 @@ public class AttributeAdmin {
         String defaultValue = args[1];
 
         attributeRepo.setDefaultAsync(name, defaultValue, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
+            sender.sendMessage(Commands.mapResult(r, "Attribute updated"))
         );
 
         return true;
@@ -208,7 +208,7 @@ public class AttributeAdmin {
         String display = args[1];
 
         attributeRepo.setDisplayAsync(name, display, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
+            sender.sendMessage(Commands.mapResult(r, "Attribute updated"))
         );
 
         return true;
@@ -223,7 +223,7 @@ public class AttributeAdmin {
         String formatString = String.join(" ", StringUtils.splice(args, 1));
 
         attributeRepo.setFormatAsync(name, formatString, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
+            sender.sendMessage(Commands.mapResult(r, "Attribute updated"))
         );
 
         return true;
@@ -237,7 +237,7 @@ public class AttributeAdmin {
         String name = args[0];
 
         attributeRepo.setIdentityAsync(name, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
+            sender.sendMessage(Commands.mapResult(r, "Attribute updated"))
         );
 
         return true;
@@ -245,7 +245,7 @@ public class AttributeAdmin {
 
     private boolean handleClearIdentity(CommandSender sender) {
         attributeRepo.clearIdentityAsync(r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Identity cleared"))
+            sender.sendMessage(Commands.mapResult(r, "Identity cleared"))
         );
         return true;
     }
@@ -258,7 +258,7 @@ public class AttributeAdmin {
         String name = args[0];
 
         attributeRepo.setMarkerAsync(name, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Attribute updated"))
+            sender.sendMessage(Commands.mapResult(r, "Attribute updated"))
         );
 
         return true;
@@ -266,7 +266,7 @@ public class AttributeAdmin {
 
     private boolean handleClearMarker(CommandSender sender) {
         attributeRepo.clearMarkerAsync(r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Marker cleared"))
+            sender.sendMessage(Commands.mapResult(r, "Marker cleared"))
         );
         return true;
     }

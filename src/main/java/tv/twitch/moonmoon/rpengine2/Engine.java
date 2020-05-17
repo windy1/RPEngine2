@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
-import tv.twitch.moonmoon.rpengine2.cmd.Commands;
+import tv.twitch.moonmoon.rpengine2.cmd.CoreCommands;
 import tv.twitch.moonmoon.rpengine2.data.DataManager;
 
 import javax.inject.Inject;
@@ -14,20 +14,20 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 @Singleton
-public class Bootstrap {
+public class Engine {
 
     private final JavaPlugin plugin;
     private final CoreListener listener;
-    private final Commands commands;
+    private final CoreCommands commands;
     private final DataManager dataManager;
     private final Chat chat;
     private final Logger log;
 
     @Inject
-    public Bootstrap(
+    public Engine(
         JavaPlugin plugin,
         CoreListener listener,
-        Commands commands,
+        CoreCommands commands,
         DataManager dataManager,
         Optional<Chat> chat
     ) {

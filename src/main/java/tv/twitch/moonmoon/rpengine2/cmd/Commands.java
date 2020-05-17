@@ -2,46 +2,27 @@ package tv.twitch.moonmoon.rpengine2.cmd;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
-import tv.twitch.moonmoon.rpengine2.cmd.admin.AdminCommand;
-import tv.twitch.moonmoon.rpengine2.cmd.card.CardCommand;
-import tv.twitch.moonmoon.rpengine2.cmd.card.CardSelectCommand;
-import tv.twitch.moonmoon.rpengine2.cmd.card.CardSetCommand;
-import tv.twitch.moonmoon.rpengine2.cmd.help.ColorListCommand;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
-import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Commands {
+public interface Commands {
 
-    private final JavaPlugin plugin;
-    private final Map<String, CommandExecutor> executors = new HashMap<>();
+    Map<String, CommandExecutor> getExecutors();
 
-    @Inject
-    public Commands(
-        JavaPlugin plugin,
-        AdminCommand adminCommand,
-        CardCommand cardCommand,
-        CardSetCommand cardSetCommand,
-        CardSelectCommand cardSelectCommand,
-        ColorListCommand colorListCommand
-    ) {
-        this.plugin = Objects.requireNonNull(plugin);
-        executors.put("rpengine", adminCommand);
-        executors.put("card", cardCommand);
-        executors.put("cardset", cardSetCommand);
-        executors.put("cardselect", cardSelectCommand);
-        executors.put("colorlist", colorListCommand);
-    }
+    JavaPlugin getPlugin();
 
-    public void register() {
+    String getConfigPath();
+
+    default void register() {
+        JavaPlugin plugin = getPlugin();
+        Map<String, CommandExecutor> executors = getExecutors();
+
         ConfigurationSection commandConfig = plugin.getConfig()
-            .getConfigurationSection("commands");
+            .getConfigurationSection(getConfigPath());
 
         if (commandConfig == null) {
             return;
@@ -55,7 +36,7 @@ public class Commands {
         }
     }
 
-    public static <T> String mapResult(Result<T> r, CommandSender sender, String success) {
+    static <T> String mapResult(Result<T> r, String success) {
         return r.getError()
             .map(e -> ChatColor.RED + e)
             .orElseGet(() -> ChatColor.GREEN + success);

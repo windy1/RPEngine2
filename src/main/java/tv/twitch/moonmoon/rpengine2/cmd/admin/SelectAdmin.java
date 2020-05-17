@@ -84,7 +84,7 @@ public class SelectAdmin {
         String name = args[0];
 
         selectRepo.createSelectAsync(name, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Select created"))
+            sender.sendMessage(Commands.mapResult(r, "Select created"))
         );
 
         return true;
@@ -98,7 +98,7 @@ public class SelectAdmin {
         String name = args[0];
 
         selectRepo.removeSelectAsync(name, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Select removed"))
+            sender.sendMessage(Commands.mapResult(r, "Select removed"))
         );
 
         return true;
@@ -127,7 +127,7 @@ public class SelectAdmin {
         }
 
         selectRepo.createOptionAsync(selectName, name, displayName, color, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Option created"))
+            sender.sendMessage(Commands.mapResult(r, "Option created"))
         );
 
         return true;
@@ -142,7 +142,7 @@ public class SelectAdmin {
         String name = args[1];
 
         selectRepo.removeOptionAsync(selectName, name, r ->
-            sender.sendMessage(Commands.mapResult(r, sender, "Option removed"))
+            sender.sendMessage(Commands.mapResult(r, "Option removed"))
         );
 
         return true;
