@@ -1,5 +1,9 @@
 package tv.twitch.moonmoon.rpengine2.model.player;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
+
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
@@ -13,12 +17,15 @@ public class RpPlayer {
     private final UUID uuid;
     private final Map<Integer, RpPlayerAttribute> attributes;
 
+    private final ChatChannel chatChannel;
+
     public RpPlayer(
         int id,
         Instant created,
         String username,
         UUID uuid,
-        Set<RpPlayerAttribute> attributes
+        Set<RpPlayerAttribute> attributes,
+        ChatChannel chatChannel
     ) {
         this.id = id;
         this.created = Objects.requireNonNull(created);
@@ -26,6 +33,7 @@ public class RpPlayer {
         this.uuid = Objects.requireNonNull(uuid);
         this.attributes = Objects.requireNonNull(attributes).stream()
             .collect(Collectors.toMap(RpPlayerAttribute::getAttributeId, Function.identity()));
+        this.chatChannel = chatChannel;
     }
 
     public int getId() {
@@ -52,6 +60,14 @@ public class RpPlayer {
         return Optional.ofNullable(attributes.get(attributeId));
     }
 
+    public Optional<ChatChannel> getChatChannel() {
+        return Optional.ofNullable(chatChannel);
+    }
+
+    public Optional<Player> getPlayer() {
+        return Optional.ofNullable(Bukkit.getPlayer(uuid));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,12 +77,13 @@ public class RpPlayer {
             Objects.equals(created, rpPlayer.created) &&
             Objects.equals(username, rpPlayer.username) &&
             Objects.equals(uuid, rpPlayer.uuid) &&
-            Objects.equals(attributes, rpPlayer.attributes);
+            Objects.equals(attributes, rpPlayer.attributes) &&
+            Objects.equals(chatChannel, rpPlayer.chatChannel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid);
+        return Objects.hash(username, uuid);
     }
 
     @Override
@@ -77,6 +94,7 @@ public class RpPlayer {
             ", username='" + username + '\'' +
             ", uuid=" + uuid +
             ", attributes=" + attributes +
+            ", chatChannel=" + chatChannel +
             '}';
     }
 }

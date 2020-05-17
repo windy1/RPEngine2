@@ -4,3 +4,17 @@ commands:
   cardset: true
   cardselect: true
   colorlist: true
+
+chat:
+  enabled: true
+  whisperRange: 5
+  shoutRange: 50
+  birdSpeed: 20 # blocks per second
+  defaultChannel: rp
+  channels:
+    rp:
+      enabled: true
+      range: 35
+    ooc:
+      enabled: true
+      prefix: '[OOC]'

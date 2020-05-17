@@ -1,6 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.data.player;
 
 import org.bukkit.OfflinePlayer;
+import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.data.Repo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
@@ -17,7 +18,7 @@ public interface RpPlayerRepo extends Repo {
 
     Optional<RpPlayer> getPlayer(String name);
 
-    Optional<String> getIdentity(RpPlayer player);
+    String getIdentity(RpPlayer player);
 
     void setAttributeAsync(
         RpPlayer player,
@@ -30,7 +31,6 @@ public interface RpPlayerRepo extends Repo {
 
     Result<Void> reloadPlayers();
 
-    void handlePlayerJoined(OfflinePlayer player);
+    void setChatChannelAsync(RpPlayer player, ChatChannel channel, Callback<Void> callback);
 
-    void flushJoinedPlayers();
 }

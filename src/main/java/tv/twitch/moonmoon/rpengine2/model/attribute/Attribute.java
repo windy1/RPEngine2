@@ -14,6 +14,7 @@ public class Attribute {
     private final Object defaultValue;
     private final String formatString;
     private final boolean identity;
+    private final boolean marker;
 
     public Attribute(
         int id,
@@ -23,7 +24,8 @@ public class Attribute {
         AttributeType type,
         Object defaultValue,
         String formatString,
-        boolean identity
+        boolean identity,
+        boolean marker
     ) {
         this.id = id;
         this.created = Objects.requireNonNull(created);
@@ -33,6 +35,7 @@ public class Attribute {
         this.defaultValue = defaultValue;
         this.formatString = formatString;
         this.identity = identity;
+        this.marker = marker;
     }
 
     public int getId() {
@@ -67,6 +70,10 @@ public class Attribute {
         return identity;
     }
 
+    public boolean isMarker() {
+        return marker;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -74,6 +81,7 @@ public class Attribute {
         Attribute attribute = (Attribute) o;
         return id == attribute.id &&
             identity == attribute.identity &&
+            marker == attribute.marker &&
             Objects.equals(created, attribute.created) &&
             Objects.equals(name, attribute.name) &&
             Objects.equals(display, attribute.display) &&
@@ -98,6 +106,7 @@ public class Attribute {
             ", defaultValue=" + defaultValue +
             ", formatString='" + formatString + '\'' +
             ", identity=" + identity +
+            ", marker=" + marker +
             '}';
     }
 }

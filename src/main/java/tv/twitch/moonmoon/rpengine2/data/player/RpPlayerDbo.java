@@ -3,6 +3,8 @@ package tv.twitch.moonmoon.rpengine2.data.player;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
+import tv.twitch.moonmoon.rpengine2.chat.Chat;
+import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
@@ -24,16 +26,18 @@ public class RpPlayerDbo {
     private final Plugin plugin;
     private final RpDb db;
     private final Logger log;
+    private final Chat chat;
 
     @Inject
-    public RpPlayerDbo(Plugin plugin, RpDb db) {
+    public RpPlayerDbo(Plugin plugin, RpDb db, Optional<Chat> chat) {
         this.plugin = Objects.requireNonNull(plugin);
         this.db = Objects.requireNonNull(db);
+        this.chat = chat.orElse(null);
         log = plugin.getLogger();
     }
 
     public Result<Set<RpPlayer>> selectPlayers() {
-        final String query = "SELECT id, created, username, uuid FROM rp_player";
+        final String query = "SELECT id, created, username, uuid, chat_channel FROM rp_player";
 
         Set<RpPlayer> players = new HashSet<>();
 
@@ -80,7 +84,8 @@ public class RpPlayerDbo {
     }
 
     public Result<RpPlayer> selectPlayer(UUID playerId) {
-        final String query = "SELECT id, created, username, uuid FROM rp_player WHERE uuid = ?";
+        final String query =
+            "SELECT id, created, username, uuid, chat_channel FROM rp_player WHERE uuid = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
             stmt.setString(1, playerId.toString());
@@ -149,6 +154,28 @@ public class RpPlayerDbo {
         );
     }
 
+    public void updateChatChannelAsync(int playerId, String channelName, Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(updateChatChannel(playerId, channelName))
+        );
+    }
+
+    private Result<Void> updateChatChannel(int playerId, String channelName) {
+        final String query = "UPDATE rp_player SET chat_channel = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setString(1, channelName);
+            stmt.setInt(2, playerId);
+
+            stmt.executeUpdate();
+
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error updating player chat channel: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
     private Result<Void> deletePlayerAttributes(int attributeId) {
         final String query = "DELETE FROM rp_player_attribute WHERE attribute_id = ?";
 
@@ -177,12 +204,18 @@ public class RpPlayerDbo {
             attributes = attributesResult.get();
         }
 
+        ChatChannel channel = null;
+        if (chat != null) {
+            channel = chat.getChannel(results.getString("chat_channel")).orElse(null);
+        }
+
         return new RpPlayer(
             playerId,
             Instant.parse(results.getString("created")),
             results.getString("username"),
             UUID.fromString(results.getString("uuid")),
-            attributes
+            attributes,
+            channel
         );
     }
 

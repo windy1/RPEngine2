@@ -19,13 +19,14 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class AttributeRepoImpl implements AttributeRepo {
-    
+
     private final AttributeDbo attributeDbo;
     private final RpPlayerRepo playerRepo;
     private final SelectRepo selectRepo;
     private final Logger log;
     private Map<String, Attribute> attributes;
     private Attribute identity;
+    private Attribute marker;
 
     @Inject
     public AttributeRepoImpl(
@@ -53,6 +54,11 @@ public class AttributeRepoImpl implements AttributeRepo {
     @Override
     public Optional<Attribute> getIdentity() {
         return Optional.ofNullable(identity);
+    }
+
+    @Override
+    public Optional<Attribute> getMarker() {
+        return Optional.ofNullable(marker);
     }
 
     @Override
@@ -269,14 +275,6 @@ public class AttributeRepoImpl implements AttributeRepo {
         }
     }
 
-    private Optional<String> checkIdent(Attribute attribute) {
-        if (attribute.getType() != AttributeType.String) {
-            String message = "The identity attribute may only be on attributes of type: string";
-            return Optional.of(message);
-        }
-        return Optional.empty();
-    }
-
     @Override
     public void clearIdentityAsync(Callback<Void> callback) {
         attributeDbo.clearIdentityAsync(r -> {
@@ -290,20 +288,81 @@ public class AttributeRepoImpl implements AttributeRepo {
         });
     }
 
-    private Result<Void> handleIdentityUpdate(Result<Void> r) {
-        Optional<String> err = handleResult(() -> r).getError();
+    @Override
+    public void setMarkerAsync(String name, Callback<Void> callback) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            callback.accept(Result.error("Attribute not found"));
+            return;
+        }
+
+        Optional<String> err = checkMarker(attribute);
         if (err.isPresent()) {
-            return Result.error(err.get());
+            callback.accept(Result.error(err.get()));
+            return;
         }
 
-        if (identity != null) {
-            err = reloadAttribute(identity.getName()).getError();
-            if (err.isPresent()) {
-                return Result.error(err.get());
+        attributeDbo.setMarkerAsync(attribute.getId(), r -> {
+            Optional<String> update = handleMarkerUpdate(r).getError();
+            if (update.isPresent()) {
+                callback.accept(Result.error(update.get()));
+                return;
             }
+
+            Result<Attribute> newMarker = reloadAttribute(name);
+
+            update = newMarker.getError();
+            if (update.isPresent()) {
+                callback.accept(Result.error(update.get()));
+            } else {
+                marker = newMarker.get();
+                callback.accept(Result.ok(null));
+            }
+        });
+    }
+
+    @Override
+    public void setMarker(String name) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            return;
         }
 
-        return Result.ok(null);
+        Optional<String> check = checkMarker(attribute);
+        if (check.isPresent()) {
+            return;
+        }
+
+        Result<Void> update = attributeDbo.setMarker(attribute.getId());
+
+        Optional<String> err = handleMarkerUpdate(update).getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+            return;
+        }
+
+        Result<Attribute> newMarker = reloadAttribute(name);
+
+        err = newMarker.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+        } else {
+            marker = newMarker.get();
+        }
+
+    }
+
+    @Override
+    public void clearMarkerAsync(Callback<Void> callback) {
+        attributeDbo.clearMarkerAsync(r -> {
+            Optional<String> err = handleMarkerUpdate(r).getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+            } else {
+                marker = null;
+                callback.accept(Result.ok(null));
+            }
+        });
     }
 
     @Override
@@ -319,6 +378,11 @@ public class AttributeRepoImpl implements AttributeRepo {
 
             identity = attributes.values().stream()
                 .filter(Attribute::isIdentity)
+                .findFirst()
+                .orElse(null);
+
+            marker = attributes.values().stream()
+                .filter(Attribute::isMarker)
                 .findFirst()
                 .orElse(null);
 
@@ -393,13 +457,59 @@ public class AttributeRepoImpl implements AttributeRepo {
         }
 
         // add new attribute to each player
-        playerRepo.flushJoinedPlayers();
-
         for (RpPlayer player : playerRepo.getPlayers()) {
             // TODO: bad
             playerRepo.setAttributeAsync(player, (int) attributeId, def, s ->
                 s.getError().ifPresent(log::warning)
             );
+        }
+
+        return Result.ok(null);
+    }
+
+    private Optional<String> checkIdent(Attribute attribute) {
+        if (attribute.getType() != AttributeType.String) {
+            String message = "The identity attribute may only be on attributes of type: string";
+            return Optional.of(message);
+        }
+        return Optional.empty();
+    }
+
+    private Optional<String> checkMarker(Attribute attribute) {
+        if (attribute.getType() != AttributeType.Select) {
+            String message = "The marker attribute may only be on attributes of type: select";
+            return Optional.of(message);
+        }
+        return Optional.empty();
+    }
+
+    private Result<Void> handleIdentityUpdate(Result<Void> r) {
+        Optional<String> err = handleResult(() -> r).getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        if (identity != null) {
+            err = reloadAttribute(identity.getName()).getError();
+            if (err.isPresent()) {
+                return Result.error(err.get());
+            }
+        }
+
+        return Result.ok(null);
+    }
+
+    private Result<Void> handleMarkerUpdate(Result<Void> r) {
+        Optional<String> err = handleResult(() -> r).getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        if (marker != null) {
+            err = reloadAttribute(marker.getName()).getError();
+            if (err.isPresent()) {
+                return Result.error(err.get());
+            }
         }
 
         return Result.ok(null);

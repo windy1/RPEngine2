@@ -55,7 +55,8 @@ public class AttributeDbo {
                 "type, " +
                 "default_value, " +
                 "format, " +
-                "identity " +
+                "identity," +
+                "marker  " +
             "FROM rp_attribute " +
             "WHERE name = ?";
 
@@ -138,7 +139,8 @@ public class AttributeDbo {
                 "type, " +
                 "default_value, " +
                 "format, " +
-                "identity " +
+                "identity," +
+                "marker  " +
             "FROM rp_attribute";
 
         Set<Attribute> attributes = new HashSet<>();
@@ -200,6 +202,46 @@ public class AttributeDbo {
             return Result.ok(null);
         } catch (SQLException e) {
             String message = "error setting identity attribute: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    public void setMarkerAsync(int attributeId, Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(setMarker(attributeId))
+        );
+    }
+
+    public Result<Void> setMarker(int attributeId) {
+        Optional<String> err = clearMarker().getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        final String query = "UPDATE rp_attribute SET marker = 1 WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, attributeId);
+            stmt.executeUpdate();
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error setting marker attribute: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    public void clearMarkerAsync(Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> callback.accept(clearMarker()));
+    }
+
+    private Result<Void> clearMarker() {
+        final String query = "UPDATE rp_attribute SET marker = 0";
+
+        try (Statement stmt = db.getConnection().createStatement()) {
+            stmt.executeUpdate(query);
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error clearing marker: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }
@@ -296,7 +338,8 @@ public class AttributeDbo {
             type,
             defaultValue,
             results.getString("format"),
-            results.getInt("identity") > 0
+            results.getInt("identity") > 0,
+            results.getInt("marker") > 0
         );
     }
 }

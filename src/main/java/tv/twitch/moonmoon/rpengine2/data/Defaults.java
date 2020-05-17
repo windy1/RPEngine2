@@ -39,6 +39,8 @@ public class Defaults {
                 "Caste", AttributeType.Select, "Caste", "Serf"
             );
 
+            attributeRepo.setMarker("Caste");
+
             attributeRepo.createAttribute(
                 "Name", AttributeType.String, "Name", null
             );

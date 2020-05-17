@@ -2,19 +2,20 @@ package tv.twitch.moonmoon.rpengine2.data.player;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
+import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
+import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
+import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -22,22 +23,24 @@ import java.util.stream.Collectors;
 @Singleton
 public class RpPlayerRepoImpl implements RpPlayerRepo {
 
-    private final Plugin plugin;
     private final RpPlayerDbo playerDbo;
     private final AttributeRepo attributeRepo;
+    private final SelectRepo selectRepo;
     private final Logger log;
-    private final Queue<OfflinePlayer> joinedPlayers = new ConcurrentLinkedQueue<>();
 
     private Map<String, RpPlayer> players;
     private Map<String, RpPlayer> playerNameMap;
-    private BukkitTask joinedPlayersWatcher;
 
     @Inject
-    public RpPlayerRepoImpl(Plugin plugin, RpPlayerDbo playerDbo, AttributeRepo attributeRepo) {
-        this.plugin = Objects.requireNonNull(plugin);
+    public RpPlayerRepoImpl(
+        RpPlayerDbo playerDbo,
+        AttributeRepo attributeRepo,
+        SelectRepo selectRepo, @PluginLogger Logger log
+    ) {
         this.playerDbo = Objects.requireNonNull(playerDbo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
-        log = plugin.getLogger();
+        this.selectRepo = Objects.requireNonNull(selectRepo);
+        this.log = Objects.requireNonNull(log);
     }
 
     @Override
@@ -59,10 +62,13 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     }
 
     @Override
-    public Optional<String> getIdentity(RpPlayer player) {
+    public String getIdentity(RpPlayer player) {
+        String prefix = getMarkerColor(player).map(ChatColor::toString).orElse("");
         return attributeRepo.getIdentity()
             .flatMap(i -> player.getAttribute(i.getId()))
-            .flatMap(i -> i.getValue().map(Object::toString));
+            .flatMap(i -> i.getValue().map(Object::toString))
+            .map(i ->  prefix + i)
+            .orElseGet(() -> prefix + player.getUsername());
     }
 
     @Override
@@ -102,7 +108,6 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
             return Result.error(err.get());
         } else {
             onLoad(r.get());
-            startJoinedPlayersWatcher();
             return Result.ok(null);
         }
     }
@@ -121,18 +126,10 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     }
 
     @Override
-    public void handlePlayerJoined(OfflinePlayer player) {
-        joinedPlayers.add(player);
-    }
-
-    @Override
-    public void flushJoinedPlayers() {
-        synchronized (joinedPlayers) {
-            while (!joinedPlayers.isEmpty()) {
-                createPlayer(joinedPlayers.poll()).getError()
-                    .ifPresent(log::info);
-            }
-        }
+    public void setChatChannelAsync(RpPlayer player, ChatChannel channel, Callback<Void> callback) {
+        playerDbo.updateChatChannelAsync(player.getId(), channel.getName(), r ->
+            handleResult(() -> r)
+        );
     }
 
     private Result<RpPlayer> createPlayer(OfflinePlayer player) {
@@ -191,14 +188,6 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
         playerNameMap.put(player.getUsername(), player);
     }
 
-    private void startJoinedPlayersWatcher() {
-        joinedPlayersWatcher = Bukkit.getScheduler().runTaskTimerAsynchronously(
-            plugin,
-            this::flushJoinedPlayers,
-            0, 20
-        );
-    }
-
     private Result<RpPlayer> reloadPlayer(UUID playerId) {
         Result<RpPlayer> updatedPlayer = playerDbo.selectPlayer(playerId);
 
@@ -220,16 +209,26 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
             .collect(Collectors.toMap(RpPlayer::getUsername, Function.identity())));
     }
 
-    @Override
-    public Logger getLogger() {
-        return log;
+    private Optional<ChatColor> getMarkerColor(RpPlayer player) {
+        RpPlayerAttribute marker = attributeRepo.getMarker()
+            .flatMap(m -> player.getAttribute(m.getId()))
+            .orElse(null);
+
+        if (marker == null) {
+            return Optional.empty();
+        }
+
+        String selectName = marker.getName();
+        //noinspection OptionalGetWithoutIsPresent
+        int optionId = (Integer) marker.getValue().get();
+
+        return selectRepo.getSelect(selectName)
+            .flatMap(select -> select.getOption(optionId))
+            .flatMap(Option::getColor);
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        if (joinedPlayersWatcher != null && !joinedPlayersWatcher.isCancelled()) {
-            joinedPlayersWatcher.cancel();
-        }
+    public Logger getLogger() {
+        return log;
     }
 }

@@ -49,7 +49,6 @@ public class CardCommand implements CommandExecutor {
 
         Result<RpPlayer> p = playerRepo.getPlayer((Player) sender);
         RpPlayer player;
-        String displayName;
 
         Optional<String> err = p.getError();
         if (err.isPresent()) {
@@ -58,8 +57,7 @@ public class CardCommand implements CommandExecutor {
         }
         player = p.get();
 
-        displayName = playerRepo.getIdentity(player).orElse(sender.getName());
-        sender.sendMessage(String.format(HEADER, displayName));
+        sender.sendMessage(String.format(HEADER, playerRepo.getIdentity(player)));
         sender.sendMessage(SUB_HEADER);
 
         player.getAttributes().stream()
