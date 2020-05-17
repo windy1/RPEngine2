@@ -25,10 +25,6 @@ public interface ChannelProxyCommand extends CommandExecutor {
     String getChannelName();
 
     default boolean handle(CommandSender sender, String[] args) {
-        if (args.length == 0) {
-            return false;
-        }
-
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
             return true;
@@ -36,7 +32,7 @@ public interface ChannelProxyCommand extends CommandExecutor {
 
         Chat chat = getChat();
         RpPlayerRepo playerRepo = getPlayerRepo();
-        ChatChannel whisperChannel = chat.getChannel(getChannelName()).orElse(null);
+        ChatChannel channel = chat.getChannel(getChannelName()).orElse(null);
         Result<RpPlayer> p = playerRepo.getPlayer((Player) sender);
 
         Optional<String> err = p.getError();
@@ -45,16 +41,15 @@ public interface ChannelProxyCommand extends CommandExecutor {
             return true;
         }
 
-        if (whisperChannel == null) {
+        if (channel == null) {
             sender.sendMessage(getNotConfiguredMessage());
             return true;
         }
 
-        String message = String.join(" ", args);
-        chat.sendMessage(p.get(), whisperChannel, message);
-
-        return true;
+        return onSuccess(p.get(), channel, sender, args);
     }
+
+    boolean onSuccess(RpPlayer player, ChatChannel channel, CommandSender sender, String[] args);
 
     @Override
     default boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

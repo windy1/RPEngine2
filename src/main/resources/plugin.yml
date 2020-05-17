@@ -44,3 +44,15 @@ commands:
     description: A delayed message determined by the distance between players
     usage: /bird <player> <message>
     permission: rpengine.bird
+  ooc:
+    description: Alias for /channel join ooc (legacy)
+    usage: /ooc
+    permission: rpengine.ooc
+  rp:
+    description: Alias for /channel join rp (legacy)
+    usage: /rp
+    permission: rpengine.rp
+  toggleooc:
+    description: Alias for /channel mute ooc (legacy)
+    usage: /toggleooc
+    permission: rpengine.toggleooc

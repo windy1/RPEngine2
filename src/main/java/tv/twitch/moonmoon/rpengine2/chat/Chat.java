@@ -1,5 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.chat;
 
+import org.bukkit.command.CommandSender;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
@@ -25,4 +26,6 @@ public interface Chat {
     void handlePlayerJoined(RpPlayer player);
 
     void setChatChannelAsync(RpPlayer player, ChatChannel channel);
+
+    void toggleMutedAsync(RpPlayer player, ChatChannel channel, CommandSender sender);
 }

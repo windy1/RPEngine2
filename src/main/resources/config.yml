@@ -32,3 +32,6 @@ chat:
     whisper: true
     shout: true
     bird: true
+    rp: true
+    ooc: true
+    toggleooc: true

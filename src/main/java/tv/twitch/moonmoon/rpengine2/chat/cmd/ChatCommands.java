@@ -2,8 +2,7 @@ package tv.twitch.moonmoon.rpengine2.chat.cmd;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
-import tv.twitch.moonmoon.rpengine2.chat.cmd.proxy.ShoutCommand;
-import tv.twitch.moonmoon.rpengine2.chat.cmd.proxy.WhisperCommand;
+import tv.twitch.moonmoon.rpengine2.chat.cmd.proxy.*;
 import tv.twitch.moonmoon.rpengine2.cmd.Commands;
 
 import javax.inject.Inject;
@@ -22,13 +21,19 @@ public class ChatCommands implements Commands {
         ChannelCommand channelCommand,
         BirdCommand birdCommand,
         ShoutCommand shoutCommand,
-        WhisperCommand whisperCommand
+        WhisperCommand whisperCommand,
+        OocCommand oocCommand,
+        RpCommand rpCommand,
+        ToggleOocCommand toggleOocCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("channel", channelCommand);
         executors.put("bird", birdCommand);
         executors.put("shout", shoutCommand);
         executors.put("whisper", whisperCommand);
+        executors.put("ooc", oocCommand);
+        executors.put("rp", rpCommand);
+        executors.put("toggleooc", toggleOocCommand);
     }
 
     @Override

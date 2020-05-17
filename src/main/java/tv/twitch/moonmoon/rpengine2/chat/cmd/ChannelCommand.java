@@ -137,16 +137,8 @@ public class ChannelCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "Channel not found");
             return true;
         }
-        
-        channelConfigRepo.toggleMutedAsync(player, channel, r -> {
-            Optional<String> toggleErr = r.getError();
-            if (toggleErr.isPresent()) {
-                sender.sendMessage(ChatColor.RED + toggleErr.get());
-            } else {
-                String message = ChatColor.GREEN + (r.get() ? "Muted " : "Unmuted ") + channelName;
-                sender.sendMessage(message);
-            }
-        });
+
+        chat.toggleMutedAsync(player, channel, sender);
 
         return true;
     }

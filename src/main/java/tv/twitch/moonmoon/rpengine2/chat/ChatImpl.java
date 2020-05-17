@@ -2,6 +2,7 @@ package tv.twitch.moonmoon.rpengine2.chat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -97,6 +98,8 @@ public class ChatImpl implements Chat {
         Objects.requireNonNull(channel);
         Objects.requireNonNull(message);
 
+        Bukkit.getConsoleSender().sendMessage(str);
+
         for (RpPlayer p : playerRepo.getPlayers()) {
             Result<ChatChannelConfig> c = channelConfigRepo.getConfig(p, channel);
 
@@ -189,11 +192,31 @@ public class ChatImpl implements Chat {
                 log.warning(err.get());
             } else {
                 player.getPlayer().ifPresent(p -> {
+                    String permission = channel.getPermission().orElse(null);
+                    if (permission != null && !p.hasPermission(permission)) {
+                        p.sendMessage(ChatColor.RED + "No permission");
+                        return;
+                    }
+
                     String message = "%s%sYou are now chatting in [%s]";
                     p.sendMessage(String.format(
                         message, ChatColor.GRAY, ChatColor.ITALIC, channel.getName()
                     ));
                 });
+            }
+        });
+    }
+
+    @Override
+    public void toggleMutedAsync(RpPlayer player, ChatChannel channel, CommandSender sender) {
+        channelConfigRepo.toggleMutedAsync(player, channel, r -> {
+            Optional<String> toggleErr = r.getError();
+            if (toggleErr.isPresent()) {
+                sender.sendMessage(ChatColor.RED + toggleErr.get());
+            } else {
+                String message = ChatColor.GREEN + (r.get() ? "Muted " : "Unmuted ") +
+                    channel.getName();
+                sender.sendMessage(message);
             }
         });
     }

@@ -66,6 +66,11 @@ public class BirdCommand implements CommandExecutor {
             return true;
         }
 
+        if (target.getUniqueId().equals(player.getUniqueId())) {
+            sender.sendMessage(ChatColor.RED + "You cannot send a bird to yourself");
+            return true;
+        }
+
         int paperIndex = inv.first(Material.PAPER);
         if (paperIndex == -1) {
             sender.sendMessage(
@@ -78,11 +83,6 @@ public class BirdCommand implements CommandExecutor {
             if (paper != null) {
                 paper.setAmount(paper.getAmount() - 1);
             }
-        }
-
-        if (target.getUniqueId().equals(player.getUniqueId())) {
-            sender.sendMessage(ChatColor.RED + "You cannot send a bird to yourself");
-            return true;
         }
 
         distance = player.getLocation().distance(target.getLocation());

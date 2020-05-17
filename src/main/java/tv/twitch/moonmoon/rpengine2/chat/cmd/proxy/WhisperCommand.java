@@ -7,7 +7,7 @@ import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import javax.inject.Inject;
 import java.util.Objects;
 
-public class WhisperCommand implements ChannelProxyCommand {
+public class WhisperCommand implements ChannelSayCommand {
 
     private static final String NOT_CONFIGURED =
         ChatColor.RED + "Whisper channel not configured. To use /whisper, " +
