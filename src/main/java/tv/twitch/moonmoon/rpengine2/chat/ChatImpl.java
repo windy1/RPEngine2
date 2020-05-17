@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.cmd.ChatCommands;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -54,25 +55,37 @@ public class ChatImpl implements Chat {
     }
 
     @Override
-    public void sendMessage(ChatChannel channel, String message) {
+    public boolean sendMessage(RpPlayer player, String message) {
+        ChatChannel channel = player.getChatChannel()
+            .orElseGet(() -> getDefaultChannel().orElse(null));
+        String displayName = playerRepo.getIdentity(player);
+
+        if (channel == null) {
+            return false;
+        }
+
+        String format = "%s: %s%s";
+        String str = String.format(format, displayName, ChatColor.WHITE, message);
+
         Objects.requireNonNull(channel);
         Objects.requireNonNull(message);
 
-        for (RpPlayer player : playerRepo.getPlayers()) {
+        for (RpPlayer p : playerRepo.getPlayers()) {
             // TODO: muted channels
-            player.getPlayer().ifPresent(p -> p.sendMessage(message));
+            p.getPlayer().ifPresent(q -> q.sendMessage(str));
         }
+
+        return true;
     }
 
     @Override
-    public void load() {
+    public Result<Void> load() {
         commands.register();
         Bukkit.getPluginManager().registerEvents(listener, plugin);
 
         ConfigurationSection c = plugin.getConfig().getConfigurationSection("chat");
         if (c == null) {
-            log.warning("Invalid configuration file (missing chat section)");
-            return;
+            return Result.error("Invalid configuration file (missing chat section)");
         }
 
         whisperRange = c.getInt("whisperRange", 0);
@@ -87,8 +100,12 @@ public class ChatImpl implements Chat {
 
         defaultChannel = channels.get(c.getString("defaultChannel"));
         if (defaultChannel == null) {
-            log.warning("Configured default chat channel was not found in loaded channels");
+            return Result.error(
+                "Configured default chat channel was not found in loaded channels"
+            );
         }
+
+        return Result.ok(null);
     }
 
     @Override

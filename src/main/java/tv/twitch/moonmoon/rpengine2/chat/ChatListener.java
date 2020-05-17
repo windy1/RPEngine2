@@ -46,9 +46,6 @@ public class ChatListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         Player mcPlayer = e.getPlayer();
         Result<RpPlayer> p = playerRepo.getPlayer(mcPlayer);
-        ChatChannel channel;
-        RpPlayer player;
-        String displayName;
 
         Optional<String> err = p.getError();
         if (err.isPresent()) {
@@ -56,19 +53,6 @@ public class ChatListener implements Listener {
             return;
         }
 
-        player = p.get();
-        channel = player.getChatChannel()
-            .orElseGet(() -> chat.getDefaultChannel().orElse(null));
-        displayName = playerRepo.getIdentity(player);
-
-        if (channel == null) {
-            return;
-        }
-
-        String format = "%s: %s%s";
-        String message = String.format(format, displayName, ChatColor.WHITE, e.getMessage());
-        chat.sendMessage(channel, message);
-
-        e.setCancelled(true);
+        e.setCancelled(chat.sendMessage(p.get(), e.getMessage()));
     }
 }

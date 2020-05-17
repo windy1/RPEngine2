@@ -50,10 +50,16 @@ public class Engine {
 
         if (dataManager.init().getError().isPresent()) {
             pluginManager.disablePlugin(plugin);
+            return;
         }
 
         if (chat != null) {
-            chat.load();
+            Optional<String> err = chat.load().getError();
+            if (err.isPresent()) {
+                log.warning(err.get());
+                pluginManager.disablePlugin(plugin);
+                return;
+            }
         }
 
         log.info("Done");
