@@ -3,6 +3,7 @@ package tv.twitch.moonmoon.rpengine2.di;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.OptionalBinder;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
@@ -40,6 +41,12 @@ public class CoreModule extends AbstractModule {
     @PluginLogger
     public static Logger provideLogger(Plugin plugin) {
         return plugin.getLogger();
+    }
+
+    @Provides
+    @PluginConfig
+    public static FileConfiguration provideConfig(Plugin plugin) {
+        return plugin.getConfig();
     }
 
     @Provides

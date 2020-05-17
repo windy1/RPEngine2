@@ -24,7 +24,8 @@ public class ChatCommands implements Commands {
         WhisperCommand whisperCommand,
         OocCommand oocCommand,
         RpCommand rpCommand,
-        ToggleOocCommand toggleOocCommand
+        ToggleOocCommand toggleOocCommand,
+        RollCommand rollCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("channel", channelCommand);
@@ -34,6 +35,7 @@ public class ChatCommands implements Commands {
         executors.put("ooc", oocCommand);
         executors.put("rp", rpCommand);
         executors.put("toggleooc", toggleOocCommand);
+        executors.put("roll", rollCommand);
     }
 
     @Override

@@ -13,6 +13,10 @@ chat:
   birdSpeed: 20 # blocks per second
   defaultChannel: rp
 
+  roll:
+    range: 35
+    prefix: '[Roll] '
+
   channels:
     rp:
       range: 35
@@ -35,3 +39,4 @@ chat:
     rp: true
     ooc: true
     toggleooc: true
+    roll: true

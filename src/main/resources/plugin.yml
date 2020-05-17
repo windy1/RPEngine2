@@ -56,3 +56,7 @@ commands:
     description: Alias for /channel mute ooc (legacy)
     usage: /toggleooc
     permission: rpengine.toggleooc
+  roll:
+    description: Generates a random number
+    usage: /roll [max | min [max]]
+    permission: rpengine.roll
