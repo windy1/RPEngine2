@@ -18,6 +18,8 @@ public interface Chat {
 
     boolean sendMessage(RpPlayer player, ChatChannel channel, String message);
 
+    int getBirdSpeed();
+
     Result<Void> load();
 
     void handlePlayerJoined(RpPlayer player);

@@ -32,15 +32,15 @@ commands:
     permission: rpengine.channel
   whisper:
     description: Speak softly and carry a big stick
-    usage: /whisper [message]
+    usage: /whisper <message>
     permission: rpengine.whisper
     aliases: [w]
   shout:
     description: Et tu brute
-    usage: /shout [message]
+    usage: /shout <message>
     permission: rpengine.shout
     aliases: [yell]
   bird:
     description: A delayed message determined by the distance between players
-    usage: /bird help
+    usage: /bird <player> <message>
     permission: rpengine.bird

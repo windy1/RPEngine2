@@ -128,6 +128,11 @@ public class ChatImpl implements Chat {
     }
 
     @Override
+    public int getBirdSpeed() {
+        return birdSpeed;
+    }
+
+    @Override
     public Result<Void> load() {
         commands.register();
         Bukkit.getPluginManager().registerEvents(listener, plugin);
@@ -137,7 +142,14 @@ public class ChatImpl implements Chat {
             return Result.error("Invalid configuration file (missing chat section)");
         }
 
-        birdSpeed = c.getInt("birdSpeed", 0);
+        birdSpeed = c.getInt("birdSpeed", 20);
+
+        if (birdSpeed <= 0) {
+            return Result.error(
+                "Invalid configuration file " +
+                    "(birdSpeed must be an integer greater than or equal to 1)"
+            );
+        }
 
         ConfigurationSection ch = c.getConfigurationSection("channels");
 
