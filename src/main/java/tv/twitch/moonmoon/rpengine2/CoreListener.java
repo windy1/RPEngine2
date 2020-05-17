@@ -11,13 +11,13 @@ import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-public class RpListener implements Listener {
+public class CoreListener implements Listener {
 
     private final RpPlayerRepo playerRepo;
     private final Logger log;
 
     @Inject
-    public RpListener(RpPlayerRepo playerRepo, @PluginLogger Logger log) {
+    public CoreListener(RpPlayerRepo playerRepo, @PluginLogger Logger log) {
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.log = Objects.requireNonNull(log);
     }

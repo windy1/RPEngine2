@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class Bootstrap {
 
     private final JavaPlugin plugin;
-    private final RpListener listener;
+    private final CoreListener listener;
     private final Commands commands;
     private final DataManager dataManager;
     private final Chat chat;
@@ -26,7 +26,7 @@ public class Bootstrap {
     @Inject
     public Bootstrap(
         JavaPlugin plugin,
-        RpListener listener,
+        CoreListener listener,
         Commands commands,
         DataManager dataManager,
         Optional<Chat> chat

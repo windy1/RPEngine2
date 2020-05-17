@@ -11,6 +11,7 @@ chat:
   shoutRange: 50
   birdSpeed: 20 # blocks per second
   defaultChannel: rp
+
   channels:
     rp:
       enabled: true

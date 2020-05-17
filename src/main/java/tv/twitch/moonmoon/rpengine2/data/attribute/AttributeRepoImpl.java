@@ -227,15 +227,9 @@ public class AttributeRepoImpl implements AttributeRepo {
         }
 
         attributeDbo.setIdentityAsync(attribute.getId(), r -> {
-            Optional<String> err = handleIdentityUpdate(r).getError();
-            if (err.isPresent()) {
-                callback.accept(Result.error(err.get()));
-                return;
-            }
+            Result<Attribute> newIdent = handleToggleUpdateAndReload(r, name, identity);
 
-            Result<Attribute> newIdent = reloadAttribute(name);
-
-            err = newIdent.getError();
+            Optional<String> err = newIdent.getError();
             if (err.isPresent()) {
                 callback.accept(Result.error(err.get()));
             } else {
@@ -258,16 +252,9 @@ public class AttributeRepoImpl implements AttributeRepo {
         }
 
         Result<Void> update = attributeDbo.setIdentity(attribute.getId());
+        Result<Attribute> newIdent = handleToggleUpdateAndReload(update, name, identity);
 
-        Optional<String> err = handleIdentityUpdate(update).getError();
-        if (err.isPresent()) {
-            log.warning(err.get());
-            return;
-        }
-
-        Result<Attribute> newIdent = reloadAttribute(name);
-
-        err = newIdent.getError();
+        Optional<String> err = newIdent.getError();
         if (err.isPresent()) {
             log.warning(err.get());
         } else {
@@ -278,7 +265,7 @@ public class AttributeRepoImpl implements AttributeRepo {
     @Override
     public void clearIdentityAsync(Callback<Void> callback) {
         attributeDbo.clearIdentityAsync(r -> {
-            Optional<String> err = handleIdentityUpdate(r).getError();
+            Optional<String> err = handleToggleUpdate(r, identity).getError();
             if (err.isPresent()) {
                 callback.accept(Result.error(err.get()));
             } else {
@@ -303,15 +290,9 @@ public class AttributeRepoImpl implements AttributeRepo {
         }
 
         attributeDbo.setMarkerAsync(attribute.getId(), r -> {
-            Optional<String> update = handleMarkerUpdate(r).getError();
-            if (update.isPresent()) {
-                callback.accept(Result.error(update.get()));
-                return;
-            }
+            Result<Attribute> newMarker = handleToggleUpdateAndReload(r, name, marker);
 
-            Result<Attribute> newMarker = reloadAttribute(name);
-
-            update = newMarker.getError();
+            Optional<String> update = newMarker.getError();
             if (update.isPresent()) {
                 callback.accept(Result.error(update.get()));
             } else {
@@ -334,16 +315,9 @@ public class AttributeRepoImpl implements AttributeRepo {
         }
 
         Result<Void> update = attributeDbo.setMarker(attribute.getId());
+        Result<Attribute> newMarker = handleToggleUpdateAndReload(update, name, marker);
 
-        Optional<String> err = handleMarkerUpdate(update).getError();
-        if (err.isPresent()) {
-            log.warning(err.get());
-            return;
-        }
-
-        Result<Attribute> newMarker = reloadAttribute(name);
-
-        err = newMarker.getError();
+        Optional<String> err = newMarker.getError();
         if (err.isPresent()) {
             log.warning(err.get());
         } else {
@@ -355,7 +329,7 @@ public class AttributeRepoImpl implements AttributeRepo {
     @Override
     public void clearMarkerAsync(Callback<Void> callback) {
         attributeDbo.clearMarkerAsync(r -> {
-            Optional<String> err = handleMarkerUpdate(r).getError();
+            Optional<String> err = handleToggleUpdate(r, marker).getError();
             if (err.isPresent()) {
                 callback.accept(Result.error(err.get()));
             } else {
@@ -483,14 +457,14 @@ public class AttributeRepoImpl implements AttributeRepo {
         return Optional.empty();
     }
 
-    private Result<Void> handleIdentityUpdate(Result<Void> r) {
+    private Result<Void> handleToggleUpdate(Result<Void> r, Attribute toggle) {
         Optional<String> err = handleResult(() -> r).getError();
         if (err.isPresent()) {
             return Result.error(err.get());
         }
 
-        if (identity != null) {
-            err = reloadAttribute(identity.getName()).getError();
+        if (toggle != null) {
+            err = reloadAttribute(toggle.getName()).getError();
             if (err.isPresent()) {
                 return Result.error(err.get());
             }
@@ -499,20 +473,14 @@ public class AttributeRepoImpl implements AttributeRepo {
         return Result.ok(null);
     }
 
-    private Result<Void> handleMarkerUpdate(Result<Void> r) {
-        Optional<String> err = handleResult(() -> r).getError();
-        if (err.isPresent()) {
-            return Result.error(err.get());
-        }
-
-        if (marker != null) {
-            err = reloadAttribute(marker.getName()).getError();
-            if (err.isPresent()) {
-                return Result.error(err.get());
-            }
-        }
-
-        return Result.ok(null);
+    private Result<Attribute> handleToggleUpdateAndReload(
+        Result<Void> update,
+        String attributeName,
+        Attribute toggle
+    ) {
+        return handleToggleUpdate(update, toggle).getError()
+            .<Result<Attribute>>map(Result::error)
+            .orElseGet(() -> reloadAttribute(attributeName));
     }
 
     @Override
