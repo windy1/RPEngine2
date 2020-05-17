@@ -7,6 +7,7 @@ commands:
   colorlist: true
 
 # Chat module
+# TODO: test ranges
 chat:
   enabled: true
   whisperRange: 5
@@ -18,7 +19,6 @@ chat:
     rp:
       range: 35
       permission: rpengine.chat.channel.rp
-      prefix: '[RP] '
     ooc:
       prefix: '[OOC] '
       permission: rpengine.chat.channel.ooc

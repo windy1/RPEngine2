@@ -68,16 +68,20 @@ public class ChatImpl implements Chat {
     public boolean sendMessage(RpPlayer player, String message) {
         ChatChannel channel = player.getChatChannel()
             .orElseGet(() -> getDefaultChannel().orElse(null));
+        Player mcSender = player.getPlayer().orElse(null);
+
         String displayName = playerRepo.getIdentity(player);
         String permission;
         String prefix;
+        int range;
 
-        if (channel == null) {
+        if (channel == null || mcSender == null) {
             return false;
         }
 
         permission = channel.getPermission().orElse(null);
         prefix = channel.getPrefix();
+        range = channel.getRange();
 
         String format = "%s%s: %s%s";
         String str = String.format(format, prefix, displayName, ChatColor.WHITE, message);
@@ -95,9 +99,17 @@ public class ChatImpl implements Chat {
             }
 
             Player mcPlayer = p.getPlayer().orElse(null);
-            boolean canReceive = mcPlayer != null
-                && !c.get().isMuted()
-                && (permission == null || mcPlayer.hasPermission(permission));
+
+            if (mcPlayer == null) {
+                continue;
+            }
+
+            boolean inRange = range == 0
+                || mcPlayer.getLocation().distance(mcSender.getLocation()) <= range;
+
+            boolean canReceive = !c.get().isMuted()
+                && (permission == null || mcPlayer.hasPermission(permission))
+                && inRange;
 
             if (canReceive) {
                 mcPlayer.sendMessage(str);
