@@ -10,8 +10,6 @@ commands:
 # TODO: test ranges
 chat:
   enabled: true
-  whisperRange: 5
-  shoutRange: 50
   birdSpeed: 20 # blocks per second
   defaultChannel: rp
 
@@ -22,6 +20,15 @@ chat:
     ooc:
       prefix: '[OOC] '
       permission: rpengine.chat.channel.ooc
+    whisper:
+      range: 5
+      prefix: '[whisper] '
+    shout:
+      range: 50
+      prefix: '[SHOUT] '
 
   commands:
     channel: true
+    whisper: true
+    shout: true
+    bird: true

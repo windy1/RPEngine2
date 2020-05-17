@@ -29,8 +29,6 @@ public class ChatImpl implements Chat {
 
     private final Map<String, ChatChannel> channels = new HashMap<>();
     private ChatChannel defaultChannel;
-    private int whisperRange;
-    private int shoutRange;
     private int birdSpeed;
 
     @Inject
@@ -68,6 +66,16 @@ public class ChatImpl implements Chat {
     public boolean sendMessage(RpPlayer player, String message) {
         ChatChannel channel = player.getChatChannel()
             .orElseGet(() -> getDefaultChannel().orElse(null));
+
+        if (channel == null) {
+            return false;
+        }
+
+        return sendMessage(player, channel, message);
+    }
+
+    @Override
+    public boolean sendMessage(RpPlayer player, ChatChannel channel, String message) {
         Player mcSender = player.getPlayer().orElse(null);
 
         String displayName = playerRepo.getIdentity(player);
@@ -129,8 +137,6 @@ public class ChatImpl implements Chat {
             return Result.error("Invalid configuration file (missing chat section)");
         }
 
-        whisperRange = c.getInt("whisperRange", 0);
-        shoutRange = c.getInt("shoutRange", 0);
         birdSpeed = c.getInt("birdSpeed", 0);
 
         ConfigurationSection ch = c.getConfigurationSection("channels");

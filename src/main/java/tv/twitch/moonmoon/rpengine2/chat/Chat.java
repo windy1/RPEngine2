@@ -16,6 +16,8 @@ public interface Chat {
 
     boolean sendMessage(RpPlayer player, String message);
 
+    boolean sendMessage(RpPlayer player, ChatChannel channel, String message);
+
     Result<Void> load();
 
     void handlePlayerJoined(RpPlayer player);
