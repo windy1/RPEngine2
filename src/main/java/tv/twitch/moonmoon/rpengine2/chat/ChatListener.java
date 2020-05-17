@@ -1,6 +1,5 @@
 package tv.twitch.moonmoon.rpengine2.chat;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

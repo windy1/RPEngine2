@@ -16,11 +16,12 @@ chat:
 
   channels:
     rp:
-      enabled: true
       range: 35
+      permission: rpengine.chat.channel.rp
+      prefix: '[RP] '
     ooc:
-      enabled: true
-      prefix: '[OOC]'
+      prefix: '[OOC] '
+      permission: rpengine.chat.channel.ooc
 
   commands:
     channel: true

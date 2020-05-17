@@ -3,25 +3,28 @@ package tv.twitch.moonmoon.rpengine2.chat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.cmd.ChatCommands;
+import tv.twitch.moonmoon.rpengine2.chat.data.ChatChannelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import javax.inject.Singleton;
+import java.util.*;
 import java.util.logging.Logger;
 
+@Singleton
 public class ChatImpl implements Chat {
 
     private final JavaPlugin plugin;
     private final RpPlayerRepo playerRepo;
     private final ChatListener listener;
     private final ChatCommands commands;
+    private final ChatChannelConfigRepo channelConfigRepo;
     private final Logger log;
 
     private final Map<String, ChatChannel> channels = new HashMap<>();
@@ -35,18 +38,25 @@ public class ChatImpl implements Chat {
         JavaPlugin plugin,
         RpPlayerRepo playerRepo,
         ChatListener listener,
-        ChatCommands commands
+        ChatCommands commands,
+        ChatChannelConfigRepo channelConfigRepo
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.listener = Objects.requireNonNull(listener);
         this.commands = Objects.requireNonNull(commands);
+        this.channelConfigRepo = Objects.requireNonNull(channelConfigRepo);
         log = plugin.getLogger();
     }
 
     @Override
     public Optional<ChatChannel> getChannel(String name) {
         return Optional.ofNullable(channels.get(name));
+    }
+
+    @Override
+    public Set<ChatChannel> getChannels() {
+        return Collections.unmodifiableSet(new HashSet<>(channels.values()));
     }
 
     @Override
@@ -59,20 +69,39 @@ public class ChatImpl implements Chat {
         ChatChannel channel = player.getChatChannel()
             .orElseGet(() -> getDefaultChannel().orElse(null));
         String displayName = playerRepo.getIdentity(player);
+        String permission;
+        String prefix;
 
         if (channel == null) {
             return false;
         }
 
-        String format = "%s: %s%s";
-        String str = String.format(format, displayName, ChatColor.WHITE, message);
+        permission = channel.getPermission().orElse(null);
+        prefix = channel.getPrefix();
+
+        String format = "%s%s: %s%s";
+        String str = String.format(format, prefix, displayName, ChatColor.WHITE, message);
 
         Objects.requireNonNull(channel);
         Objects.requireNonNull(message);
 
         for (RpPlayer p : playerRepo.getPlayers()) {
-            // TODO: muted channels
-            p.getPlayer().ifPresent(q -> q.sendMessage(str));
+            Result<ChatChannelConfig> c = channelConfigRepo.getConfig(p, channel);
+
+            Optional<String> err = c.getError();
+            if (err.isPresent()) {
+                log.warning(err.get());
+                continue;
+            }
+
+            Player mcPlayer = p.getPlayer().orElse(null);
+            boolean canReceive = mcPlayer != null
+                && !c.get().isMuted()
+                && (permission == null || mcPlayer.hasPermission(permission));
+
+            if (canReceive) {
+                mcPlayer.sendMessage(str);
+            }
         }
 
         return true;
@@ -105,7 +134,9 @@ public class ChatImpl implements Chat {
             );
         }
 
-        return Result.ok(null);
+        return channelConfigRepo.load().getError()
+            .<Result<Void>>map(Result::error)
+            .orElseGet(() -> Result.ok(null));
     }
 
     @Override
@@ -113,9 +144,15 @@ public class ChatImpl implements Chat {
         if (!player.getChatChannel().isPresent()) {
             setChatChannelAsync(player, defaultChannel);
         }
+
+        for (ChatChannel channel : getChannels()) {
+            channelConfigRepo.getConfig(player, channel).getError()
+                .ifPresent(log::warning);
+        }
     }
 
-    private void setChatChannelAsync(RpPlayer player, ChatChannel channel) {
+    @Override
+    public void setChatChannelAsync(RpPlayer player, ChatChannel channel) {
         playerRepo.setChatChannelAsync(player, channel, r -> {
             Optional<String> err = r.getError();
             if (err.isPresent()) {
@@ -139,8 +176,9 @@ public class ChatImpl implements Chat {
             channels.put(channelName, new ChatChannel(
                 channelName,
                 c.getInt("range", 0),
-                c.getString("prefix")
-            ));
+                c.getString("prefix", ""),
+                c.getString("permission", null))
+            );
         }
     }
 }

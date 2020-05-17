@@ -126,9 +126,13 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     }
 
     @Override
-    public void setChatChannelAsync(RpPlayer player, ChatChannel channel, Callback<Void> callback) {
+    public void setChatChannelAsync(
+        RpPlayer player,
+        ChatChannel channel,
+        Callback<Void> callback
+    ) {
         playerDbo.updateChatChannelAsync(player.getId(), channel.getName(), r ->
-            handleResult(() -> r)
+            callback.accept(handleAndReloadPlayer(player.getUUID(), r))
         );
     }
 

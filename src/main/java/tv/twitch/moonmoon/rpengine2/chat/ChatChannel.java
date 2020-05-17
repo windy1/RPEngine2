@@ -8,11 +8,13 @@ public class ChatChannel {
     private final String name;
     private final int range;
     private final String prefix;
+    private final String permission;
 
-    public ChatChannel(String name, int range, String prefix) {
+    public ChatChannel(String name, int range, String prefix, String permission) {
         this.name = Objects.requireNonNull(name);
         this.range = range;
-        this.prefix = prefix;
+        this.prefix = Objects.requireNonNull(prefix);
+        this.permission = permission;
     }
 
     public String getName() {
@@ -23,18 +25,23 @@ public class ChatChannel {
         return range;
     }
 
-    public Optional<String> getPrefix() {
-        return Optional.of(prefix);
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public Optional<String> getPermission() {
+        return Optional.ofNullable(permission);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChatChannel channel = (ChatChannel) o;
-        return range == channel.range &&
-            Objects.equals(name, channel.name) &&
-            Objects.equals(prefix, channel.prefix);
+        ChatChannel that = (ChatChannel) o;
+        return range == that.range &&
+            Objects.equals(name, that.name) &&
+            Objects.equals(prefix, that.prefix) &&
+            Objects.equals(permission, that.permission);
     }
 
     @Override
@@ -44,10 +51,11 @@ public class ChatChannel {
 
     @Override
     public String toString() {
-        return "Channel{" +
+        return "ChatChannel{" +
             "name='" + name + '\'' +
             ", range=" + range +
             ", prefix='" + prefix + '\'' +
+            ", permission='" + permission + '\'' +
             '}';
     }
 }
