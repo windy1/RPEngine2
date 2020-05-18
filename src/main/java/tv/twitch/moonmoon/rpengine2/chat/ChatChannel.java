@@ -1,5 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.chat;
 
+import net.md_5.bungee.api.ChatColor;
+
 import java.util.Objects;
 import java.util.Optional;
 
@@ -9,12 +11,20 @@ public class ChatChannel {
     private final int range;
     private final String prefix;
     private final String permission;
+    private final ChatColor messageColor;
 
-    public ChatChannel(String name, int range, String prefix, String permission) {
+    public ChatChannel(
+        String name,
+        int range,
+        String prefix,
+        String permission,
+        ChatColor messageColor
+    ) {
         this.name = Objects.requireNonNull(name);
         this.range = range;
         this.prefix = Objects.requireNonNull(prefix);
         this.permission = permission;
+        this.messageColor = Objects.requireNonNull(messageColor);
     }
 
     public String getName() {
@@ -33,6 +43,10 @@ public class ChatChannel {
         return Optional.ofNullable(permission);
     }
 
+    public ChatColor getMessageColor() {
+        return messageColor;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -41,7 +55,8 @@ public class ChatChannel {
         return range == that.range &&
             Objects.equals(name, that.name) &&
             Objects.equals(prefix, that.prefix) &&
-            Objects.equals(permission, that.permission);
+            Objects.equals(permission, that.permission) &&
+            messageColor == that.messageColor;
     }
 
     @Override
@@ -56,6 +71,7 @@ public class ChatChannel {
             ", range=" + range +
             ", prefix='" + prefix + '\'' +
             ", permission='" + permission + '\'' +
+            ", messageColor=" + messageColor +
             '}';
     }
 }

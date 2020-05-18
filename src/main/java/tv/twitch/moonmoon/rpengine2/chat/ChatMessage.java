@@ -11,6 +11,7 @@ public class ChatMessage {
     private final String prefix;
     private final String displayName;
     private final String message;
+    private final ChatColor messageColor;
     private final boolean actionMenu;
     private final String playerName;
 
@@ -18,12 +19,14 @@ public class ChatMessage {
         String prefix,
         String displayName,
         String message,
+        ChatColor messageColor,
         boolean actionMenu,
         String playerName
     ) {
         this.prefix = Objects.requireNonNull(prefix);
         this.displayName = Objects.requireNonNull(displayName);
         this.message = Objects.requireNonNull(message);
+        this.messageColor = Objects.requireNonNull(messageColor);
         this.actionMenu = actionMenu;
         this.playerName = Objects.requireNonNull(playerName);
     }
@@ -33,7 +36,7 @@ public class ChatMessage {
         TextComponent n = new TextComponent(displayName + ": ");
         TextComponent m = new TextComponent(message);
 
-        m.setColor(ChatColor.WHITE);
+        m.setColor(messageColor);
 
         if (actionMenu) {
             n.setClickEvent(new ClickEvent(

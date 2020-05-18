@@ -31,4 +31,8 @@ public class StringUtils {
             return Optional.empty();
         }
     }
+
+    public static Optional<net.md_5.bungee.api.ChatColor> getSpigotChatColor(String name) {
+        return getChatColor(name).map(c -> net.md_5.bungee.api.ChatColor.valueOf(c.name()));
+    }
 }

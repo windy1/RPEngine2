@@ -51,9 +51,11 @@ chat:
       prefix: '[OOC] '
       permission: rpengine.chat.channel.ooc
     whisper:
+      messageColor: BLUE
       range: 5
       prefix: '[whisper] '
     shout:
+      messageColor: RED
       range: 50
       prefix: '[SHOUT] '
 

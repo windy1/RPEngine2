@@ -13,6 +13,7 @@ import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
+import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -95,7 +96,7 @@ public class ChatImpl implements Chat {
         range = channel.getRange();
 
         TextComponent msg = new ChatMessage(
-            prefix, displayName, message, actionMenu, mcSender.getName()
+            prefix, displayName, message, channel.getMessageColor(), actionMenu, mcSender.getName()
         ).toTextComponent();
 
         Objects.requireNonNull(channel);
@@ -234,7 +235,9 @@ public class ChatImpl implements Chat {
                 channelName,
                 c.getInt("range", 0),
                 c.getString("prefix", ""),
-                c.getString("permission", null))
+                c.getString("permission", null),
+                StringUtils.getSpigotChatColor(c.getString("messageColor"))
+                    .orElse(net.md_5.bungee.api.ChatColor.WHITE))
             );
         }
     }
