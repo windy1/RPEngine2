@@ -6,7 +6,6 @@ import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 
 import javax.inject.Inject;
-import java.util.Objects;
 
 public class WhisperCommand extends AbstractChannelProxyCommand implements ChannelSayCommand {
 

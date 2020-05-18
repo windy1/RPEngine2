@@ -23,6 +23,10 @@ commands:
     description: Lists options for a select
     usage: /cardselect help
     permission: rpengine.cardselect
+  inspect:
+    description: Allows you to view other players cards
+    usage: /inspect <player>
+    permission: rpengine.inspect
   colorlist:
     description: Lists available colors
     usage: /colorlist

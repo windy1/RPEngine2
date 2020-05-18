@@ -19,13 +19,15 @@ public class AttributeLabel {
     private final String formatString;
     private final AttributeType type;
     private final SelectRepo selectRepo;
+    private final boolean readOnly;
 
     public AttributeLabel(
         String name,
         String display,
         Object value,
         String formatString, AttributeType type,
-        SelectRepo selectRepo
+        SelectRepo selectRepo,
+        boolean readOnly
     ) {
         this.name = Objects.requireNonNull(name);
         this.display = Objects.requireNonNull(display);
@@ -33,13 +35,15 @@ public class AttributeLabel {
         this.formatString = formatString;
         this.type = Objects.requireNonNull(type);
         this.selectRepo = Objects.requireNonNull(selectRepo);
+        this.readOnly = readOnly;
     }
 
     public static AttributeLabel from(
         RpPlayerAttribute attribute,
         String display,
         String formatString,
-        SelectRepo selectRepo
+        SelectRepo selectRepo,
+        boolean readOnly
     ) {
         return new AttributeLabel(
             attribute.getName(),
@@ -47,7 +51,8 @@ public class AttributeLabel {
             attribute.getValue().orElse(null),
             formatString,
             attribute.getType(),
-            selectRepo
+            selectRepo,
+            readOnly
         );
     }
 
@@ -98,7 +103,9 @@ public class AttributeLabel {
 
         valueTag.setColor(valueColor);
 
-        base.setClickEvent(makeClickEvent());
+        if (!readOnly) {
+            base.setClickEvent(makeClickEvent());
+        }
 
         base.addExtra(nameTag);
         base.addExtra(valueTag);

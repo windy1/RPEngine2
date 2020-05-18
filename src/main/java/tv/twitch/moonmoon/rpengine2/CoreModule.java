@@ -3,9 +3,7 @@ package tv.twitch.moonmoon.rpengine2;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.OptionalBinder;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
@@ -16,16 +14,15 @@ import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepoImpl;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepoImpl;
+import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibModule;
+import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
 import tv.twitch.moonmoon.rpengine2.nte.NametagEditModule;
 import tv.twitch.moonmoon.rpengine2.nte.NametagEditPlugin;
-import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
-import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibModule;
 import tv.twitch.moonmoon.rpengine2.util.DbPath;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public class CoreModule extends AbstractModule {

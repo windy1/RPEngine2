@@ -10,8 +10,12 @@ commands:
   cardselect:
     enabled: true
     cooldown: 15
+  inspect:
+    enabled: true
   colorlist:
     enabled: true
+
+inspectRange: 35
 
 # == Chat module ==
 chat:

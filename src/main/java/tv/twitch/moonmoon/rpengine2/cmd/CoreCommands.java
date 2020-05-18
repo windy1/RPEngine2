@@ -6,6 +6,7 @@ import tv.twitch.moonmoon.rpengine2.cmd.admin.AdminCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardSelectCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardSetCommand;
+import tv.twitch.moonmoon.rpengine2.cmd.card.InspectCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ColorListCommand;
 
 import javax.inject.Inject;
@@ -26,7 +27,8 @@ public class CoreCommands implements Commands {
         CardCommand cardCommand,
         CardSetCommand cardSetCommand,
         CardSelectCommand cardSelectCommand,
-        ColorListCommand colorListCommand
+        ColorListCommand colorListCommand,
+        InspectCommand inspectCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("rpengine", adminCommand);
@@ -34,6 +36,7 @@ public class CoreCommands implements Commands {
         executors.put("cardset", cardSetCommand);
         executors.put("cardselect", cardSelectCommand);
         executors.put("colorlist", colorListCommand);
+        executors.put("inspect", inspectCommand);
     }
 
     @Override

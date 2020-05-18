@@ -6,8 +6,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.cmd.CoreCommands;
 import tv.twitch.moonmoon.rpengine2.data.DataManager;
-import tv.twitch.moonmoon.rpengine2.nte.NametagEditPlugin;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
+import tv.twitch.moonmoon.rpengine2.nte.NametagEditPlugin;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
