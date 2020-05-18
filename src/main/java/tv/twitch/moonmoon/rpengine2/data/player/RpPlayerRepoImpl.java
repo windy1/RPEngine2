@@ -76,7 +76,10 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
 
     @Override
     public String getPrefix(RpPlayer player) {
-        return getMarkerColor(player).map(ChatColor::toString).orElse("");
+        return getMarkerColor(player)
+            .map(c -> net.md_5.bungee.api.ChatColor.valueOf(c.name()))
+            .map(net.md_5.bungee.api.ChatColor::toString)
+            .orElse("");
     }
 
     @Override

@@ -14,15 +14,19 @@ commands:
     enabled: true
   colorlist:
     enabled: true
+  playeractionmenu:
+    enabled: true
 
 inspectRange: 35
 
 # == Chat module ==
 chat:
   enabled: true
-  birdSpeed: 20 # blocks per second
+  birdSpeed: 20       # Blocks per second
+  actionMenu: true    # Brings up an action menu when you click on a players name in chat
   defaultChannel: rp
 
+  # Start a countdown in the center of surrounding player's screens
   countdown:
     range: 35
     color: DARK_RED
@@ -34,6 +38,7 @@ chat:
     goVolume: 0.5
     goPitch: 1
 
+  # Generate a random number in a range
   roll:
     range: 35
     prefix: '[Roll] '

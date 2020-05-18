@@ -2,6 +2,7 @@ package tv.twitch.moonmoon.rpengine2.cmd;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
+import tv.twitch.moonmoon.rpengine2.cmd.action.PlayerActionMenuCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.admin.AdminCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardSelectCommand;
@@ -28,7 +29,8 @@ public class CoreCommands implements Commands {
         CardSetCommand cardSetCommand,
         CardSelectCommand cardSelectCommand,
         ColorListCommand colorListCommand,
-        InspectCommand inspectCommand
+        InspectCommand inspectCommand,
+        PlayerActionMenuCommand playerActionMenuCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("rpengine", adminCommand);
@@ -37,6 +39,7 @@ public class CoreCommands implements Commands {
         executors.put("cardselect", cardSelectCommand);
         executors.put("colorlist", colorListCommand);
         executors.put("inspect", inspectCommand);
+        executors.put("playeractionmenu", playerActionMenuCommand);
     }
 
     @Override

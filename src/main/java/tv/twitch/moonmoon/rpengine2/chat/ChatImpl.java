@@ -1,5 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.chat;
 
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -31,6 +32,7 @@ public class ChatImpl implements Chat {
     private final Map<String, ChatChannel> channels = new HashMap<>();
     private ChatChannel defaultChannel;
     private int birdSpeed;
+    private boolean actionMenu;
 
     @Inject
     public ChatImpl(
@@ -92,13 +94,14 @@ public class ChatImpl implements Chat {
         prefix = channel.getPrefix();
         range = channel.getRange();
 
-        String format = "%s%s: %s%s";
-        String str = String.format(format, prefix, displayName, ChatColor.WHITE, message);
+        TextComponent msg = new ChatMessage(
+            prefix, displayName, message, actionMenu, mcSender.getName()
+        ).toTextComponent();
 
         Objects.requireNonNull(channel);
         Objects.requireNonNull(message);
 
-        Bukkit.getConsoleSender().sendMessage(str);
+        Bukkit.getConsoleSender().spigot().sendMessage(msg);
 
         for (RpPlayer p : playerRepo.getPlayers()) {
             Result<ChatChannelConfig> c = channelConfigRepo.getConfig(p, channel);
@@ -123,7 +126,7 @@ public class ChatImpl implements Chat {
                 && inRange;
 
             if (canReceive) {
-                mcPlayer.sendMessage(str);
+                mcPlayer.spigot().sendMessage(msg);
             }
         }
 
@@ -146,6 +149,7 @@ public class ChatImpl implements Chat {
         }
 
         birdSpeed = c.getInt("birdSpeed", 20);
+        actionMenu = c.getBoolean("actionMenu");
 
         if (birdSpeed <= 0) {
             return Result.error(

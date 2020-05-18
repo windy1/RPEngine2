@@ -49,6 +49,10 @@ commands:
     description: A delayed message determined by the distance between players
     usage: /bird <player> <message>
     permission: rpengine.bird
+  playeractionmenu:
+    description: Displays the player action menu (internal)
+    usage: /playeractionmenu <player>
+    permission: rpengine.playeractionmenu
   ooc:
     description: Alias for /channel join ooc (legacy)
     usage: /ooc
