@@ -7,9 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
+import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
 import java.util.Objects;
@@ -20,12 +20,19 @@ public class PlayerActionMenuCommand extends AbstractCoreCommandExecutor {
     private static final String FOOTER = ChatColor.BLUE + "===============";
 
     private final RpPlayerRepo playerRepo;
+    private final CommandPlayerParser playerParser;
     private final Chat chat;
 
     @Inject
-    public PlayerActionMenuCommand(Plugin plugin, RpPlayerRepo playerRepo, Optional<Chat> chat) {
+    public PlayerActionMenuCommand(
+        Plugin plugin,
+        RpPlayerRepo playerRepo,
+        CommandPlayerParser playerParser,
+        Optional<Chat> chat
+    ) {
         super(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerParser = Objects.requireNonNull(playerParser);
         this.chat = chat.orElse(null);
     }
 
@@ -37,22 +44,16 @@ public class PlayerActionMenuCommand extends AbstractCoreCommandExecutor {
 
         String targetName = args[0];
         Player mcTarget = Bukkit.getPlayer(targetName);
-        Result<RpPlayer> t;
-        RpPlayer target;
+        RpPlayer target = playerParser.parse(sender).orElse(null);
+
+        if (target == null) {
+            return true;
+        }
 
         if (mcTarget == null) {
             sender.sendMessage(ChatColor.RED + "Player not found");
             return true;
         }
-
-        t = playerRepo.getPlayer(mcTarget);
-
-        Optional<String> err = t.getError();
-        if (err.isPresent()) {
-            sender.sendMessage(ChatColor.RED + err.get());
-            return true;
-        }
-        target = t.get();
 
         StringBuilder header = new StringBuilder(
             " " + playerRepo.getIdentity(target) + " " + ChatColor.BLUE
@@ -68,7 +69,6 @@ public class PlayerActionMenuCommand extends AbstractCoreCommandExecutor {
         header.insert(0, ChatColor.BLUE);
 
         sender.sendMessage(header.toString());
-
         sender.spigot().sendMessage(PlayerAction.inspect(targetName).toTextComponent());
 
         if (chat != null) {

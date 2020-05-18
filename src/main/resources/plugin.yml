@@ -78,3 +78,7 @@ commands:
     usage: /duelrules
     aliases: [drules]
     permission: rpengine.duelrules
+  duel:
+    description: Invites a player to duel or accepts an active invitation
+    usage: /duel <player>
+    permission: rpengine.duel

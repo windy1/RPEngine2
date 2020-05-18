@@ -5,19 +5,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
+import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.cmd.CoreCommandExecutor;
-import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
-
-import java.util.Optional;
 
 public interface ChannelProxyCommand extends CoreCommandExecutor {
 
     Chat getChat();
 
-    RpPlayerRepo getPlayerRepo();
+    CommandPlayerParser getPlayerParser();
 
     String getNotConfiguredMessage();
 
@@ -31,13 +28,10 @@ public interface ChannelProxyCommand extends CoreCommandExecutor {
         }
 
         Chat chat = getChat();
-        RpPlayerRepo playerRepo = getPlayerRepo();
         ChatChannel channel = chat.getChannel(getChannelName()).orElse(null);
-        Result<RpPlayer> p = playerRepo.getPlayer((Player) sender);
+        RpPlayer player = getPlayerParser().parse(sender).orElse(null);
 
-        Optional<String> err = p.getError();
-        if (err.isPresent()) {
-            sender.sendMessage(ChatColor.RED + err.get());
+        if (player == null) {
             return true;
         }
 
@@ -46,7 +40,7 @@ public interface ChannelProxyCommand extends CoreCommandExecutor {
             return true;
         }
 
-        return onSuccess(p.get(), channel, sender, args);
+        return onSuccess(player, channel, sender, args);
     }
 
     boolean onSuccess(RpPlayer player, ChatChannel channel, CommandSender sender, String[] args);

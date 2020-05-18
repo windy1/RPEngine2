@@ -3,7 +3,7 @@ package tv.twitch.moonmoon.rpengine2.chat.cmd.proxy;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
-import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 
 import javax.inject.Inject;
 
@@ -14,8 +14,8 @@ public class WhisperCommand extends AbstractChannelProxyCommand implements Chann
             "you must have a channel configured named `whisper` with the desired range";
 
     @Inject
-    public WhisperCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo) {
-        super(plugin, playerRepo, chat);
+    public WhisperCommand(Plugin plugin, Chat chat, CommandPlayerParser playerParser) {
+        super(plugin, playerParser, chat);
     }
 
     @Override

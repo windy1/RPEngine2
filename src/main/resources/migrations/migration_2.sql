@@ -28,3 +28,12 @@ CREATE TABLE IF NOT EXISTS rp_chat_channel_config (
     FOREIGN KEY (player_id) REFERENCES rp_player ON DELETE CASCADE,
     UNIQUE (channel_name, player_id) ON CONFLICT IGNORE
 );
+
+CREATE TABLE IF NOT EXISTS rp_duel_config (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created TEXT NOT NULL,
+    player_id INTEGER NOT NULL,
+    read_rules INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (player_id) REFERENCES rp_player ON DELETE CASCADE,
+    UNIQUE (player_id) ON CONFLICT IGNORE
+);

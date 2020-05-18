@@ -8,23 +8,24 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
+import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RollCommand extends AbstractCoreCommandExecutor {
 
     private final RpPlayerRepo playerRepo;
+    private final CommandPlayerParser playerParser;
 
     @Inject
-    public RollCommand(Plugin plugin, RpPlayerRepo playerRepo) {
+    public RollCommand(Plugin plugin, RpPlayerRepo playerRepo, CommandPlayerParser playerParser) {
         super(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerParser = Objects.requireNonNull(playerParser);
     }
 
     @Override
@@ -42,16 +43,12 @@ public class RollCommand extends AbstractCoreCommandExecutor {
         int min;
         int max;
         Player mcPlayer = (Player) sender;
-        Result<RpPlayer> p = playerRepo.getPlayer(mcPlayer);
-        RpPlayer player;
+        RpPlayer player = playerParser.parse(mcPlayer).orElse(null);
         Location playerLocation = mcPlayer.getLocation();
 
-        Optional<String> err = p.getError();
-        if (err.isPresent()) {
-            sender.sendMessage(ChatColor.RED + err.get());
+        if (player == null) {
             return true;
         }
-        player = p.get();
 
         if (args.length > 1) {
             minStr = args[0];

@@ -21,7 +21,7 @@ public interface Chat {
 
     int getBirdSpeed();
 
-    Result<Void> load();
+    Result<Void> init();
 
     void handlePlayerJoined(RpPlayer player);
 

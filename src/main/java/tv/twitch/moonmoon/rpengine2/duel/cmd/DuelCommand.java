@@ -1,36 +1,24 @@
-package tv.twitch.moonmoon.rpengine2.cmd.card;
+package tv.twitch.moonmoon.rpengine2.duel.cmd;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
-import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 
 import javax.inject.Inject;
 import java.util.Objects;
 
-public class CardCommand extends AbstractCoreCommandExecutor {
+public class DuelCommand extends AbstractCoreCommandExecutor {
 
     private final RpPlayerRepo playerRepo;
-    private final SelectRepo selectRepo;
-    private final AttributeRepo attributeRepo;
     private final CommandPlayerParser playerParser;
 
     @Inject
-    public CardCommand(
-        Plugin plugin,
-        RpPlayerRepo playerRepo,
-        SelectRepo selectRepo,
-        AttributeRepo attributeRepo,
-        CommandPlayerParser playerParser
-    ) {
+    public DuelCommand(Plugin plugin, RpPlayerRepo playerRepo, CommandPlayerParser playerParser) {
         super(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
-        this.selectRepo = Objects.requireNonNull(selectRepo);
-        this.attributeRepo = Objects.requireNonNull(attributeRepo);
         this.playerParser = Objects.requireNonNull(playerParser);
     }
 
@@ -42,14 +30,12 @@ public class CardCommand extends AbstractCoreCommandExecutor {
             return true;
         }
 
-        new Card(playerRepo, attributeRepo, selectRepo, player, false).sendTo(sender);
-
-        return true;
+        return false;
     }
 
     @Override
     public String getConfigPath() {
-        return "commands.card";
+        return "duels.commands.duel";
     }
 
     @Override

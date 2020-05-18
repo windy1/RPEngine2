@@ -3,7 +3,7 @@ package tv.twitch.moonmoon.rpengine2.chat.cmd.proxy;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
-import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 
 import java.util.Objects;
 
@@ -11,12 +11,16 @@ public abstract class AbstractChannelProxyCommand extends AbstractCoreCommandExe
         implements ChannelProxyCommand {
 
     private final Chat chat;
-    private final RpPlayerRepo playerRepo;
+    private final CommandPlayerParser playerParser;
 
-    public AbstractChannelProxyCommand(Plugin plugin, RpPlayerRepo playerRepo, Chat chat) {
+    public AbstractChannelProxyCommand(
+        Plugin plugin,
+        CommandPlayerParser playerParser,
+        Chat chat
+    ) {
         super(plugin);
         this.chat = Objects.requireNonNull(chat);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerParser = Objects.requireNonNull(playerParser);
     }
 
     @Override
@@ -30,7 +34,7 @@ public abstract class AbstractChannelProxyCommand extends AbstractCoreCommandExe
     }
 
     @Override
-    public RpPlayerRepo getPlayerRepo() {
-        return playerRepo;
+    public CommandPlayerParser getPlayerParser() {
+        return playerParser;
     }
 }

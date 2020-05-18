@@ -88,3 +88,5 @@ duels:
   commands:
     duelrules:
       enabled: true
+    duel:
+      enabled: true

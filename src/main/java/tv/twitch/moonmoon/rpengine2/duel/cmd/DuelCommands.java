@@ -15,9 +15,14 @@ public class DuelCommands implements Commands {
     private final Map<String, CommandExecutor> executors = new HashMap<>();
 
     @Inject
-    public DuelCommands(JavaPlugin plugin, DuelRulesCommand duelRulesCommand) {
+    public DuelCommands(
+        JavaPlugin plugin,
+        DuelRulesCommand duelRulesCommand,
+        DuelCommand duelCommand
+    ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("duelrules", duelRulesCommand);
+        executors.put("duel", duelCommand);
     }
 
     @Override

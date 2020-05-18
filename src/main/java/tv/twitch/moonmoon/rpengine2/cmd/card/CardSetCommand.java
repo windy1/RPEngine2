@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
+import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
@@ -13,7 +14,6 @@ import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.CommandDispatcher;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
@@ -36,18 +36,21 @@ public class CardSetCommand extends AbstractCoreCommandExecutor {
     private final RpPlayerRepo playerRepo;
     private final AttributeRepo attributeRepo;
     private final CommandDispatcher commandDispatcher;
+    private final CommandPlayerParser playerParser;
 
     @Inject
     public CardSetCommand(
         Plugin plugin,
         RpPlayerRepo playerRepo,
         AttributeRepo attributeRepo,
-        CommandDispatcher commandDispatcher
+        CommandDispatcher commandDispatcher,
+        CommandPlayerParser playerParser
     ) {
         super(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
         this.commandDispatcher = Objects.requireNonNull(commandDispatcher);
+        this.playerParser = Objects.requireNonNull(playerParser);
     }
 
     @Override
@@ -59,7 +62,11 @@ public class CardSetCommand extends AbstractCoreCommandExecutor {
         String name = args[0];
         String value = String.join(" ", StringUtils.splice(args, 1));
         Player mcPlayer = (Player) sender;
-        Result<RpPlayer> p = playerRepo.getPlayer(mcPlayer);
+        RpPlayer player = playerParser.parse(mcPlayer).orElse(null);
+
+        if (player == null) {
+            return true;
+        }
 
         Optional<Attribute> a = attributeRepo.getAttribute(name);
         if (!a.isPresent()) {
@@ -67,13 +74,7 @@ public class CardSetCommand extends AbstractCoreCommandExecutor {
             return true;
         }
 
-        Optional<String> err = p.getError();
-        if (err.isPresent()) {
-            sender.sendMessage(ChatColor.RED + err.get());
-            return true;
-        }
-
-        playerRepo.setAttributeAsync(p.get(), a.get().getId(), value, r -> {
+        playerRepo.setAttributeAsync(player, a.get().getId(), value, r -> {
             Optional<String> setErr = r.getError();
             if (setErr.isPresent()) {
                 sender.sendMessage(ChatColor.RED + setErr.get());

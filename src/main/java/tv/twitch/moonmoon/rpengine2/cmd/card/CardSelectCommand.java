@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
+import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
@@ -17,7 +18,6 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.util.CommandDispatcher;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -40,6 +40,8 @@ public class CardSelectCommand extends AbstractCoreCommandExecutor {
     private final RpPlayerRepo playerRepo;
     private final AttributeRepo attributeRepo;
     private final CommandDispatcher commandDispatcher;
+    private final CommandPlayerParser playerParser;
+
 
     @Inject
     public CardSelectCommand(
@@ -47,13 +49,15 @@ public class CardSelectCommand extends AbstractCoreCommandExecutor {
         SelectRepo selectRepo,
         RpPlayerRepo playerRepo,
         AttributeRepo attributeRepo,
-        CommandDispatcher commandDispatcher
+        CommandDispatcher commandDispatcher,
+        CommandPlayerParser playerParser
     ) {
         super(plugin);
         this.selectRepo = Objects.requireNonNull(selectRepo);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
         this.commandDispatcher = Objects.requireNonNull(commandDispatcher);
+        this.playerParser = Objects.requireNonNull(playerParser);
     }
 
     @Override
@@ -65,20 +69,15 @@ public class CardSelectCommand extends AbstractCoreCommandExecutor {
         String selectName = args[0];
         Optional<Select> s = selectRepo.getSelect(selectName);
         Player mcPlayer = (Player) sender;
-        Result<RpPlayer> p = playerRepo.getPlayer(mcPlayer);
         Optional<Attribute> a = attributeRepo.getAttribute(selectName);
         Attribute attribute;
         Select select;
-        RpPlayer player;
+        RpPlayer player = playerParser.parse(mcPlayer).orElse(null);
         int curOptionId;
 
-        // check player
-        Optional<String> err = p.getError();
-        if (err.isPresent()) {
-            sender.sendMessage(ChatColor.RED + err.get());
+        if (player == null) {
             return true;
         }
-        player = p.get();
 
         // check select
         if (!s.isPresent()) {

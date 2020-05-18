@@ -140,7 +140,7 @@ public class ChatImpl implements Chat {
     }
 
     @Override
-    public Result<Void> load() {
+    public Result<Void> init() {
         commands.register();
         Bukkit.getPluginManager().registerEvents(listener, plugin);
 

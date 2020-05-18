@@ -10,26 +10,27 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
+import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 public class BirdCommand extends AbstractCoreCommandExecutor {
 
     private final Chat chat;
     private final RpPlayerRepo playerRepo;
+    private final CommandPlayerParser playerParser;
 
     @Inject
-    public BirdCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo) {
+    public BirdCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo, CommandPlayerParser playerParser) {
         super(plugin);
         this.chat = Objects.requireNonNull(chat);
         this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerParser = Objects.requireNonNull(playerParser);
     }
 
     @Override
@@ -42,15 +43,13 @@ public class BirdCommand extends AbstractCoreCommandExecutor {
         String message = String.join(" ", StringUtils.splice(args, 1));
         Player player = (Player) sender;
         Player target = Bukkit.getPlayer(targetName);
-        Result<RpPlayer> p = playerRepo.getPlayer(player);
+        RpPlayer p = playerParser.parse(player).orElse(null);
         PlayerInventory inv = player.getInventory();
         double distance;
         int tripTimeTicks;
         UUID targetId;
 
-        Optional<String> err = p.getError();
-        if (err.isPresent()) {
-            sender.sendMessage(ChatColor.RED + err.get());
+        if (p == null) {
             return true;
         }
 
@@ -83,7 +82,7 @@ public class BirdCommand extends AbstractCoreCommandExecutor {
         targetId = target.getUniqueId();
 
         Bukkit.getScheduler().runTaskLater(plugin, () ->
-                receiveBird(playerRepo.getIdentity(p.get()), targetId, message),
+                receiveBird(playerRepo.getIdentity(p), targetId, message),
             tripTimeTicks
         );
 

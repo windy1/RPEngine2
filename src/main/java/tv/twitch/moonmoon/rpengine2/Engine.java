@@ -9,6 +9,7 @@ import tv.twitch.moonmoon.rpengine2.data.DataManager;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
 import tv.twitch.moonmoon.rpengine2.nte.NametagEditPlugin;
+import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -64,17 +65,12 @@ public class Engine {
             return;
         }
 
-        if (chat != null) {
-            Optional<String> err = chat.load().getError();
-            if (err.isPresent()) {
-                log.warning(err.get());
-                pluginManager.disablePlugin(plugin);
-                return;
-            }
+        if (chat != null && !requireOk(chat.init())) {
+            return;
         }
 
-        if (duels != null) {
-            duels.init();
+        if (duels != null && !requireOk(duels.init())) {
+            return;
         }
 
         if (protocol != null) {
@@ -86,5 +82,15 @@ public class Engine {
         }
 
         log.info("Done");
+    }
+
+    private <T> boolean requireOk(Result<T> r) {
+        Optional<String> err = r.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            return false;
+        }
+        return true;
     }
 }

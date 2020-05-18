@@ -4,21 +4,23 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
+import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class ChannelCommand extends AbstractCoreCommandExecutor {
 
@@ -45,12 +47,19 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
 
     private final Chat chat;
     private final RpPlayerRepo playerRepo;
+    private final CommandPlayerParser playerParser;
 
     @Inject
-    public ChannelCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo) {
+    public ChannelCommand(
+        Plugin plugin,
+        Chat chat,
+        RpPlayerRepo playerRepo,
+        CommandPlayerParser playerParser
+    ) {
         super(plugin);
         this.chat = Objects.requireNonNull(chat);
         this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerParser = Objects.requireNonNull(playerParser);
     }
 
     @Override
@@ -60,16 +69,11 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
             return true;
         }
 
-        Player mcPlayer = (Player) sender;
-        Result<RpPlayer> p = playerRepo.getPlayer(mcPlayer);
-        RpPlayer player;
+        RpPlayer player = playerParser.parse(sender).orElse(null);
 
-        Optional<String> err = p.getError();
-        if (err.isPresent()) {
-            sender.sendMessage(ChatColor.RED + err.get());
+        if (player == null) {
             return true;
         }
-        player = p.get();
 
         if (args.length == 0) {
             return handleGetChannel(sender, player);
@@ -113,15 +117,11 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
 
         String channelName = args[0];
         ChatChannel channel = chat.getChannel(channelName).orElse(null);
-        Result<RpPlayer> p = playerRepo.getPlayer((Player) sender);
-        RpPlayer player;
+        RpPlayer player = playerParser.parse(sender).orElse(null);
 
-        Optional<String> err = p.getError();
-        if (err.isPresent()) {
-            sender.sendMessage(ChatColor.RED + err.get());
+        if (player == null) {
             return true;
         }
-        player = p.get();
         
         if (channel == null) {
             sender.sendMessage(ChatColor.RED + "Channel not found");
@@ -139,19 +139,18 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
         }
 
         ChatChannel channel = chat.getChannel(args[0]).orElse(null);
-        Result<RpPlayer> p = playerRepo.getPlayer((Player) sender);
+        RpPlayer p = playerParser.parse(sender).orElse(null);
+
+        if (p == null) {
+            return true;
+        }
 
         if (channel == null) {
             sender.sendMessage(ChatColor.RED + "Channel not found");
             return true;
         }
 
-        Optional<String> err = p.getError();
-        if (err.isPresent()) {
-            sender.sendMessage(ChatColor.RED + err.get());
-        } else {
-            chat.setChatChannelAsync(p.get(), channel);
-        }
+        chat.setChatChannelAsync(p, channel);
 
         return true;
     }
