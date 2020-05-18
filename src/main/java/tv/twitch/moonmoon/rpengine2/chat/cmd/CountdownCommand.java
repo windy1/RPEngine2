@@ -37,7 +37,7 @@ public class CountdownCommand extends AbstractCoreCommandExecutor {
         );
 
         String goSound = config.getString(
-            "chat.countdown.sound", "minecraft:block.bell.use"
+            "chat.countdown.goSound", "minecraft:block.bell.use"
         );
 
         ChatColor color = StringUtils.getChatColor(
