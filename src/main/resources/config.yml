@@ -13,6 +13,17 @@ chat:
   birdSpeed: 20 # blocks per second
   defaultChannel: rp
 
+  countdown:
+    range: 35
+    color: DARK_RED
+    sound: 'minecraft:ui.button.click'
+    volume: 0.5
+    pitch: 1
+    goColor: DARK_GREEN
+    goSound: 'minecraft:block.bell.use'
+    goVolume: 0.5
+    goPitch: 1
+
   roll:
     range: 35
     prefix: '[Roll] '
@@ -40,3 +51,4 @@ chat:
     ooc: true
     toggleooc: true
     roll: true
+    countdown: true

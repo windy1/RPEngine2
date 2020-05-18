@@ -25,7 +25,8 @@ public class ChatCommands implements Commands {
         OocCommand oocCommand,
         RpCommand rpCommand,
         ToggleOocCommand toggleOocCommand,
-        RollCommand rollCommand
+        RollCommand rollCommand,
+        CountdownCommand countdownCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("channel", channelCommand);
@@ -36,6 +37,7 @@ public class ChatCommands implements Commands {
         executors.put("rp", rpCommand);
         executors.put("toggleooc", toggleOocCommand);
         executors.put("roll", rollCommand);
+        executors.put("countdown", countdownCommand);
     }
 
     @Override

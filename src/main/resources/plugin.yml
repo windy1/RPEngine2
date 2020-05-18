@@ -60,3 +60,7 @@ commands:
     description: Generates a random number
     usage: /roll [max | min [max]]
     permission: rpengine.roll
+  countdown:
+    description: Starts a countdown for players
+    usage: /countdown [seconds]
+    permission: rpengine.countdown

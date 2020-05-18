@@ -7,10 +7,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.di.PluginConfig;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
@@ -22,12 +21,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RollCommand implements CommandExecutor {
 
-    private final FileConfiguration config;
+    private final Plugin plugin;
     private final RpPlayerRepo playerRepo;
 
+    // minecraft:block.anvil.place
+
     @Inject
-    public RollCommand(@PluginConfig FileConfiguration config, RpPlayerRepo playerRepo) {
-        this.config = Objects.requireNonNull(config);
+    public RollCommand(Plugin plugin, RpPlayerRepo playerRepo) {
+        this.plugin = Objects.requireNonNull(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
     }
 
@@ -38,7 +39,7 @@ public class RollCommand implements CommandExecutor {
             return true;
         }
 
-        ConfigurationSection c = config.getConfigurationSection("chat.roll");
+        ConfigurationSection c = plugin.getConfig().getConfigurationSection("chat.roll");
         if (c == null) {
             sender.sendMessage(ChatColor.RED + "Invalid configuration (missing roll section)");
             return true;
@@ -74,7 +75,7 @@ public class RollCommand implements CommandExecutor {
             max = Integer.parseInt(maxStr);
         } catch (NumberFormatException e) {
             sender.sendMessage("Invalid number argument");
-            return true;
+            return false;
         }
 
         int roll = ThreadLocalRandom.current().nextInt(min, max + 1);

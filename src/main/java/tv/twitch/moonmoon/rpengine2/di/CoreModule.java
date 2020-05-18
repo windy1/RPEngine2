@@ -44,12 +44,6 @@ public class CoreModule extends AbstractModule {
     }
 
     @Provides
-    @PluginConfig
-    public static FileConfiguration provideConfig(Plugin plugin) {
-        return plugin.getConfig();
-    }
-
-    @Provides
     @DbPath
     public static Path provideDbPath(Plugin plugin) {
         return plugin.getDataFolder().toPath().resolve("plugin.db");
