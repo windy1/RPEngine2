@@ -51,6 +51,7 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     @Override
     public Result<RpPlayer> getPlayer(OfflinePlayer player) {
         Objects.requireNonNull(player);
+        System.out.println("playerId " + player.getUniqueId());
         return Optional.ofNullable(players.get(player.getUniqueId().toString()))
             .map(Result::ok)
             .orElseGet(() -> handleResult(() -> createPlayer(player)));

@@ -55,7 +55,7 @@ public class RpPlayerDbo {
     }
 
     public Result<Long> insertPlayer(OfflinePlayer player) {
-        if (player.getName() == null || !player.hasPlayedBefore()) {
+        if (player.getName() == null) {
             return Result.error("player not yet seen on server");
         }
 

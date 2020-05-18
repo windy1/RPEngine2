@@ -199,7 +199,6 @@ public class ChatImpl implements Chat {
                 player.getPlayer().ifPresent(p -> {
                     String permission = channel.getPermission().orElse(null);
                     if (permission != null && !p.hasPermission(permission)) {
-                        p.sendMessage(ChatColor.RED + "No permission");
                         return;
                     }
 
