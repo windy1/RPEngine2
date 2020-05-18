@@ -1,7 +1,5 @@
 package tv.twitch.moonmoon.rpengine2.cmd.card;
 
-import com.nametagedit.plugin.NametagEdit;
-import com.nametagedit.plugin.api.INametagApi;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

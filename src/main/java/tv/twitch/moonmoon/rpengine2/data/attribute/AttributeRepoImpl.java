@@ -2,12 +2,12 @@ package tv.twitch.moonmoon.rpengine2.data.attribute;
 
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
-import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeArgs;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;

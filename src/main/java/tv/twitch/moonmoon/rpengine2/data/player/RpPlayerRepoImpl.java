@@ -7,12 +7,12 @@ import org.bukkit.OfflinePlayer;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
-import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.*;
@@ -63,12 +63,15 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
 
     @Override
     public String getIdentity(RpPlayer player) {
-        String prefix = getPrefix(player);
+        return getPrefix(player) + getIdentityPlain(player);
+    }
+
+    @Override
+    public String getIdentityPlain(RpPlayer player) {
         return attributeRepo.getIdentity()
             .flatMap(i -> player.getAttribute(i.getId()))
             .flatMap(i -> i.getValue().map(Object::toString))
-            .map(i ->  prefix + i)
-            .orElseGet(() -> prefix + player.getUsername());
+            .orElseGet(player::getUsername);
     }
 
     @Override

@@ -1,8 +1,6 @@
-package tv.twitch.moonmoon.rpengine2.di;
+package tv.twitch.moonmoon.rpengine2.chat;
 
 import com.google.inject.AbstractModule;
-import tv.twitch.moonmoon.rpengine2.chat.Chat;
-import tv.twitch.moonmoon.rpengine2.chat.ChatImpl;
 import tv.twitch.moonmoon.rpengine2.chat.data.ChatChannelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.data.ChatChannelConfigRepoImpl;
 

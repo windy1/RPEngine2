@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.cmd.CoreCommands;
 import tv.twitch.moonmoon.rpengine2.data.DataManager;
+import tv.twitch.moonmoon.rpengine2.protocol.Protocol;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,6 +22,7 @@ public class Engine {
     private final CoreCommands commands;
     private final DataManager dataManager;
     private final Chat chat;
+    private final Protocol protocol;
     private final Logger log;
 
     @Inject
@@ -29,13 +31,15 @@ public class Engine {
         CoreListener listener,
         CoreCommands commands,
         DataManager dataManager,
-        Optional<Chat> chat
+        Optional<Chat> chat,
+        Optional<Protocol> protocol
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         this.listener = Objects.requireNonNull(listener);
         this.commands = Objects.requireNonNull(commands);
         this.dataManager = Objects.requireNonNull(dataManager);
         this.chat = chat.orElse(null);
+        this.protocol = protocol.orElse(null);
         log = plugin.getLogger();
     }
 
@@ -60,6 +64,10 @@ public class Engine {
                 pluginManager.disablePlugin(plugin);
                 return;
             }
+        }
+
+        if (protocol != null) {
+            protocol.init();
         }
 
         log.info("Done");

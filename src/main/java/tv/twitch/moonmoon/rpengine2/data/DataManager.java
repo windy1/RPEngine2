@@ -3,7 +3,7 @@ package tv.twitch.moonmoon.rpengine2.data;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
-import tv.twitch.moonmoon.rpengine2.di.PluginLogger;
+import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
