@@ -3,14 +3,13 @@ package tv.twitch.moonmoon.rpengine2.chat.cmd;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
+import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
@@ -21,28 +20,22 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BirdCommand implements CommandExecutor {
+public class BirdCommand extends AbstractCoreCommandExecutor {
 
-    private final Plugin plugin;
     private final Chat chat;
     private final RpPlayerRepo playerRepo;
 
     @Inject
     public BirdCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo) {
-        this.plugin = Objects.requireNonNull(plugin);
+        super(plugin);
         this.chat = Objects.requireNonNull(chat);
         this.playerRepo = Objects.requireNonNull(playerRepo);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean handle(CommandSender sender, String[] args) {
         if (args.length < 2) {
             return false;
-        }
-
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
-            return true;
         }
 
         String targetName = args[0];
@@ -90,7 +83,7 @@ public class BirdCommand implements CommandExecutor {
         targetId = target.getUniqueId();
 
         Bukkit.getScheduler().runTaskLater(plugin, () ->
-            receiveBird(playerRepo.getIdentity(p.get()), targetId, message),
+                receiveBird(playerRepo.getIdentity(p.get()), targetId, message),
             tripTimeTicks
         );
 
@@ -117,5 +110,15 @@ public class BirdCommand implements CommandExecutor {
             t.sendMessage(ChatColor.GREEN + message);
             t.sendMessage("" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "Signed " + playerName);
         }
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "chat.commands.bird";
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
+        return true;
     }
 }

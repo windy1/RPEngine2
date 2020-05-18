@@ -3,42 +3,32 @@ package tv.twitch.moonmoon.rpengine2.chat.cmd;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
-import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RollCommand implements CommandExecutor {
+public class RollCommand extends AbstractCoreCommandExecutor {
 
-    private final Plugin plugin;
     private final RpPlayerRepo playerRepo;
-
-    // minecraft:block.anvil.place
 
     @Inject
     public RollCommand(Plugin plugin, RpPlayerRepo playerRepo) {
-        this.plugin = Objects.requireNonNull(plugin);
+        super(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
-            return true;
-        }
-
+    public boolean handle(CommandSender sender, String[] args) {
         ConfigurationSection c = plugin.getConfig().getConfigurationSection("chat.roll");
         if (c == null) {
             sender.sendMessage(ChatColor.RED + "Invalid configuration (missing roll section)");
@@ -90,6 +80,16 @@ public class RollCommand implements CommandExecutor {
             }
         }
 
+        return true;
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "chat.commands.roll";
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
         return true;
     }
 }

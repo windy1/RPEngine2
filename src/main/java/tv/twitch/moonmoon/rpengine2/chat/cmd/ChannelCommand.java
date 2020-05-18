@@ -1,13 +1,12 @@
 package tv.twitch.moonmoon.rpengine2.chat.cmd;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
-import tv.twitch.moonmoon.rpengine2.chat.data.ChatChannelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
@@ -19,7 +18,7 @@ import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 import javax.inject.Inject;
 import java.util.*;
 
-public class ChannelCommand implements CommandExecutor {
+public class ChannelCommand extends AbstractCoreCommandExecutor {
 
     private static final List<CommandUsage> USAGES = new ArrayList<>();
     private static final Help HELP = new Help(
@@ -43,26 +42,16 @@ public class ChannelCommand implements CommandExecutor {
 
     private final Chat chat;
     private final RpPlayerRepo playerRepo;
-    private final ChatChannelConfigRepo channelConfigRepo;
 
     @Inject
-    public ChannelCommand(
-        Chat chat,
-        RpPlayerRepo playerRepo,
-        ChatChannelConfigRepo channelConfigRepo
-    ) {
+    public ChannelCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo) {
+        super(plugin);
         this.chat = Objects.requireNonNull(chat);
         this.playerRepo = Objects.requireNonNull(playerRepo);
-        this.channelConfigRepo = Objects.requireNonNull(channelConfigRepo);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
-            return true;
-        }
-
+    public boolean handle(CommandSender sender, String[] args) {
         if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
             HELP.handle(sender, new String[] { "help" });
             return true;
@@ -159,6 +148,16 @@ public class ChannelCommand implements CommandExecutor {
             chat.setChatChannelAsync(p.get(), channel);
         }
 
+        return true;
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "chat.commands.channel";
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
         return true;
     }
 }

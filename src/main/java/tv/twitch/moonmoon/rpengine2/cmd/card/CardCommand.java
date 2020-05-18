@@ -1,23 +1,22 @@
 package tv.twitch.moonmoon.rpengine2.cmd.card;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
-import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CardCommand implements CommandExecutor {
+public class CardCommand extends AbstractCoreCommandExecutor {
 
     private static final String HEADER =
         ChatColor.BLUE + "========== " + ChatColor.GREEN + "%s " + ChatColor.BLUE + "==========";
@@ -31,22 +30,19 @@ public class CardCommand implements CommandExecutor {
 
     @Inject
     public CardCommand(
+        Plugin plugin,
         RpPlayerRepo playerRepo,
         SelectRepo selectRepo,
         AttributeRepo attributeRepo
     ) {
+        super(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.selectRepo = Objects.requireNonNull(selectRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
-            return true;
-        }
-
+    public boolean handle(CommandSender sender, String[] args) {
         Result<RpPlayer> p = playerRepo.getPlayer((Player) sender);
         RpPlayer player;
 
@@ -73,6 +69,16 @@ public class CardCommand implements CommandExecutor {
             })
             .forEach(a -> sender.spigot().sendMessage(a.toTextComponent()));
 
+        return true;
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "commands.card";
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
         return true;
     }
 }

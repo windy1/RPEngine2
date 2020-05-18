@@ -15,7 +15,12 @@ public interface ChannelSayCommand extends ChannelProxyCommand {
     }
 
     @Override
-    default boolean onSuccess(RpPlayer player, ChatChannel channel, CommandSender sender, String[] args) {
+    default boolean onSuccess(
+        RpPlayer player,
+        ChatChannel channel,
+        CommandSender sender,
+        String[] args
+    ) {
         String message = String.join(" ", args);
         getChat().sendMessage(player, channel, message);
         return true;

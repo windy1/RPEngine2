@@ -1,5 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.chat.cmd.proxy;
 
+import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 
@@ -11,8 +12,8 @@ public class RpCommand extends AbstractChannelProxyCommand implements ChannelJoi
         "you must have a channel configured named `rp`";
 
     @Inject
-    public RpCommand(Chat chat, RpPlayerRepo playerRepo) {
-        super(chat, playerRepo);
+    public RpCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo) {
+        super(plugin, playerRepo, chat);
     }
 
     @Override
@@ -23,5 +24,10 @@ public class RpCommand extends AbstractChannelProxyCommand implements ChannelJoi
     @Override
     public String getChannelName() {
         return "rp";
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "chat.commands.rp";
     }
 }

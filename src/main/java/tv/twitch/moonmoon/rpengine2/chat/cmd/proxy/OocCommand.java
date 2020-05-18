@@ -1,5 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.chat.cmd.proxy;
 
+import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 
@@ -11,8 +12,8 @@ public class OocCommand extends AbstractChannelProxyCommand implements ChannelJo
         "you must have a channel configured named `ooc`";
 
     @Inject
-    public OocCommand(Chat chat, RpPlayerRepo playerRepo) {
-        super(chat, playerRepo);
+    public OocCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo) {
+        super(plugin, playerRepo, chat);
     }
 
     @Override
@@ -23,5 +24,10 @@ public class OocCommand extends AbstractChannelProxyCommand implements ChannelJo
     @Override
     public String getChannelName() {
         return "ooc";
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "chat.commands.ooc";
     }
 }

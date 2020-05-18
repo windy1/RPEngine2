@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AdminCommand implements CommandExecutor {
+public class AdminCommand extends AbstractCoreCommandExecutor {
 
     private static final String PLUGIN_DISPLAY_NAME = "RPEngine";
     private static final List<CommandUsage> USAGES = new ArrayList<>();
@@ -38,6 +39,8 @@ public class AdminCommand implements CommandExecutor {
         SelectAdmin selectAdmin,
         Dump dump
     ) {
+        super(plugin);
+
         this.attributeAdmin = Objects.requireNonNull(attributeAdmin);
         this.selectAdmin = Objects.requireNonNull(selectAdmin);
         this.dump = Objects.requireNonNull(dump);
@@ -52,7 +55,7 @@ public class AdminCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean handle(CommandSender sender, String[] args) {
         if (args.length == 0) {
             return help.handle(sender, new String[0]);
         }
@@ -71,5 +74,15 @@ public class AdminCommand implements CommandExecutor {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "commands.rpengine";
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
+        return false;
     }
 }

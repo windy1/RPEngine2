@@ -1,10 +1,17 @@
 # == Core module ==
 commands:
-  rpengine: true
-  card: true
-  cardset: true
-  cardselect: true
-  colorlist: true
+  rpengine:
+    enabled: true
+  card:
+    enabled: true
+  cardset:
+    enabled: true
+    cooldown: 15
+  cardselect:
+    enabled: true
+    cooldown: 15
+  colorlist:
+    enabled: true
 
 # == Chat module ==
 chat:
@@ -42,12 +49,21 @@ chat:
       prefix: '[SHOUT] '
 
   commands:
-    channel: true
-    whisper: true
-    shout: true
-    bird: true
-    rp: true
-    ooc: true
-    toggleooc: true
-    roll: true
-    countdown: true
+    channel:
+      enabled: true
+    whisper:
+      enabled: true
+    shout:
+      enabled: true
+    bird:
+      enabled: true
+    rp:
+      enabled: true
+    ooc:
+      enabled: true
+    toggleooc:
+      enabled: true
+    roll:
+      enabled: true
+    countdown:
+      enabled: true

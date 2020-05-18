@@ -1,10 +1,10 @@
 package tv.twitch.moonmoon.rpengine2.cmd.card;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
@@ -18,12 +18,11 @@ import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.util.CommandDispatcher;
 import tv.twitch.moonmoon.rpengine2.util.Result;
-import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
 import java.util.*;
 
-public class CardSelectCommand implements CommandExecutor {
+public class CardSelectCommand extends AbstractCoreCommandExecutor {
 
     private static final List<CommandUsage> USAGES = new ArrayList<>();
     private static final Help HELP = new Help(
@@ -44,11 +43,13 @@ public class CardSelectCommand implements CommandExecutor {
 
     @Inject
     public CardSelectCommand(
+        Plugin plugin,
         SelectRepo selectRepo,
         RpPlayerRepo playerRepo,
         AttributeRepo attributeRepo,
         CommandDispatcher commandDispatcher
     ) {
+        super(plugin);
         this.selectRepo = Objects.requireNonNull(selectRepo);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
@@ -56,12 +57,7 @@ public class CardSelectCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
-            return true;
-        }
-
+    public boolean handle(CommandSender sender, String[] args) {
         if (args.length == 0 || (args.length == 1 && args[0].equalsIgnoreCase("help"))) {
             return HELP.handle(sender, new String[] { "help" });
         }
@@ -142,6 +138,16 @@ public class CardSelectCommand implements CommandExecutor {
             commandDispatcher.add(mcPlayer.getUniqueId(), "card");
         });
 
+        return true;
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "commands.cardselect";
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
         return true;
     }
 }

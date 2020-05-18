@@ -5,6 +5,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
@@ -19,7 +21,7 @@ import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 import javax.inject.Inject;
 import java.util.*;
 
-public class CardSetCommand implements CommandExecutor {
+public class CardSetCommand extends AbstractCoreCommandExecutor {
 
     private static final List<CommandUsage> USAGES = new ArrayList<>();
     private static final Help HELP = new Help(
@@ -39,22 +41,19 @@ public class CardSetCommand implements CommandExecutor {
 
     @Inject
     public CardSetCommand(
+        Plugin plugin,
         RpPlayerRepo playerRepo,
         AttributeRepo attributeRepo,
         CommandDispatcher commandDispatcher
     ) {
+        super(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
         this.commandDispatcher = Objects.requireNonNull(commandDispatcher);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
-            return true;
-        }
-
+    public boolean handle(CommandSender sender, String[] args) {
         if (args.length < 2) {
             return HELP.handle(sender, new String[] { "help" });
         }
@@ -85,6 +84,16 @@ public class CardSetCommand implements CommandExecutor {
             }
         });
 
+        return true;
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "commands.cardset";
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
         return true;
     }
 }

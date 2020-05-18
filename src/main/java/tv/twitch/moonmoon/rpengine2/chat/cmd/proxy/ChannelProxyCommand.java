@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
+import tv.twitch.moonmoon.rpengine2.cmd.CoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
@@ -14,7 +15,7 @@ import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import java.util.Optional;
 
-public interface ChannelProxyCommand extends CommandExecutor {
+public interface ChannelProxyCommand extends CoreCommandExecutor {
 
     Chat getChat();
 
@@ -24,6 +25,7 @@ public interface ChannelProxyCommand extends CommandExecutor {
 
     String getChannelName();
 
+    @Override
     default boolean handle(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
@@ -50,9 +52,4 @@ public interface ChannelProxyCommand extends CommandExecutor {
     }
 
     boolean onSuccess(RpPlayer player, ChatChannel channel, CommandSender sender, String[] args);
-
-    @Override
-    default boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        return handle(sender, args);
-    }
 }

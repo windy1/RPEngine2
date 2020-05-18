@@ -1,6 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.chat.cmd.proxy;
 
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 
@@ -13,8 +14,8 @@ public class ShoutCommand extends AbstractChannelProxyCommand implements Channel
             "you must have a channel configured named `shout` with the desired range";
 
     @Inject
-    public ShoutCommand(Chat chat, RpPlayerRepo playerRepo) {
-        super(chat, playerRepo);
+    public ShoutCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo) {
+        super(plugin, playerRepo, chat);
     }
 
     @Override
@@ -25,5 +26,10 @@ public class ShoutCommand extends AbstractChannelProxyCommand implements Channel
     @Override
     public String getChannelName() {
         return "shout";
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "chat.commands.shout";
     }
 }

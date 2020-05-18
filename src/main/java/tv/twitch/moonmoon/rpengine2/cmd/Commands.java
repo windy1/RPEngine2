@@ -29,7 +29,12 @@ public interface Commands {
         }
 
         for (String cmd : plugin.getDescription().getCommands().keySet()) {
-            if (commandConfig.getBoolean(cmd)) {
+            ConfigurationSection c = commandConfig.getConfigurationSection(cmd);
+            if (c == null) {
+                continue;
+            }
+
+            if (c.getBoolean("enabled")) {
                 Objects.requireNonNull(plugin.getCommand(cmd))
                     .setExecutor(executors.get(cmd));
             }

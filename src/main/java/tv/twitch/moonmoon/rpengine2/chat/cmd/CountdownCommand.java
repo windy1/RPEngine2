@@ -3,34 +3,26 @@ package tv.twitch.moonmoon.rpengine2.chat.cmd;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CountdownCommand implements CommandExecutor {
-
-    private final Plugin plugin;
+public class CountdownCommand extends AbstractCoreCommandExecutor {
 
     @Inject
     public CountdownCommand(Plugin plugin) {
-        this.plugin = Objects.requireNonNull(plugin);
+        super(plugin);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
-            return true;
-        }
-
+    public boolean handle(CommandSender sender, String[] args) {
         FileConfiguration config = plugin.getConfig();
         int range = config.getInt("chat.countdown.range", 0);
         int timeSecs = 3;
@@ -152,5 +144,15 @@ public class CountdownCommand implements CommandExecutor {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         }
+    }
+
+    @Override
+    public String getConfigPath() {
+        return "chat.commands.countdown";
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
+        return true;
     }
 }
