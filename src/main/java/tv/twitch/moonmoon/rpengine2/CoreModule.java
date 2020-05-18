@@ -16,13 +16,16 @@ import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepoImpl;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepoImpl;
-import tv.twitch.moonmoon.rpengine2.protocol.Protocol;
-import tv.twitch.moonmoon.rpengine2.protocol.ProtocolModule;
+import tv.twitch.moonmoon.rpengine2.nte.NametagEditModule;
+import tv.twitch.moonmoon.rpengine2.nte.NametagEditPlugin;
+import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
+import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibModule;
 import tv.twitch.moonmoon.rpengine2.util.DbPath;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public class CoreModule extends AbstractModule {
@@ -63,15 +66,23 @@ public class CoreModule extends AbstractModule {
 
         OptionalBinder.newOptionalBinder(binder(), Chat.class);
         OptionalBinder.newOptionalBinder(binder(), ChatChannelConfigRepo.class);
-        OptionalBinder.newOptionalBinder(binder(), Protocol.class);
+        OptionalBinder.newOptionalBinder(binder(), ProtocolLibPlugin.class);
+        OptionalBinder.newOptionalBinder(binder(), NametagEditPlugin.class);
 
         if (plugin.getConfig().getBoolean("chat.enabled")) {
             install(new ChatModule());
         }
 
-        PluginManager pluginManager = Bukkit.getPluginManager();
-        if (pluginManager.isPluginEnabled("ProtocolLib")) {
-            install(new ProtocolModule());
+        try {
+            Class.forName("com.comphenix.protocol.ProtocolLibrary");
+            install(new ProtocolLibModule());
+        } catch (ClassNotFoundException ignored) {
+        }
+
+        try {
+            Class.forName("com.nametagedit.plugin.NametagEdit");
+            install(new NametagEditModule());
+        } catch (ClassNotFoundException ignored) {
         }
     }
 }

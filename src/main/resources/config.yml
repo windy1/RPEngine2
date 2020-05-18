@@ -1,4 +1,4 @@
-# Core module
+# == Core module ==
 commands:
   rpengine: true
   card: true
@@ -6,8 +6,7 @@ commands:
   cardselect: true
   colorlist: true
 
-# Chat module
-# TODO: test ranges
+# == Chat module ==
 chat:
   enabled: true
   birdSpeed: 20 # blocks per second

@@ -21,12 +21,16 @@ repositories {
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
     maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.31.1'
     compile group: 'com.google.inject', name: 'guice', version: '4.2.3'
-    compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.5.0";
+    compileOnly group: 'com.nametagedit', name: 'nametagedit', version: '4.4.6'
+    compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.5.0"
     compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

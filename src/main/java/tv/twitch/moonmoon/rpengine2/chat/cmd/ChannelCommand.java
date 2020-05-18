@@ -58,7 +58,6 @@ public class ChannelCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        System.out.println("DEBUG-1");
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + StringUtils.MUST_BE_PLAYER);
             return true;
@@ -84,15 +83,12 @@ public class ChannelCommand implements CommandExecutor {
             return handleGetChannel(sender, player);
         }
 
-        System.out.println("DEBUG0");
-
         switch (args[0]) {
             case "mute":
             case "unmute":
                 return handleMute(sender, StringUtils.splice(args, 1));
             case "join":
             case "j":
-                System.out.println("DEBUG1");
                 return handleJoin(sender, StringUtils.splice(args, 1));
             default:
                 return false;
