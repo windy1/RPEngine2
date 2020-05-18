@@ -1,5 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.chat.cmd;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,6 +36,7 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
 
         USAGES.add(new CommandUsage("mute", muteArgs));
         USAGES.add(new CommandUsage("unmute", muteArgs));
+        USAGES.add(new CommandUsage("list"));
 
         USAGES.add(new CommandUsage("join", Collections.singletonList(
             new ArgumentLabel("channel", true)
@@ -79,6 +82,8 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
             case "join":
             case "j":
                 return handleJoin(sender, StringUtils.splice(args, 1));
+            case "list":
+                return handleListChannels(sender);
             default:
                 return false;
         }
@@ -148,6 +153,30 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
             chat.setChatChannelAsync(p.get(), channel);
         }
 
+        return true;
+    }
+
+    private boolean handleListChannels(CommandSender sender) {
+        sender.sendMessage(ChatColor.BLUE + "Chat channels:");
+        sender.sendMessage("" + ChatColor.GRAY + ChatColor.ITALIC + "Click a channel to join");
+        for (ChatChannel channel : chat.getChannels()) {
+            String channelName = channel.getName();
+            TextComponent c = new TextComponent();
+            TextComponent prefix = new TextComponent("# ");
+            TextComponent nameTag = new TextComponent(channelName);
+
+            prefix.setColor(net.md_5.bungee.api.ChatColor.BLUE);
+            nameTag.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+
+            c.setClickEvent(new ClickEvent(
+                ClickEvent.Action.RUN_COMMAND, "/channel join " + channelName
+            ));
+
+            c.addExtra(prefix);
+            c.addExtra(nameTag);
+
+            sender.spigot().sendMessage(c);
+        }
         return true;
     }
 
