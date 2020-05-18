@@ -1,5 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.cmd.card;
 
+import com.nametagedit.plugin.NametagEdit;
+import com.nametagedit.plugin.api.INametagApi;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -136,9 +138,10 @@ public class CardSelectCommand implements CommandExecutor {
             Optional<String> setErr = r.getError();
             if (setErr.isPresent()) {
                 sender.sendMessage(ChatColor.RED + setErr.get());
-            } else {
-                commandDispatcher.add(mcPlayer.getUniqueId(), "card");
+                return;
             }
+
+            commandDispatcher.add(mcPlayer.getUniqueId(), "card");
         });
 
         return true;

@@ -63,12 +63,17 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
 
     @Override
     public String getIdentity(RpPlayer player) {
-        String prefix = getMarkerColor(player).map(ChatColor::toString).orElse("");
+        String prefix = getPrefix(player);
         return attributeRepo.getIdentity()
             .flatMap(i -> player.getAttribute(i.getId()))
             .flatMap(i -> i.getValue().map(Object::toString))
             .map(i ->  prefix + i)
             .orElseGet(() -> prefix + player.getUsername());
+    }
+
+    @Override
+    public String getPrefix(RpPlayer player) {
+        return getMarkerColor(player).map(ChatColor::toString).orElse("");
     }
 
     @Override
