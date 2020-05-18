@@ -78,3 +78,13 @@ chat:
       enabled: true
     countdown:
       enabled: true
+
+# == Duel module ==
+duels:
+  enabled: true
+  startRange: 10
+  maxSecs: 300
+
+  commands:
+    duelrules:
+      enabled: true

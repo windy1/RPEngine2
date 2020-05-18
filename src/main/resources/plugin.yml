@@ -73,3 +73,8 @@ commands:
     description: Starts a countdown for players
     usage: /countdown [seconds]
     permission: rpengine.countdown
+  duelrules:
+    description: Prints the duel rules
+    usage: /duelrules
+    aliases: [drules]
+    permission: rpengine.duelrules

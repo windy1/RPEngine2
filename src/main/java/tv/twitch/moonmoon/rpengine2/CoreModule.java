@@ -3,6 +3,7 @@ package tv.twitch.moonmoon.rpengine2;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.OptionalBinder;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
@@ -14,6 +15,8 @@ import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepoImpl;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepoImpl;
+import tv.twitch.moonmoon.rpengine2.duel.DuelModule;
+import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibModule;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
 import tv.twitch.moonmoon.rpengine2.nte.NametagEditModule;
@@ -65,9 +68,16 @@ public class CoreModule extends AbstractModule {
         OptionalBinder.newOptionalBinder(binder(), ChatChannelConfigRepo.class);
         OptionalBinder.newOptionalBinder(binder(), ProtocolLibPlugin.class);
         OptionalBinder.newOptionalBinder(binder(), NametagEditPlugin.class);
+        OptionalBinder.newOptionalBinder(binder(), Duels.class);
 
-        if (plugin.getConfig().getBoolean("chat.enabled")) {
+        FileConfiguration config = plugin.getConfig();
+
+        if (config.getBoolean("chat.enabled")) {
             install(new ChatModule());
+        }
+
+        if (config.getBoolean("duels.enabled")) {
+            install(new DuelModule());
         }
 
         try {

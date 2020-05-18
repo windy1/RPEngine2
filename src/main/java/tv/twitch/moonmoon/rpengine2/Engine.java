@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.cmd.CoreCommands;
 import tv.twitch.moonmoon.rpengine2.data.DataManager;
+import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
 import tv.twitch.moonmoon.rpengine2.nte.NametagEditPlugin;
 
@@ -23,6 +24,7 @@ public class Engine {
     private final CoreCommands commands;
     private final DataManager dataManager;
     private final Chat chat;
+    private final Duels duels;
     private final ProtocolLibPlugin protocol;
     private final NametagEditPlugin nte;
     private final Logger log;
@@ -34,6 +36,7 @@ public class Engine {
         CoreCommands commands,
         DataManager dataManager,
         Optional<Chat> chat,
+        Optional<Duels> duels,
         Optional<ProtocolLibPlugin> protocol,
         Optional<NametagEditPlugin> nte) {
         this.plugin = Objects.requireNonNull(plugin);
@@ -41,6 +44,7 @@ public class Engine {
         this.commands = Objects.requireNonNull(commands);
         this.dataManager = Objects.requireNonNull(dataManager);
         this.chat = chat.orElse(null);
+        this.duels = duels.orElse(null);
         this.protocol = protocol.orElse(null);
         this.nte = nte.orElse(null);
         log = plugin.getLogger();
@@ -67,6 +71,10 @@ public class Engine {
                 pluginManager.disablePlugin(plugin);
                 return;
             }
+        }
+
+        if (duels != null) {
+            duels.init();
         }
 
         if (protocol != null) {
