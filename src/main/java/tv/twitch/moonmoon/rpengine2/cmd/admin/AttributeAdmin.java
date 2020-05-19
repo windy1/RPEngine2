@@ -62,17 +62,19 @@ public class AttributeAdmin {
             new ArgumentLabel("name", true)
         )));
 
-        USAGES.add(new CommandUsage("clearidentity", Collections.singletonList(
-            new ArgumentLabel("name", true)
-        )));
+        USAGES.add(new CommandUsage("clearidentity"));
 
         USAGES.add(new CommandUsage("setmarker", Collections.singletonList(
             new ArgumentLabel("name", true)
         )));
 
-        USAGES.add(new CommandUsage("clearmarker", Collections.singletonList(
+        USAGES.add(new CommandUsage("clearmarker"));
+
+        USAGES.add(new CommandUsage("settitle", Collections.singletonList(
             new ArgumentLabel("name", true)
         )));
+
+        USAGES.add(new CommandUsage("cleartitle"));
     }
 
     private final AttributeRepo attributeRepo;
@@ -123,6 +125,10 @@ public class AttributeAdmin {
             case "clearmarker":
             case "clearmark":
                 return handleClearMarker(sender);
+            case "settitle":
+                return handleSetTitle(sender, StringUtils.splice(args, 1));
+            case "cleartitle":
+                return handleClearTitle(sender);
             default:
                 return false;
         }
@@ -268,6 +274,28 @@ public class AttributeAdmin {
         attributeRepo.clearMarkerAsync(r ->
             sender.sendMessage(Commands.mapResult(r, "Marker cleared"))
         );
+        return true;
+    }
+
+    private boolean handleSetTitle(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+
+        String name = args[0];
+
+        attributeRepo.setTitleAsync(name, r ->
+            sender.sendMessage(Commands.mapResult(r, "Attribute updated"))
+        );
+
+        return true;
+    }
+
+    private boolean handleClearTitle(CommandSender sender) {
+        attributeRepo.clearTitleAsync(r ->
+            sender.sendMessage(Commands.mapResult(r, "Title cleared"))
+        );
+
         return true;
     }
 }

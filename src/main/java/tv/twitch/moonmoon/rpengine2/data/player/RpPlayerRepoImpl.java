@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
+import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
@@ -63,7 +64,12 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
 
     @Override
     public String getIdentity(RpPlayer player) {
-        return getPrefix(player) + getIdentityPlain(player);
+        return String.format(
+            "%s%s %s",
+            getPrefix(player),
+            getTitle(player),
+            getIdentityPlain(player)
+        );
     }
 
     @Override
@@ -79,6 +85,32 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
         return getMarkerColor(player)
             .map(c -> net.md_5.bungee.api.ChatColor.valueOf(c.name()))
             .map(net.md_5.bungee.api.ChatColor::toString)
+            .orElse("");
+    }
+
+    @Override
+    public String getTitle(RpPlayer player) {
+        RpPlayerAttribute title = attributeRepo.getTitle()
+            .flatMap(t -> player.getAttribute(t.getId()))
+            .orElse(null);
+
+        if (title == null) {
+            return "";
+        }
+
+        if (title.getType() == AttributeType.Select) {
+            String selectName = title.getName();
+            //noinspection OptionalGetWithoutIsPresent
+            int optionId = (Integer) title.getValue().get();
+
+            return selectRepo.getSelect(selectName)
+                .flatMap(select -> select.getOption(optionId))
+                .map(Option::getName)
+                .orElse("");
+        }
+
+        return title.getValue()
+            .map(Object::toString)
             .orElse("");
     }
 

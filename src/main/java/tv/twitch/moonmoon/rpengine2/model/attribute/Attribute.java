@@ -15,6 +15,7 @@ public class Attribute {
     private final String formatString;
     private final boolean identity;
     private final boolean marker;
+    private final boolean title;
 
     public Attribute(
         int id,
@@ -25,7 +26,8 @@ public class Attribute {
         Object defaultValue,
         String formatString,
         boolean identity,
-        boolean marker
+        boolean marker,
+        boolean title
     ) {
         this.id = id;
         this.created = Objects.requireNonNull(created);
@@ -36,6 +38,7 @@ public class Attribute {
         this.formatString = formatString;
         this.identity = identity;
         this.marker = marker;
+        this.title = title;
     }
 
     public int getId() {
@@ -72,6 +75,10 @@ public class Attribute {
 
     public boolean isMarker() {
         return marker;
+    }
+
+    public boolean isTitle() {
+        return title;
     }
 
     @Override

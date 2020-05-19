@@ -27,6 +27,7 @@ public class AttributeRepoImpl implements AttributeRepo {
     private Map<String, Attribute> attributes;
     private Attribute identity;
     private Attribute marker;
+    private Attribute title;
 
     @Inject
     public AttributeRepoImpl(
@@ -59,6 +60,11 @@ public class AttributeRepoImpl implements AttributeRepo {
     @Override
     public Optional<Attribute> getMarker() {
         return Optional.ofNullable(marker);
+    }
+
+    @Override
+    public Optional<Attribute> getTitle() {
+        return Optional.ofNullable(title);
     }
 
     @Override
@@ -340,6 +346,58 @@ public class AttributeRepoImpl implements AttributeRepo {
     }
 
     @Override
+    public void setTitleAsync(String name, Callback<Void> callback) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            callback.accept(Result.error("Attribute not found"));
+            return;
+        }
+
+        attributeDbo.setTitleAsync(attribute.getId(), r -> {
+            Result<Attribute> newTitle = handleToggleUpdateAndReload(r, name, title);
+
+            Optional<String> update = newTitle.getError();
+            if (update.isPresent()) {
+                callback.accept(Result.error(update.get()));
+            } else {
+                title = newTitle.get();
+                callback.accept(Result.ok(null));
+            }
+        });
+    }
+
+    @Override
+    public void setTitle(String name) {
+        Attribute attribute = attributes.get(name);
+        if (attribute == null) {
+            return;
+        }
+
+        Result<Void> update = attributeDbo.setTitle(attribute.getId());
+        Result<Attribute> newTitle = handleToggleUpdateAndReload(update, name, title);
+
+        Optional<String> err = newTitle.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+        } else {
+            title = newTitle.get();
+        }
+    }
+
+    @Override
+    public void clearTitleAsync(Callback<Void> callback) {
+        attributeDbo.clearTitleAsync(r -> {
+            Optional<String> err = handleToggleUpdate(r, title).getError();
+            if (err.isPresent()) {
+                callback.accept(Result.error(err.get()));
+            } else {
+                title = null;
+                callback.accept(Result.ok(null));
+            }
+        });
+    }
+
+    @Override
     public Result<Void> load() {
         Result<Set<Attribute>> r = attributeDbo.selectAttributes();
 
@@ -357,6 +415,11 @@ public class AttributeRepoImpl implements AttributeRepo {
 
             marker = attributes.values().stream()
                 .filter(Attribute::isMarker)
+                .findFirst()
+                .orElse(null);
+
+            title = attributes.values().stream()
+                .filter(Attribute::isTitle)
                 .findFirst()
                 .orElse(null);
 

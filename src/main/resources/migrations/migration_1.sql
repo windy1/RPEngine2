@@ -21,5 +21,6 @@ CREATE TABLE IF NOT EXISTS rp_attribute (
     default_value VARCHAR(255),
     format VARCHAR(255) DEFAULT NULL,
     identity INTEGER NOT NULL DEFAULT 0,
-    marker INTEGER NOT NULL DEFAULT 0
+    marker INTEGER NOT NULL DEFAULT 0,
+    title INTEGER NOT NULL DEFAULT 0
 );

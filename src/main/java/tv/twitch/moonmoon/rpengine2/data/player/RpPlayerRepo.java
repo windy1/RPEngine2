@@ -23,6 +23,8 @@ public interface RpPlayerRepo extends Repo {
 
     String getPrefix(RpPlayer player);
 
+    String getTitle(RpPlayer player);
+
     void setAttributeAsync(
         RpPlayer player,
         int attributeId,

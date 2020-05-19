@@ -56,7 +56,8 @@ public class AttributeDbo {
                 "default_value, " +
                 "format, " +
                 "identity," +
-                "marker  " +
+                "marker," +
+                "title  " +
             "FROM rp_attribute " +
             "WHERE name = ?";
 
@@ -140,7 +141,8 @@ public class AttributeDbo {
                 "default_value, " +
                 "format, " +
                 "identity," +
-                "marker  " +
+                "marker," +
+                "title  " +
             "FROM rp_attribute";
 
         Set<Attribute> attributes = new HashSet<>();
@@ -232,6 +234,46 @@ public class AttributeDbo {
 
     public void clearMarkerAsync(Callback<Void> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> callback.accept(clearMarker()));
+    }
+
+    public void setTitleAsync(int attributeId, Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(setTitle(attributeId))
+        );
+    }
+
+    public Result<Void> setTitle(int attributeId) {
+        Optional<String> err = clearTitle().getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        final String query = "UPDATE rp_attribute SET title = 1 WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, attributeId);
+            stmt.executeUpdate();
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error setting title attribute: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    public void clearTitleAsync(Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> callback.accept(clearTitle()));
+    }
+
+    private Result<Void> clearTitle() {
+        final String query = "UPDATE rp_attribute SET title = 0";
+
+        try (Statement stmt = db.getConnection().createStatement()) {
+            stmt.executeUpdate(query);
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error clearing title: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
     }
 
     private Result<Void> clearMarker() {
@@ -339,7 +381,8 @@ public class AttributeDbo {
             defaultValue,
             results.getString("format"),
             results.getInt("identity") > 0,
-            results.getInt("marker") > 0
+            results.getInt("marker") > 0,
+            results.getInt("title") > 0
         );
     }
 }

@@ -56,6 +56,12 @@ public class Defaults {
             attributeRepo.createAttribute(
                 "Description", AttributeType.String, "Description", null
             );
+
+            attributeRepo.createAttribute(
+                "Job", AttributeType.String, "Job", null
+            );
+
+            attributeRepo.setTitle("Job");
         }
     }
 }

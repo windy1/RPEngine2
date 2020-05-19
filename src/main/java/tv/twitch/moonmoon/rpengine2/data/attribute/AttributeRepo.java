@@ -18,6 +18,8 @@ public interface AttributeRepo extends Repo {
 
     Optional<Attribute> getMarker();
 
+    Optional<Attribute> getTitle();
+
     void createAttributeAsync(
         String name,
         AttributeType type,
@@ -47,4 +49,10 @@ public interface AttributeRepo extends Repo {
     void setMarker(String name);
 
     void clearMarkerAsync(Callback<Void> callback);
+
+    void setTitleAsync(String name, Callback<Void> callback);
+
+    void setTitle(String name);
+
+    void clearTitleAsync(Callback<Void> callback);
 }
