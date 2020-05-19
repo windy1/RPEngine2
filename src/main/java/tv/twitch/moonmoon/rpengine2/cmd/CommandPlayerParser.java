@@ -3,6 +3,7 @@ package tv.twitch.moonmoon.rpengine2.cmd;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tv.twitch.moonmoon.rpengine2.cmd.parser.CommandParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
@@ -11,7 +12,7 @@ import javax.inject.Inject;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CommandPlayerParser {
+public class CommandPlayerParser implements CommandParser<RpPlayer> {
 
     private final RpPlayerRepo playerRepo;
 
@@ -20,6 +21,7 @@ public class CommandPlayerParser {
         this.playerRepo = Objects.requireNonNull(playerRepo);
     }
 
+    @Override
     public Optional<RpPlayer> parse(CommandSender sender) {
         if (!(sender instanceof Player)) {
             return Optional.empty();

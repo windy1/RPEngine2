@@ -6,14 +6,13 @@ import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import javax.inject.Singleton;
+import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@Singleton
 public class DuelConfigRepoImpl implements DuelConfigRepo {
 
     private final DuelConfigDbo configDbo;
@@ -42,8 +41,9 @@ public class DuelConfigRepoImpl implements DuelConfigRepo {
             return Result.error(err.get());
         }
 
-        configs = r.get().stream()
-            .collect(Collectors.toMap(DuelConfig::getPlayerId, Function.identity()));
+        configs = Collections.synchronizedMap(r.get().stream()
+            .collect(Collectors.toMap(DuelConfig::getPlayerId, Function.identity()))
+        );
 
         return Result.ok(null);
     }

@@ -2,13 +2,14 @@ package tv.twitch.moonmoon.rpengine2.chat.data;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
+import tv.twitch.moonmoon.rpengine2.chat.Chat;
+import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
+import tv.twitch.moonmoon.rpengine2.chat.model.ChatConfig;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,23 +19,23 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Singleton
-public class ChatChannelConfigDbo {
+public class ChatConfigDbo {
 
     private final Plugin plugin;
     private final RpDb db;
+    private final Chat chat;
 
     @Inject
-    public ChatChannelConfigDbo(Plugin plugin, RpDb db) {
+    public ChatConfigDbo(Plugin plugin, RpDb db, Chat chat) {
         this.plugin = Objects.requireNonNull(plugin);
         this.db = Objects.requireNonNull(db);
+        this.chat = Objects.requireNonNull(chat);
     }
 
-    public Result<Set<ChatChannelConfig>> selectConfigs() {
-        final String query =
-            "SELECT id, created, channel_name, player_id, muted FROM rp_chat_channel_config";
+    public Result<Set<ChatConfig>> selectConfigs() {
+        final String query = "SELECT id, created, player_id, channel FROM rp_chat_config";
 
-        Set<ChatChannelConfig> configs = new HashSet<>();
+        Set<ChatConfig> configs = new HashSet<>();
 
         try (Statement stmt = db.getConnection().createStatement();
                 ResultSet results = stmt.executeQuery(query)) {
@@ -44,19 +45,19 @@ public class ChatChannelConfigDbo {
 
             return Result.ok(configs);
         } catch (SQLException e) {
-            String message = "error reading chat channel configs: `%s`";
+            String message = "error reading chat configs: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }
 
-    public Result<ChatChannelConfig> selectConfig(int configId) {
+    public Result<ChatConfig> selectConfig(int playerId) {
         final String query =
-            "SELECT id, created, channel_name, player_id, muted " +
-            "FROM rp_chat_channel_config " +
-            "WHERE id = ?";
+            "SELECT id, created, player_id, channel " +
+            "FROM rp_chat_config " +
+            "WHERE player_id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
-            stmt.setInt(1, configId);
+            stmt.setInt(1, playerId);
 
             try (ResultSet results = stmt.executeQuery()) {
                 if (results.next()) {
@@ -66,25 +67,28 @@ public class ChatChannelConfigDbo {
                 }
             }
         } catch (SQLException e) {
-            String message = "error reading channel config: `%s`";
+            String message = "error reading chat config: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }
 
-    public Result<Long> createConfig(int playerId, String channelName) {
-        final String query =
-            "INSERT OR IGNORE INTO rp_chat_channel_config (" +
-                "created, " +
-                "channel_name, " +
-                "player_id" +
-            ") " +
-            "VALUES (?, ?, ?)";
+    public Result<Long> createConfig(int playerId) {
+        final String query = "INSERT OR IGNORE INTO rp_chat_config (" +
+            "created, " +
+            "player_id, " +
+            "channel" +
+        ") " +
+        "VALUES (?, ?, ?)";
+
+        String channelName = chat.getDefaultChannel()
+            .map(ChatChannel::getName)
+            .orElse(null);
 
         try (PreparedStatement stmt =
                  db.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, Instant.now().toString());
-            stmt.setString(2, channelName);
-            stmt.setInt(3, playerId);
+            stmt.setInt(2, playerId);
+            stmt.setString(3, channelName);
 
             stmt.executeUpdate();
 
@@ -96,41 +100,45 @@ public class ChatChannelConfigDbo {
                 }
             }
         } catch (SQLException e) {
-            String message = "error inserting chat channel config: `%s`";
+            String message = "error inserting chat config: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }
 
-    public void setMutedAsync(int playerId, boolean muted, Callback<Void> callback) {
+    public void updateChannelAsync(int playerId, String channelName, Callback<Void> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
-            callback.accept(setMuted(playerId, muted))
+            callback.accept(updateChannel(playerId, channelName))
         );
     }
 
-    private Result<Void> setMuted(int playerId, boolean muted) {
-        int mutedValue = muted ? 1 : 0;
-        final String query = "UPDATE rp_chat_channel_config SET muted = ? WHERE player_id = ?";
+    private Result<Void> updateChannel(int playerId, String channelName) {
+        final String query = "UPDATE rp_chat_config SET channel = ? WHERE player_id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
-            stmt.setInt(1, mutedValue);
+            stmt.setString(1, channelName);
             stmt.setInt(2, playerId);
 
             stmt.executeUpdate();
 
             return Result.ok(null);
         } catch (SQLException e) {
-            String message = "error updating channel config: `%s`";
+            String message = "error updating player chat channel: `%s`";
             return Result.error(String.format(message, e.getMessage()));
         }
     }
 
-    private ChatChannelConfig readConfig(ResultSet results) throws SQLException {
-        return new ChatChannelConfig(
+    private ChatConfig readConfig(ResultSet results) throws SQLException {
+        String channelName = results.getString("channel");
+        ChatChannel channel = null;
+        if (channelName != null) {
+            channel = chat.getChannel(channelName).orElse(null);
+        }
+
+        return new ChatConfig(
             results.getInt("id"),
             Instant.parse(results.getString("created")),
-            results.getString("channel_name"),
             results.getInt("player_id"),
-            results.getInt("muted") > 0
+            channel
         );
     }
 }

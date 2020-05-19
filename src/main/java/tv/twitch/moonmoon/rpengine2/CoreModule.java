@@ -8,7 +8,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
-import tv.twitch.moonmoon.rpengine2.chat.data.ChatChannelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigRepo;
+import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepoImpl;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
@@ -17,6 +18,7 @@ import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepoImpl;
 import tv.twitch.moonmoon.rpengine2.duel.DuelModule;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
+import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibModule;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
 import tv.twitch.moonmoon.rpengine2.nte.NametagEditModule;
@@ -65,10 +67,12 @@ public class CoreModule extends AbstractModule {
         bind(SelectRepo.class).to(SelectRepoImpl.class);
 
         OptionalBinder.newOptionalBinder(binder(), Chat.class);
+        OptionalBinder.newOptionalBinder(binder(), ChatConfigRepo.class);
         OptionalBinder.newOptionalBinder(binder(), ChatChannelConfigRepo.class);
         OptionalBinder.newOptionalBinder(binder(), ProtocolLibPlugin.class);
         OptionalBinder.newOptionalBinder(binder(), NametagEditPlugin.class);
         OptionalBinder.newOptionalBinder(binder(), Duels.class);
+        OptionalBinder.newOptionalBinder(binder(), DuelConfigRepo.class);
 
         FileConfiguration config = plugin.getConfig();
 

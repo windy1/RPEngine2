@@ -1,4 +1,4 @@
-package tv.twitch.moonmoon.rpengine2.chat.data;
+package tv.twitch.moonmoon.rpengine2.chat.data.channel;
 
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
@@ -19,7 +19,7 @@ public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {
 
     private final ChatChannelConfigDbo configDbo;
     private final Logger log;
-    private Map<Integer, ChatChannelConfig> configs;
+    private Map<Integer, Map<String, ChatChannelConfig>> configs;
 
     @Inject
     public ChatChannelConfigRepoImpl(ChatChannelConfigDbo configDbo, @PluginLogger Logger log) {
@@ -33,12 +33,13 @@ public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {
         Objects.requireNonNull(player);
         int playerId = player.getId();
         return Optional.ofNullable(configs.get(playerId))
+            .map(c -> c.get(channel.getName()))
             .map(Result::ok)
             .orElseGet(() -> handleResult(() -> createConfig(playerId, channel.getName())));
     }
 
     @Override
-    public Set<ChatChannelConfig> getConfigs() {
+    public Set<Map<String, ChatChannelConfig>> getConfigs() {
         return Collections.unmodifiableSet(new HashSet<>(configs.values()));
     }
 
@@ -51,6 +52,8 @@ public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {
         Result<ChatChannelConfig> c = getConfig(player, channel);
         ChatChannelConfig config;
         boolean muted;
+        int playerId = player.getId();
+        String channelName = channel.getName();
 
         Optional<String> err = c.getError();
         if (err.isPresent()) {
@@ -61,7 +64,7 @@ public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {
 
         muted = !config.isMuted();
 
-        configDbo.setMutedAsync(player.getId(), muted, r -> {
+        configDbo.setMutedAsync(playerId, channelName, muted, r -> {
             Optional<String> updateErr = handleResult(() -> r).getError();
             if (updateErr.isPresent()) {
                 callback.accept(Result.error(updateErr.get()));
@@ -69,7 +72,7 @@ public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {
             }
 
             // reload config
-            updateErr = reloadConfig(config.getId()).getError();
+            updateErr = reloadConfig(playerId, channelName).getError();
             if (updateErr.isPresent()) {
                 callback.accept(Result.error(updateErr.get()));
             } else {
@@ -78,9 +81,9 @@ public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {
         });
     }
 
-    private Result<Void> reloadConfig(int configId) {
+    private Result<Void> reloadConfig(int playerId, String channelName) {
         Result<ChatChannelConfig> updatedConfig = handleResult(() ->
-            configDbo.selectConfig(configId)
+            configDbo.selectConfig(playerId, channelName)
         );
 
         Optional<String> err = updatedConfig.getError();
@@ -89,7 +92,9 @@ public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {
         }
 
         ChatChannelConfig config = updatedConfig.get();
-        configs.put(config.getPlayerId(), config);
+
+        configs.computeIfAbsent(playerId, k -> new HashMap<>())
+            .put(channelName, config);
 
         return Result.ok(null);
     }
@@ -102,11 +107,16 @@ public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {
         if (err.isPresent()) {
             return Result.error(err.get());
         } else {
-            configs = Collections.synchronizedMap(c.get().stream()
-                .collect(Collectors
-                    .toMap(ChatChannelConfig::getPlayerId, Function.identity())
-                )
-            );
+            Set<ChatChannelConfig> configs = c.get();
+            Map<Integer, Map<String, ChatChannelConfig>> configMap = new HashMap<>();
+
+            for (ChatChannelConfig config : configs) {
+                configMap.computeIfAbsent(config.getPlayerId(), k -> new HashMap<>())
+                    .put(config.getChannelName(), config);
+            }
+
+            this.configs = Collections.synchronizedMap(configMap);
+
             return Result.ok(null);
         }
     }
@@ -122,17 +132,19 @@ public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {
         long configId = r.get();
         if (configId == 0) {
             // config already existed
-            return Result.ok(configs.get(playerId));
+            return Result.ok(configs.get(playerId).get(channelName));
         }
 
-        Result<ChatChannelConfig> newConfig = configDbo.selectConfig((int) configId);
+        Result<ChatChannelConfig> newConfig = configDbo.selectConfig(playerId, channelName);
 
         err = newConfig.getError();
         if (err.isPresent()) {
             return Result.error(err.get());
         } else {
             ChatChannelConfig c = newConfig.get();
-            configs.put(playerId, c);
+            configs.computeIfAbsent(playerId, k -> new HashMap<>())
+                .put(channelName, c);
+
             return Result.ok(c);
         }
     }

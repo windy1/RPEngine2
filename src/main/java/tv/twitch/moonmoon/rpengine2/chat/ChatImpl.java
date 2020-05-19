@@ -8,8 +8,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.cmd.ChatCommands;
-import tv.twitch.moonmoon.rpengine2.chat.data.ChatChannelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigRepo;
+import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
+import tv.twitch.moonmoon.rpengine2.chat.model.ChatConfig;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
@@ -27,6 +29,7 @@ public class ChatImpl implements Chat {
     private final RpPlayerRepo playerRepo;
     private final ChatListener listener;
     private final ChatCommands commands;
+    private final ChatConfigRepo configRepo;
     private final ChatChannelConfigRepo channelConfigRepo;
     private final Logger log;
 
@@ -41,12 +44,13 @@ public class ChatImpl implements Chat {
         RpPlayerRepo playerRepo,
         ChatListener listener,
         ChatCommands commands,
-        ChatChannelConfigRepo channelConfigRepo
+        ChatConfigRepo configRepo, ChatChannelConfigRepo channelConfigRepo
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.listener = Objects.requireNonNull(listener);
         this.commands = Objects.requireNonNull(commands);
+        this.configRepo = Objects.requireNonNull(configRepo);
         this.channelConfigRepo = Objects.requireNonNull(channelConfigRepo);
         log = plugin.getLogger();
     }
@@ -68,7 +72,7 @@ public class ChatImpl implements Chat {
 
     @Override
     public boolean sendMessage(RpPlayer player, String message) {
-        ChatChannel channel = player.getChatChannel()
+        ChatChannel channel = getChannel(player)
             .orElseGet(() -> getDefaultChannel().orElse(null));
 
         if (channel == null) {
@@ -76,6 +80,22 @@ public class ChatImpl implements Chat {
         }
 
         return sendMessage(player, channel, message);
+    }
+
+    private Optional<ChatChannel> getChannel(RpPlayer player) {
+        return getConfig(player).flatMap(ChatConfig::getChannel);
+    }
+
+    private Optional<ChatConfig> getConfig(RpPlayer player) {
+        Result<ChatConfig> c = configRepo.getConfig(player);
+
+        Optional<String> err = c.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+            return Optional.empty();
+        } else {
+            return Optional.of(c.get());
+        }
     }
 
     @Override
@@ -172,14 +192,21 @@ public class ChatImpl implements Chat {
             );
         }
 
-        return channelConfigRepo.load().getError()
+        Result<Void> r = channelConfigRepo.load().getError()
             .<Result<Void>>map(Result::error)
             .orElseGet(() -> Result.ok(null));
+
+        return r.getError()
+            .<Result<Void>>map(Result::error)
+            .orElseGet(() -> configRepo.load().getError()
+                .<Result<Void>>map(Result::error)
+                .orElseGet(() -> Result.ok(null))
+            );
     }
 
     @Override
     public void handlePlayerJoined(RpPlayer player) {
-        if (!player.getChatChannel().isPresent()) {
+        if (!getChannel(player).isPresent()) {
             setChatChannelAsync(player, defaultChannel);
         }
 
@@ -191,7 +218,7 @@ public class ChatImpl implements Chat {
 
     @Override
     public void setChatChannelAsync(RpPlayer player, ChatChannel channel) {
-        playerRepo.setChatChannelAsync(player, channel, r -> {
+        configRepo.setChannelAsync(player, channel, r -> {
             Optional<String> err = r.getError();
             if (err.isPresent()) {
                 log.warning(err.get());

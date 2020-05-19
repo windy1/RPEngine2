@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
-import tv.twitch.moonmoon.rpengine2.chat.data.ChatChannelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
 import tv.twitch.moonmoon.rpengine2.cmd.Commands;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;

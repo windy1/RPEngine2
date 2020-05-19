@@ -7,12 +7,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
+import tv.twitch.moonmoon.rpengine2.chat.CommandChatConfigParser;
+import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigRepo;
+import tv.twitch.moonmoon.rpengine2.chat.model.ChatConfig;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
-import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
@@ -46,19 +48,19 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
     }
 
     private final Chat chat;
-    private final RpPlayerRepo playerRepo;
+    private final CommandChatConfigParser configParser;
     private final CommandPlayerParser playerParser;
 
     @Inject
     public ChannelCommand(
         Plugin plugin,
         Chat chat,
-        RpPlayerRepo playerRepo,
+        CommandChatConfigParser configParser,
         CommandPlayerParser playerParser
     ) {
         super(plugin);
         this.chat = Objects.requireNonNull(chat);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.configParser = Objects.requireNonNull(configParser);
         this.playerParser = Objects.requireNonNull(playerParser);
     }
 
@@ -94,7 +96,13 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
     }
 
     private boolean handleGetChannel(CommandSender sender, RpPlayer player) {
-        String channelName = player.getChatChannel()
+        ChatConfig chatConfig = configParser.parse(sender).orElse(null);
+
+        if (chatConfig == null) {
+            return true;
+        }
+
+        String channelName = chatConfig.getChannel()
             .map(ChatChannel::getName)
             .orElseGet(() -> chat.getDefaultChannel()
                 .map(ChatChannel::getName)
