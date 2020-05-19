@@ -76,6 +76,8 @@ public class DuelConfigDbo {
             stmt.setString(1, Instant.now().toString());
             stmt.setInt(2, playerId);
 
+            stmt.executeUpdate();
+
             try (ResultSet results = stmt.getGeneratedKeys()) {
                 if (results.next()) {
                     return Result.ok(results.getLong(1));

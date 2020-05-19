@@ -35,6 +35,11 @@ public class DuelConfigRepoImpl implements DuelConfigRepo {
     }
 
     @Override
+    public Set<DuelConfig> getConfigs() {
+        return Collections.unmodifiableSet(new HashSet<>(configs.values()));
+    }
+
+    @Override
     public void setRulesReadAsync(RpPlayer player) {
         Result<DuelConfig> c = getConfig(player);
 
@@ -48,8 +53,32 @@ public class DuelConfigRepoImpl implements DuelConfigRepo {
             return;
         }
 
-        configDbo.setReadRulesAsync(player.getId(), r -> r.getError()
-            .ifPresent(log::warning));
+        int playerId = player.getId();
+
+        configDbo.setReadRulesAsync(playerId, r -> {
+            Optional<String> update = handleResult(() -> r).getError();
+            if (update.isPresent()) {
+                log.warning(update.get());
+                return;
+            }
+
+            reloadConfig(playerId).getError()
+                .ifPresent(log::warning);
+        });
+    }
+
+    private Result<Void> reloadConfig(int playerId) {
+        Result<DuelConfig> updatedConfig = configDbo.selectConfig(playerId);
+
+        Optional<String> err = handleResult(() -> updatedConfig).getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        DuelConfig config = updatedConfig.get();
+        configs.put(playerId, config);
+
+        return Result.ok(null);
     }
 
     @Override

@@ -7,9 +7,13 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
+import java.util.Set;
+
 public interface ChatConfigRepo extends Repo {
 
     Result<ChatConfig> getConfig(RpPlayer player);
+
+    Set<ChatConfig> getConfigs();
 
     void setChannelAsync(
         RpPlayer player,

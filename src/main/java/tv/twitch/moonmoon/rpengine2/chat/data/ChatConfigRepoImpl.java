@@ -36,6 +36,11 @@ public class ChatConfigRepoImpl implements ChatConfigRepo {
     }
 
     @Override
+    public Set<ChatConfig> getConfigs() {
+        return Collections.unmodifiableSet(new HashSet<>(configs.values()));
+    }
+
+    @Override
     public void setChannelAsync(
         RpPlayer player,
         ChatChannel channel,
