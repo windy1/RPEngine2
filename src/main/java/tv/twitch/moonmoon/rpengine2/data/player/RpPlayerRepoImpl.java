@@ -63,12 +63,15 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
 
     @Override
     public String getIdentity(RpPlayer player) {
-        return String.format(
-            "%s%s %s",
-            getPrefix(player),
-            getTitle(player),
-            getIdentityPlain(player)
-        );
+        StringBuilder ident = new StringBuilder(getPrefix(player));
+        String title = getTitle(player);
+        if (!title.equals("")) {
+            ident.append(title);
+            ident.append(" ");
+        }
+        ident.append(getIdentityPlain(player));
+
+        return ident.toString();
     }
 
     @Override

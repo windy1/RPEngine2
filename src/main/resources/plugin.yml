@@ -91,3 +91,8 @@ commands:
     usage: /forfeit
     aliases: [yield, concede]
     permission: rpengine.forfeit
+  emote:
+    description: You feel as though...
+    usage: /emote <phrase>
+    aliases: [em, me]
+    permission: rpengine.emote

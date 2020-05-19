@@ -36,6 +36,7 @@ countdown:
 # == Chat module ==
 chat:
   enabled: true
+  emoteRange: 35
   birdSpeed: 20       # Blocks per second
   actionMenu: true    # Brings up an action menu when you click on a players name in chat
   defaultChannel: rp
@@ -77,6 +78,8 @@ chat:
     toggleooc:
       enabled: true
     roll:
+      enabled: true
+    emote:
       enabled: true
 
 # == Duel module ==
