@@ -55,7 +55,7 @@ public class Countdown extends TimerTask {
         if (timeSecs == 0) {
             for (Player player : players) {
                 player.playSound(player.getLocation(), goSound, goVolume, goPitch);
-                player.sendTitle("" + goColor + ChatColor.BOLD + "Go!",
+                player.sendTitle("" + goColor + ChatColor.BOLD + "GO!",
                     null, 0, 10, 5
                 );
             }

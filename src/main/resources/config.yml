@@ -24,14 +24,14 @@ inspectRange: 35
 # Start a countdown in the center of surrounding player's screens
 countdown:
   range: 35
-  color: DARK_RED
-  sound: 'minecraft:ui.button.click'
+  color: YELLOW
+  sound: 'minecraft:block.note_block.bit'
   volume: 0.5
   pitch: 1
   goColor: DARK_GREEN
-  goSound: 'minecraft:block.bell.use'
-  goVolume: 0.5
-  goPitch: 1
+  goSound: 'minecraft:block.note_block.bit'
+  goVolume: 1
+  goPitch: 2
 
 # == Chat module ==
 chat:
