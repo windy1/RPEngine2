@@ -29,7 +29,7 @@ public class DuelConfig {
         return playerId;
     }
 
-    public boolean isReadRules() {
+    public boolean hasReadRules() {
         return readRules;
     }
 

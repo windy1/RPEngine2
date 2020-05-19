@@ -16,8 +16,22 @@ commands:
     enabled: true
   playeractionmenu:
     enabled: true
+  countdown:
+    enabled: true
 
 inspectRange: 35
+
+# Start a countdown in the center of surrounding player's screens
+countdown:
+  range: 35
+  color: DARK_RED
+  sound: 'minecraft:ui.button.click'
+  volume: 0.5
+  pitch: 1
+  goColor: DARK_GREEN
+  goSound: 'minecraft:block.bell.use'
+  goVolume: 0.5
+  goPitch: 1
 
 # == Chat module ==
 chat:
@@ -25,18 +39,6 @@ chat:
   birdSpeed: 20       # Blocks per second
   actionMenu: true    # Brings up an action menu when you click on a players name in chat
   defaultChannel: rp
-
-  # Start a countdown in the center of surrounding player's screens
-  countdown:
-    range: 35
-    color: DARK_RED
-    sound: 'minecraft:ui.button.click'
-    volume: 0.5
-    pitch: 1
-    goColor: DARK_GREEN
-    goSound: 'minecraft:block.bell.use'
-    goVolume: 0.5
-    goPitch: 1
 
   # Generate a random number in a range
   roll:
@@ -76,13 +78,11 @@ chat:
       enabled: true
     roll:
       enabled: true
-    countdown:
-      enabled: true
 
 # == Duel module ==
 duels:
   enabled: true
-  startRange: 10
+  startRange: 35
   maxSecs: 300
 
   commands:

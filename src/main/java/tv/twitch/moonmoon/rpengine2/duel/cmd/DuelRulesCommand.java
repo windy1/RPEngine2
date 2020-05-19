@@ -5,8 +5,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
+import tv.twitch.moonmoon.rpengine2.cmd.parser.CommandPlayerParser;
+import tv.twitch.moonmoon.rpengine2.duel.cmd.parser.CommandDuelConfigParser;
+import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 
 import javax.inject.Inject;
+import java.util.Objects;
 
 public class DuelRulesCommand extends AbstractCoreCommandExecutor {
 
@@ -27,9 +32,18 @@ public class DuelRulesCommand extends AbstractCoreCommandExecutor {
 
     private static final String HELP = ChatColor.BLUE + "To start a duel, run /duel <player>";
 
+    private final CommandPlayerParser playerParser;
+    private final DuelConfigRepo configRepo;
+
     @Inject
-    public DuelRulesCommand(Plugin plugin) {
+    public DuelRulesCommand(
+        Plugin plugin,
+        CommandPlayerParser playerParser,
+        DuelConfigRepo configRepo
+    ) {
         super(plugin);
+        this.playerParser = Objects.requireNonNull(playerParser);
+        this.configRepo = Objects.requireNonNull(configRepo);
     }
 
     @Override
@@ -37,6 +51,11 @@ public class DuelRulesCommand extends AbstractCoreCommandExecutor {
         FileConfiguration config = plugin.getConfig();
         int startRange = config.getInt("duels.startRange", 10);
         int maxSecs = config.getInt("duels.maxSecs", 300);
+        RpPlayer player = playerParser.parse(sender).orElse(null);
+
+        if (player == null) {
+            return true;
+        }
 
         rules[0] = String.format(rules[0], startRange);
         rules[6] = String.format(rules[6], maxSecs);
@@ -48,6 +67,8 @@ public class DuelRulesCommand extends AbstractCoreCommandExecutor {
         }
 
         sender.sendMessage(HELP);
+
+        configRepo.setRulesReadAsync(player);
 
         return true;
     }

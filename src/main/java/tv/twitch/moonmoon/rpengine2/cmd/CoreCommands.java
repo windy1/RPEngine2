@@ -30,7 +30,8 @@ public class CoreCommands implements Commands {
         CardSelectCommand cardSelectCommand,
         ColorListCommand colorListCommand,
         InspectCommand inspectCommand,
-        PlayerActionMenuCommand playerActionMenuCommand
+        PlayerActionMenuCommand playerActionMenuCommand,
+        CountdownCommand countdownCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("rpengine", adminCommand);
@@ -40,6 +41,7 @@ public class CoreCommands implements Commands {
         executors.put("colorlist", colorListCommand);
         executors.put("inspect", inspectCommand);
         executors.put("playeractionmenu", playerActionMenuCommand);
+        executors.put("countdown", countdownCommand);
     }
 
     @Override

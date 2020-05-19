@@ -26,9 +26,30 @@ public class DuelConfigRepoImpl implements DuelConfigRepo {
     }
 
     @Override
-    public Optional<DuelConfig> getConfig(RpPlayer player) {
+    public Result<DuelConfig> getConfig(RpPlayer player) {
         Objects.requireNonNull(player);
-        return Optional.ofNullable(configs.get(player.getId()));
+        int playerId = player.getId();
+        return Optional.ofNullable(configs.get(playerId))
+            .map(Result::ok)
+            .orElseGet(() -> handleResult(() -> createConfig(playerId)));
+    }
+
+    @Override
+    public void setRulesReadAsync(RpPlayer player) {
+        Result<DuelConfig> c = getConfig(player);
+
+        Optional<String> err = c.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+            return;
+        }
+
+        if (c.get().hasReadRules()) {
+            return;
+        }
+
+        configDbo.setReadRulesAsync(player.getId(), r -> r.getError()
+            .ifPresent(log::warning));
     }
 
     @Override
@@ -45,6 +66,31 @@ public class DuelConfigRepoImpl implements DuelConfigRepo {
         );
 
         return Result.ok(null);
+    }
+
+    private Result<DuelConfig> createConfig(int playerId) {
+        Result<Long> r = configDbo.insertConfig(playerId);
+
+        Optional<String> err = r.getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
+        long configId = r.get();
+        if (configId == 0) {
+            return Result.ok(configs.get(playerId));
+        }
+
+        Result<DuelConfig> newConfig = configDbo.selectConfig(playerId);
+
+        err = newConfig.getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        } else {
+            DuelConfig c = newConfig.get();
+            configs.put(playerId, c);
+            return Result.ok(c);
+        }
     }
 
     @Override
