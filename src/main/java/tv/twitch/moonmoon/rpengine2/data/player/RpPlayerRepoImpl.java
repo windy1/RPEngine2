@@ -15,6 +15,8 @@ import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -145,10 +147,38 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     }
 
     @Override
+    public void startSessionAsync(RpPlayer player) {
+        playerDbo.setSessionAsync(player.getId(), Instant.now(), r ->
+            handleAndReloadPlayer(player.getUUID(), r).getError().ifPresent(log::warning)
+        );
+    }
+
+    @Override
+    public void clearSession(RpPlayer player) {
+        handleAndReloadPlayer(
+            player.getUUID(),
+            playerDbo.setSession(player.getId(), null)
+        ).getError().ifPresent(log::warning);
+    }
+
+    @Override
+    public void setPlayed(RpPlayer player, Duration duration) {
+        handleAndReloadPlayer(
+            player.getUUID(),
+            playerDbo.setPlayed(player.getId(), duration)
+        ).getError().ifPresent(log::warning);
+    }
+
+    @Override
     public Result<Void> load() {
+        Optional<String> err = playerDbo.clearSessions().getError();
+        if (err.isPresent()) {
+            return Result.error(err.get());
+        }
+
         Result<Set<RpPlayer>> r = playerDbo.selectPlayers();
 
-        Optional<String> err = r.getError();
+        err = r.getError();
         if (err.isPresent()) {
             return Result.error(err.get());
         } else {
@@ -167,6 +197,20 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
         } else {
             onLoad(reloadedPlayers.get());
             return Result.ok(null);
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        // update play time
+        Instant now = Instant.now();
+        for (RpPlayer player : players.values()) {
+            Instant sessionStart = player.getSessionStart().orElse(null);
+            if (sessionStart != null) {
+                Duration sessionDuration = Duration.between(sessionStart, now);
+                setPlayed(player, player.getPlayed().plus(sessionDuration));
+                clearSession(player);
+            }
         }
     }
 

@@ -9,6 +9,8 @@ import tv.twitch.moonmoon.rpengine2.cmd.card.CardSelectCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.CardSetCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.card.InspectCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ColorListCommand;
+import tv.twitch.moonmoon.rpengine2.cmd.util.CountdownCommand;
+import tv.twitch.moonmoon.rpengine2.cmd.util.PlayedCommand;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -31,7 +33,8 @@ public class CoreCommands implements Commands {
         ColorListCommand colorListCommand,
         InspectCommand inspectCommand,
         PlayerActionMenuCommand playerActionMenuCommand,
-        CountdownCommand countdownCommand
+        CountdownCommand countdownCommand,
+        PlayedCommand playedCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("rpengine", adminCommand);
@@ -42,6 +45,7 @@ public class CoreCommands implements Commands {
         executors.put("inspect", inspectCommand);
         executors.put("playeractionmenu", playerActionMenuCommand);
         executors.put("countdown", countdownCommand);
+        executors.put("played", playedCommand);
     }
 
     @Override

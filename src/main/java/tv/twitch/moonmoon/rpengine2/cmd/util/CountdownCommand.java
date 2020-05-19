@@ -1,4 +1,4 @@
-package tv.twitch.moonmoon.rpengine2.cmd;
+package tv.twitch.moonmoon.rpengine2.cmd.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Countdown;
 
 import javax.inject.Inject;

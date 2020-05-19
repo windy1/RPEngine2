@@ -96,3 +96,7 @@ commands:
     usage: /emote <phrase>
     aliases: [em, me]
     permission: rpengine.emote
+  played:
+    description: Prints play time on server
+    usage: /played
+    permission: rpengine.played

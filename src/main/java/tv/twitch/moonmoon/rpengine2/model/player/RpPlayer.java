@@ -3,6 +3,7 @@ package tv.twitch.moonmoon.rpengine2.model.player;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
@@ -15,13 +16,17 @@ public class RpPlayer {
     private final String username;
     private final UUID uuid;
     private final Map<Integer, RpPlayerAttribute> attributes;
+    private final Duration played;
+    private final Instant sessionStart;
 
     public RpPlayer(
         int id,
         Instant created,
         String username,
         UUID uuid,
-        Set<RpPlayerAttribute> attributes
+        Set<RpPlayerAttribute> attributes,
+        Duration played,
+        Instant sessionStart
     ) {
         this.id = id;
         this.created = Objects.requireNonNull(created);
@@ -29,6 +34,8 @@ public class RpPlayer {
         this.uuid = Objects.requireNonNull(uuid);
         this.attributes = Objects.requireNonNull(attributes).stream()
             .collect(Collectors.toMap(RpPlayerAttribute::getAttributeId, Function.identity()));
+        this.played = Objects.requireNonNull(played);
+        this.sessionStart = sessionStart;
     }
 
     public int getId() {
@@ -59,6 +66,22 @@ public class RpPlayer {
         return Optional.ofNullable(Bukkit.getPlayer(uuid));
     }
 
+    public Duration getPlayed() {
+        return played;
+    }
+
+    public Duration getPlayedLive() {
+        if (sessionStart == null) {
+            return played;
+        } else {
+            return played.plus(Duration.between(sessionStart, Instant.now()));
+        }
+    }
+
+    public Optional<Instant> getSessionStart() {
+        return Optional.ofNullable(sessionStart);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -81,6 +104,8 @@ public class RpPlayer {
             ", username='" + username + '\'' +
             ", uuid=" + uuid +
             ", attributes=" + attributes +
+            ", played=" + (played.toMillis() / 1000) +
+            ", sessionStart=" + sessionStart +
             '}';
     }
 }

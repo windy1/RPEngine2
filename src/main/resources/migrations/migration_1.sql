@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS rp_player (
     created TEXT NOT NULL,
     username VARCHAR(255) NOT NULL UNIQUE,
     uuid VARCHAR(255) NOT NULL UNIQUE,
-    chat_channel VARCHAR(255) DEFAULT NULL
+    session_start TEXT DEFAULT NULL,
+    played INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS rp_select (

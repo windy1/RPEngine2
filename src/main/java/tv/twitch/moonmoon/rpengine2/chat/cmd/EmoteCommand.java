@@ -12,7 +12,6 @@ import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 
 import javax.inject.Inject;
-import javax.xml.soap.Text;
 import java.util.Objects;
 
 public class EmoteCommand extends AbstractCoreCommandExecutor {

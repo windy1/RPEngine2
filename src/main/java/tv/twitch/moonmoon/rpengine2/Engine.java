@@ -94,6 +94,14 @@ public class Engine implements ModuleLoader {
         log.info("Done");
     }
 
+    public void shutdown() {
+        log.info("Shutting down");
+
+        dataManager.shutdown();
+
+        log.info("Done");
+    }
+
     @Override
     public Logger getLogger() {
         return log;
@@ -102,5 +110,29 @@ public class Engine implements ModuleLoader {
     @Override
     public Plugin getPlugin() {
         return plugin;
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
+    }
+
+    public Optional<Chat> getChatPlugin() {
+        return Optional.ofNullable(chat);
+    }
+
+    public Optional<Duels> getDuelsPlugin() {
+        return Optional.ofNullable(duels);
+    }
+
+    public Optional<ProtocolLibPlugin> getProtocolLibPlugin() {
+        return Optional.ofNullable(protocol);
+    }
+
+    public Optional<NametagEditPlugin> getNametagEditPlugin() {
+        return Optional.ofNullable(nte);
+    }
+
+    public Optional<CombatLog> getCombatLogPlugin() {
+        return Optional.ofNullable(combatLog);
     }
 }

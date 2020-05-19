@@ -7,7 +7,10 @@ import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class DataManager {
@@ -15,8 +18,12 @@ public class DataManager {
     private final RpDb db;
     private final Migrations migrations;
     private final Defaults defaults;
-    private final List<Repo> repos;
+    private final RpPlayerRepo playerRepo;
+    private final AttributeRepo attributeRepo;
+    private final SelectRepo selectRepo;
     private final Logger log;
+
+    private final List<Repo> repos;
 
     @Inject
     public DataManager(
@@ -32,7 +39,10 @@ public class DataManager {
         this.migrations = Objects.requireNonNull(migrations);
         this.defaults = Objects.requireNonNull(defaults);
         this.log = Objects.requireNonNull(log);
-        repos = new ArrayList<>(Arrays.asList(playerRepo, attributeRepo, selectRepo));
+        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.attributeRepo = Objects.requireNonNull(attributeRepo);
+        this.selectRepo = Objects.requireNonNull(selectRepo);
+        repos = Arrays.asList(playerRepo, attributeRepo, selectRepo);
     }
 
     public Result<Void> init() {
@@ -62,5 +72,21 @@ public class DataManager {
         defaults.saveDefaults();
 
         return Result.ok(null);
+    }
+
+    public void shutdown() {
+        playerRepo.shutdown();
+    }
+
+    public RpPlayerRepo getPlayerRepo() {
+        return playerRepo;
+    }
+
+    public AttributeRepo getAttributeRepo() {
+        return attributeRepo;
+    }
+
+    public SelectRepo getSelectRepo() {
+        return selectRepo;
     }
 }

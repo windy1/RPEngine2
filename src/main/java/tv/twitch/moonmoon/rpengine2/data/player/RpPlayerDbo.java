@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Logger;
@@ -32,8 +33,21 @@ public class RpPlayerDbo {
         log = plugin.getLogger();
     }
 
+    public Result<Void> clearSessions() {
+        final String query = "UPDATE rp_player SET session_start = NULL";
+
+        try (Statement stmt = db.getConnection().createStatement()) {
+            stmt.executeUpdate(query);
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error clearing player sessions: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
     public Result<Set<RpPlayer>> selectPlayers() {
-        final String query = "SELECT id, created, username, uuid FROM rp_player";
+        final String query =
+            "SELECT id, created, username, uuid, played, session_start FROM rp_player";
 
         Set<RpPlayer> players = new HashSet<>();
 
@@ -81,7 +95,9 @@ public class RpPlayerDbo {
 
     public Result<RpPlayer> selectPlayer(UUID playerId) {
         final String query =
-            "SELECT id, created, username, uuid FROM rp_player WHERE uuid = ?";
+            "SELECT id, created, username, uuid, played, session_start " +
+            "FROM rp_player " +
+            "WHERE uuid = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
             stmt.setString(1, playerId.toString());
@@ -150,6 +166,46 @@ public class RpPlayerDbo {
         );
     }
 
+    public void setSessionAsync(int playerId, Instant sessionStart, Callback<Void> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+            callback.accept(setSession(playerId, sessionStart))
+        );
+    }
+
+    public Result<Void> setSession(int playerId, Instant sessionStart) {
+        final String query = "UPDATE rp_player SET session_start = ? WHERE id = ?";
+
+        String value = sessionStart != null ? sessionStart.toString() : null;
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setString(1, value);
+            stmt.setInt(2, playerId);
+
+            stmt.executeUpdate();
+
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error setting player session: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
+    public Result<Void> setPlayed(int playerId, Duration played) {
+        final String query = "UPDATE rp_player SET played = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, (int) (played.toMillis() / 1000));
+            stmt.setInt(2, playerId);
+
+            stmt.executeUpdate();
+
+            return Result.ok(null);
+        } catch (SQLException e) {
+            String message = "error updated play time: `%s`";
+            return Result.error(String.format(message, e.getMessage()));
+        }
+    }
+
     private Result<Void> deletePlayerAttributes(int attributeId) {
         final String query = "DELETE FROM rp_player_attribute WHERE attribute_id = ?";
 
@@ -183,7 +239,11 @@ public class RpPlayerDbo {
             Instant.parse(results.getString("created")),
             results.getString("username"),
             UUID.fromString(results.getString("uuid")),
-            attributes
+            attributes,
+            Duration.ofSeconds(results.getInt("played")),
+            Optional.ofNullable(results.getString("session_start"))
+                .map(Instant::parse)
+                .orElse(null)
         );
     }
 

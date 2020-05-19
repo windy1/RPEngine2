@@ -18,6 +18,8 @@ commands:
     enabled: true
   countdown:
     enabled: true
+  played:
+    enabled: true
 
 inspectRange: 35
 
