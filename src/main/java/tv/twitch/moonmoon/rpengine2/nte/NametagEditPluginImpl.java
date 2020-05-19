@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-public class NametagEditPluginImpl implements NametagEditPlugin {
+public class NametagEditPluginImpl implements RpNametagEdit {
 
     private final Plugin plugin;
     private final NametagEditListener listener;

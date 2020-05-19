@@ -1,12 +1,16 @@
 package tv.twitch.moonmoon.rpengine2.model.select;
 
 import org.bukkit.ChatColor;
+import tv.twitch.moonmoon.rpengine2.model.Model;
 
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Option {
+/**
+ * A single choice within a {@link Select}
+ */
+public class Option implements Model {
 
     private final int id;
     private final int selectId;
@@ -31,26 +35,48 @@ public class Option {
         this.color = color;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    /**
+     * Returns this option's {@link Select} parent ID
+     *
+     * @return Parent ID
+     */
     public int getSelectId() {
         return selectId;
     }
 
+    @Override
     public Instant getCreated() {
         return created;
     }
 
+    /**
+     * Returns this options name
+     *
+     * @return Option name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns this options display name
+     *
+     * @return Option display name
+     */
     public String getDisplay() {
         return display;
     }
 
+    /**
+     * Returns this options color
+     *
+     * @return Option color
+     */
     public Optional<ChatColor> getColor() {
         return Optional.ofNullable(color);
     }

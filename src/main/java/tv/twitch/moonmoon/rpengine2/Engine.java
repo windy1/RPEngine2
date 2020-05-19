@@ -8,9 +8,10 @@ import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.cmd.CoreCommands;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.data.DataManager;
+import tv.twitch.moonmoon.rpengine2.data.DataManagerImpl;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
-import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
-import tv.twitch.moonmoon.rpengine2.nte.NametagEditPlugin;
+import tv.twitch.moonmoon.rpengine2.nms.RpProtocolLib;
+import tv.twitch.moonmoon.rpengine2.nte.RpNametagEdit;
 import tv.twitch.moonmoon.rpengine2.util.ModuleLoader;
 
 import javax.inject.Inject;
@@ -25,11 +26,11 @@ public class Engine implements ModuleLoader {
     private final JavaPlugin plugin;
     private final CoreListener listener;
     private final CoreCommands commands;
-    private final DataManager dataManager;
+    private final DataManagerImpl dataManager;
     private final Chat chat;
     private final Duels duels;
-    private final ProtocolLibPlugin protocol;
-    private final NametagEditPlugin nte;
+    private final RpProtocolLib protocol;
+    private final RpNametagEdit nte;
     private final CombatLog combatLog;
     private final Logger log;
 
@@ -38,11 +39,11 @@ public class Engine implements ModuleLoader {
         JavaPlugin plugin,
         CoreListener listener,
         CoreCommands commands,
-        DataManager dataManager,
+        DataManagerImpl dataManager,
         Optional<Chat> chat,
         Optional<Duels> duels,
-        Optional<ProtocolLibPlugin> protocol,
-        Optional<NametagEditPlugin> nte,
+        Optional<RpProtocolLib> protocol,
+        Optional<RpNametagEdit> nte,
         Optional<CombatLog> combatLog
     ) {
         this.plugin = Objects.requireNonNull(plugin);
@@ -57,7 +58,7 @@ public class Engine implements ModuleLoader {
         log = plugin.getLogger();
     }
 
-    public void init() {
+    void init() {
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
 
@@ -94,7 +95,7 @@ public class Engine implements ModuleLoader {
         log.info("Done");
     }
 
-    public void shutdown() {
+    void shutdown() {
         log.info("Shutting down");
 
         dataManager.shutdown();
@@ -112,27 +113,58 @@ public class Engine implements ModuleLoader {
         return plugin;
     }
 
+    /**
+     * Returns the {@link DataManagerImpl} instance, responsible for managing the plugins
+     * internal data
+     *
+     * @return DataManager instance
+     */
     public DataManager getDataManager() {
         return dataManager;
     }
 
-    public Optional<Chat> getChatPlugin() {
+    /**
+     * Returns the {@link Chat} module instance if enabled, empty otherwise
+     *
+     * @return Chat module
+     */
+    public Optional<Chat> getChatModule() {
         return Optional.ofNullable(chat);
     }
 
-    public Optional<Duels> getDuelsPlugin() {
+    /**
+     * Returns the {@link Duels} module instance if enabled, empty otherwise
+     *
+     * @return Duels module
+     */
+    public Optional<Duels> getDuelsModule() {
         return Optional.ofNullable(duels);
     }
 
-    public Optional<ProtocolLibPlugin> getProtocolLibPlugin() {
+    /**
+     * Returns the {@link RpProtocolLib} module if enabled, empty otherwise
+     *
+     * @return Protocol lib module
+     */
+    public Optional<RpProtocolLib> getProtocolLibModule() {
         return Optional.ofNullable(protocol);
     }
 
-    public Optional<NametagEditPlugin> getNametagEditPlugin() {
+    /**
+     * Returns the {@link RpNametagEdit} module if enabled, empty otherwise
+     *
+     * @return Nametag module
+     */
+    public Optional<RpNametagEdit> getNametagEditModule() {
         return Optional.ofNullable(nte);
     }
 
-    public Optional<CombatLog> getCombatLogPlugin() {
+    /**
+     * Returns the {@link CombatLog} module instance if enabled, empty otherwise
+     *
+     * @return CombatLog module
+     */
+    public Optional<CombatLog> getCombatLogModule() {
         return Optional.ofNullable(combatLog);
     }
 }

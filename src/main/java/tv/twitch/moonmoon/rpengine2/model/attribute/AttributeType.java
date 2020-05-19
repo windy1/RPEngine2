@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * The different types of attributes
+ */
 public enum AttributeType {
     String("string"),
     Number("number"),
@@ -26,10 +29,21 @@ public enum AttributeType {
         this.id = id;
     }
 
+    /**
+     * Returns this types unique ID
+     *
+     * @return Attribute ID
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Parses the specified attribute type value from a string into the correct type
+     *
+     * @param value Value to parse
+     * @return Parsed object or error
+     */
     public Result<Object> parse(String value) {
         Objects.requireNonNull(value);
         switch (this) {
@@ -53,6 +67,12 @@ public enum AttributeType {
         }
     }
 
+    /**
+     * Returns the attribute type with the specified ID
+     *
+     * @param id Attribute type ID
+     * @return Attribute type if found, empty otherwise
+     */
     public static Optional<AttributeType> findById(String id) {
         return Optional.ofNullable(idMap.get(id));
     }

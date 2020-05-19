@@ -1,12 +1,13 @@
 package tv.twitch.moonmoon.rpengine2.model.player;
 
+import tv.twitch.moonmoon.rpengine2.model.Model;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
-public class RpPlayerAttribute {
+public class RpPlayerAttribute implements Model {
 
     private final int id;
     private final int attributeId;
@@ -31,6 +32,7 @@ public class RpPlayerAttribute {
         this.value = value;
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -39,6 +41,7 @@ public class RpPlayerAttribute {
         return attributeId;
     }
 
+    @Override
     public Instant getCreated() {
         return created;
     }

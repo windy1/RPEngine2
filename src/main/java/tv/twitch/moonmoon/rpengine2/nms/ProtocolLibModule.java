@@ -6,6 +6,6 @@ public class ProtocolLibModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(ProtocolLibPlugin.class).to(ProtocolLibPluginImpl.class);
+        bind(RpProtocolLib.class).to(ProtocolLibPluginImpl.class);
     }
 }

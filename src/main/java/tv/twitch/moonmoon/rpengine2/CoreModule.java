@@ -22,9 +22,9 @@ import tv.twitch.moonmoon.rpengine2.duel.DuelModule;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibModule;
-import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
+import tv.twitch.moonmoon.rpengine2.nms.RpProtocolLib;
 import tv.twitch.moonmoon.rpengine2.nte.NametagEditModule;
-import tv.twitch.moonmoon.rpengine2.nte.NametagEditPlugin;
+import tv.twitch.moonmoon.rpengine2.nte.RpNametagEdit;
 import tv.twitch.moonmoon.rpengine2.util.DbPath;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 
@@ -72,9 +72,9 @@ public class CoreModule extends AbstractModule {
         OptionalBinder.newOptionalBinder(binder(), ChatConfigRepo.class);
         OptionalBinder.newOptionalBinder(binder(), ChatChannelConfigRepo.class);
 
-        OptionalBinder.newOptionalBinder(binder(), ProtocolLibPlugin.class);
+        OptionalBinder.newOptionalBinder(binder(), RpProtocolLib.class);
 
-        OptionalBinder.newOptionalBinder(binder(), NametagEditPlugin.class);
+        OptionalBinder.newOptionalBinder(binder(), RpNametagEdit.class);
 
         OptionalBinder.newOptionalBinder(binder(), Duels.class);
         OptionalBinder.newOptionalBinder(binder(), DuelConfigRepo.class);

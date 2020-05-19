@@ -1,12 +1,13 @@
 package tv.twitch.moonmoon.rpengine2.chat.model;
 
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
+import tv.twitch.moonmoon.rpengine2.model.Model;
 
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
-public class ChatConfig {
+public class ChatConfig implements Model {
 
     private final int id;
     private final Instant created;
@@ -20,10 +21,12 @@ public class ChatConfig {
         this.channel = channel;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public Instant getCreated() {
         return Objects.requireNonNull(created);
     }

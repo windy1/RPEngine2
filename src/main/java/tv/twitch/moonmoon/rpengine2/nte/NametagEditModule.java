@@ -6,6 +6,6 @@ public class NametagEditModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(NametagEditPlugin.class).to(NametagEditPluginImpl.class);
+        bind(RpNametagEdit.class).to(NametagEditPluginImpl.class);
     }
 }

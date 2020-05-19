@@ -13,6 +13,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
+/**
+ * Manages pending challenges to duel
+ */
 @Singleton
 public class DuelInvites {
 
@@ -27,23 +30,48 @@ public class DuelInvites {
         this.plugin = Objects.requireNonNull(plugin);
     }
 
+    /**
+     * Returns true if the specified player has an invite from the specified target
+     *
+     * @param playerId Player ID
+     * @param targetId Player ID
+     * @return True if has invite
+     */
     public boolean has(UUID playerId, UUID targetId) {
         return getInvites(playerId).contains(new DuelInvite(targetId));
     }
 
+    /**
+     * Clears all invites for the specified player
+     *
+     * @param playerId Player ID
+     */
     public void clear(UUID playerId) {
         getInvites(playerId).clear();
     }
 
+    /**
+     * Adds an invite for the specified players
+     *
+     * @param playerId Invitee
+     * @param targetId Inviter
+     */
     public void add(UUID playerId, UUID targetId) {
         getInvites(playerId).add(new DuelInvite(targetId));
     }
 
+    /**
+     * Removes an invite
+     *
+     * @param playerId Player ID
+     * @param targetId Player ID
+     * @return True if invite was present
+     */
     public boolean decline(UUID playerId, UUID targetId) {
         return getInvites(playerId).remove(new DuelInvite(targetId));
     }
 
-    public void startWatching() {
+    void startWatching() {
         int inviteExpireSecs = plugin.getConfig().getInt("duels.inviteExpireSecs", 300);
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             synchronized (invites) {

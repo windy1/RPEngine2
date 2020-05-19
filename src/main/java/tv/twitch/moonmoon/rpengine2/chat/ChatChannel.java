@@ -5,6 +5,9 @@ import net.md_5.bungee.api.ChatColor;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * A chat-channel of communication
+ */
 public class ChatChannel {
 
     private final String name;
@@ -27,22 +30,48 @@ public class ChatChannel {
         this.messageColor = Objects.requireNonNull(messageColor);
     }
 
+    /**
+     * Returns this channel unique ID
+     *
+     * @return Channel ID
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the amount of blocks player can hear you from when chatting in this channel
+     *
+     * @return Block range
+     */
     public int getRange() {
         return range;
     }
 
+    /**
+     * Returns the prefix inserted into each message in this channel
+     *
+     * @return Channel prefix
+     */
     public String getPrefix() {
         return prefix;
     }
 
+    /**
+     * Returns the permission string a player is required to have to send and receive messages in
+     * this channel.
+     *
+     * @return Permission string
+     */
     public Optional<String> getPermission() {
         return Optional.ofNullable(permission);
     }
 
+    /**
+     * Returns the color of messages in this channel
+     *
+     * @return Message color
+     */
     public ChatColor getMessageColor() {
         return messageColor;
     }

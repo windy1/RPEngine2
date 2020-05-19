@@ -1,9 +1,15 @@
 package tv.twitch.moonmoon.rpengine2.duel.model;
 
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerConfig;
+import tv.twitch.moonmoon.rpengine2.model.Model;
+
 import java.time.Instant;
 import java.util.Objects;
 
-public class DuelConfig {
+/**
+ * Manages player data related to duels
+ */
+public class DuelConfig implements RpPlayerConfig {
 
     private final int id;
     private final Instant created;
@@ -17,18 +23,26 @@ public class DuelConfig {
         this.readRules = readRules;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public Instant getCreated() {
         return created;
     }
 
+    @Override
     public int getPlayerId() {
         return playerId;
     }
 
+    /**
+     * Returns true if the player has read the duel rules
+     *
+     * @return True if has read rules
+     */
     public boolean hasReadRules() {
         return readRules;
     }

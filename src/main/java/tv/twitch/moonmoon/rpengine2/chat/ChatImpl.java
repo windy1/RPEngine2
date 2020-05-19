@@ -71,15 +71,15 @@ public class ChatImpl implements Chat {
     }
 
     @Override
-    public boolean sendMessage(RpPlayer player, String message) {
-        ChatChannel channel = getChannel(player)
+    public boolean sendMessage(RpPlayer sender, String message) {
+        ChatChannel channel = getChannel(sender)
             .orElseGet(() -> getDefaultChannel().orElse(null));
 
         if (channel == null) {
             return false;
         }
 
-        return sendMessage(player, channel, message);
+        return sendMessage(sender, channel, message);
     }
 
     private Optional<ChatChannel> getChannel(RpPlayer player) {
@@ -99,10 +99,10 @@ public class ChatImpl implements Chat {
     }
 
     @Override
-    public boolean sendMessage(RpPlayer player, ChatChannel channel, String message) {
-        Player mcSender = player.getPlayer().orElse(null);
+    public boolean sendMessage(RpPlayer sender, ChatChannel channel, String message) {
+        Player mcSender = sender.getPlayer().orElse(null);
 
-        String displayName = playerRepo.getIdentity(player);
+        String displayName = playerRepo.getIdentity(sender);
         String permission;
         String prefix;
         int range;

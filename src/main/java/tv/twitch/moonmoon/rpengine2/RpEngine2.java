@@ -3,6 +3,8 @@ package tv.twitch.moonmoon.rpengine2;
 import com.google.inject.Guice;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Optional;
+
 public final class RpEngine2 extends JavaPlugin {
 
     private Engine engine;
@@ -20,7 +22,13 @@ public final class RpEngine2 extends JavaPlugin {
         }
     }
 
-    public Engine getEngine() {
-        return engine;
+    /**
+     * Returns the {@link Engine} instance of the plugin if the plugin is enabled, otherwise
+     * returns empty.
+     *
+     * @return Engine instance
+     */
+    public static Optional<Engine> getEngine() {
+        return Optional.ofNullable(JavaPlugin.getPlugin(RpEngine2.class).engine);
     }
 }

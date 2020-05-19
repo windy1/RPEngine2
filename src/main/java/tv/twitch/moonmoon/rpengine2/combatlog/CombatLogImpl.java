@@ -16,6 +16,11 @@ public class CombatLogImpl implements CombatLog {
     }
 
     @Override
+    public Optional<ShowDamage> getShowDamageModule() {
+        return Optional.ofNullable(showDamage);
+    }
+
+    @Override
     public Result<Void> init() {
         if (showDamage != null) {
             Optional<String> err = showDamage.init().getError();

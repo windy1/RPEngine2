@@ -5,6 +5,9 @@ import com.sainttx.holograms.api.Hologram;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * Hologram tracking data
+ */
 public class DamageHologram {
 
     private final Hologram hologram;
@@ -15,10 +18,20 @@ public class DamageHologram {
         spawnTime = Instant.now();
     }
 
+    /**
+     * Returns the underlying hologram
+     *
+     * @return Hologram
+     */
     public Hologram getHologram() {
         return hologram;
     }
 
+    /**
+     * Returns the {@link Instant} this hologram was spawned
+     *
+     * @return Spawn time
+     */
     public Instant getSpawnTime() {
         return spawnTime;
     }

@@ -1,6 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.nte;
 
-public interface NametagEditPlugin {
+public interface RpNametagEdit {
 
     void init();
 }

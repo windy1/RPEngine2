@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-public class ProtocolLibPluginImpl implements ProtocolLibPlugin {
+public class ProtocolLibPluginImpl implements RpProtocolLib {
 
     private final PlayerInfoPacketAdapter playerInfoAdapter;
 

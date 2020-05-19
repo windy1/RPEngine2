@@ -2,6 +2,7 @@ package tv.twitch.moonmoon.rpengine2.model.player;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import tv.twitch.moonmoon.rpengine2.model.Model;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -9,7 +10,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class RpPlayer {
+/**
+ * Represents a plugin-tracker player
+ */
+public class RpPlayer implements Model {
 
     private final int id;
     private final Instant created;
@@ -38,38 +42,76 @@ public class RpPlayer {
         this.sessionStart = sessionStart;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public Instant getCreated() {
         return created;
     }
 
+    /**
+     * Returns the player's Mojang username
+     *
+     * @return Mojang name
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Returns the player's Mojang {@link UUID}
+     *
+     * @return Mojang UUID
+     */
     public UUID getUUID() {
         return uuid;
     }
 
+    /**
+     * Returns a set of this player's attributes
+     *
+     * @return Player attributes
+     */
     public Set<RpPlayerAttribute> getAttributes() {
         return Collections.unmodifiableSet(new HashSet<>(attributes.values()));
     }
 
+    /**
+     * Returns the attribute for this player with the specified ID
+     *
+     * @param attributeId Attribute to get
+     * @return Attribute if found, empty otherwise
+     */
     public Optional<RpPlayerAttribute> getAttribute(int attributeId) {
         return Optional.ofNullable(attributes.get(attributeId));
     }
 
+    /**
+     * Returns the Bukkit {@link Player} if found, empty otherwise
+     *
+     * @return Bukkit player
+     */
     public Optional<Player> getPlayer() {
         return Optional.ofNullable(Bukkit.getPlayer(uuid));
     }
 
+    /**
+     * Returns the {@link Duration} that this player has logged, not including the current session
+     *
+     * @return Play time
+     */
     public Duration getPlayed() {
         return played;
     }
 
+    /**
+     * Returns the {@link Duration} that this player has logged, including the current session
+     *
+     * @return Play time
+     */
     public Duration getPlayedLive() {
         if (sessionStart == null) {
             return played;
@@ -78,6 +120,12 @@ public class RpPlayer {
         }
     }
 
+    /**
+     * Returns the {@link Instant} this player's current session started or empty if
+     * offline. However, this should not be relied upon to determine if a player is online.
+     *
+     * @return Instant session started
+     */
     public Optional<Instant> getSessionStart() {
         return Optional.ofNullable(sessionStart);
     }

@@ -1,9 +1,11 @@
 package tv.twitch.moonmoon.rpengine2.chat.model;
 
+import tv.twitch.moonmoon.rpengine2.model.Model;
+
 import java.time.Instant;
 import java.util.Objects;
 
-public class ChatChannelConfig {
+public class ChatChannelConfig implements Model {
 
     private final int id;
     private final Instant created;
@@ -25,10 +27,12 @@ public class ChatChannelConfig {
         this.muted = muted;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public Instant getCreated() {
         return created;
     }

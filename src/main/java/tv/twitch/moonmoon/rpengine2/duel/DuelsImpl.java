@@ -120,6 +120,21 @@ public class DuelsImpl implements Duels {
     }
 
     @Override
+    public DuelConfigRepo getConfigRepo() {
+        return configRepo;
+    }
+
+    @Override
+    public DuelInvites getInvites() {
+        return invites;
+    }
+
+    @Override
+    public Set<Duel> getActiveDuels() {
+        return activeDuels;
+    }
+
+    @Override
     public void handlePlayerJoined(RpPlayer player) {
         configRepo.getConfig(player).getError().ifPresent(log::warning);
     }

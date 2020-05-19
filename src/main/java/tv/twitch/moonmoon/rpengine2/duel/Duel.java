@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Duel tracking data
+ */
 public class Duel {
 
     private final Dueler player1;
@@ -15,22 +18,45 @@ public class Duel {
         this.player2 = Objects.requireNonNull(player2);
     }
 
+    /**
+     * Returns player 1
+     *
+     * @return Player 1
+     */
     public Dueler getPlayer1() {
         return player1;
     }
 
+    /**
+     * Return player 2
+     *
+     * @return Player 2
+     */
     public Dueler getPlayer2() {
         return player2;
     }
 
+    /**
+     * Returns true if the duel has started
+     *
+     * @return True if duel has started
+     */
     public boolean hasStarted() {
         return startTime != null;
     }
 
+    /**
+     * Marks the duel as started
+     */
     public void start() {
         startTime = Instant.now();
     }
 
+    /**
+     * Returns the {@link Instant} this duel was started
+     *
+     * @return Instant duel was started if found
+     */
     public Optional<Instant> getStartTime() {
         return Optional.ofNullable(startTime);
     }

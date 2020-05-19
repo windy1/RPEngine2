@@ -1,10 +1,17 @@
 package tv.twitch.moonmoon.rpengine2.model.attribute;
 
+import tv.twitch.moonmoon.rpengine2.model.Model;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Attribute {
+/**
+ * An attribute is a key-value pair that describes something about a
+ * {@link tv.twitch.moonmoon.rpengine2.model.player.RpPlayer}. Values may be one of the
+ * {@link AttributeType}s.
+ */
+public class Attribute implements Model {
 
     private final int id;
     private final Instant created;
@@ -41,42 +48,84 @@ public class Attribute {
         this.title = title;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public Instant getCreated() {
         return created;
     }
 
+    /**
+     * Returns this Attribute's unique name
+     *
+     * @return Attribute name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns this Attributes display name
+     *
+     * @return Display name
+     */
     public String getDisplay() {
         return display;
     }
 
+    /**
+     * Returns this attributes {@link AttributeType}
+     *
+     * @return Attribute type
+     */
     public AttributeType getType() {
         return type;
     }
 
+    /**
+     * Returns the default value for this attribute or empty if none
+     *
+     * @return Default value
+     */
     public Optional<Object> getDefaultValue() {
         return Optional.ofNullable(defaultValue);
     }
 
+    /**
+     * Returns the format string for this attribute or empty if none
+     *
+     * @return Format string
+     */
     public Optional<String> getFormatString() {
         return Optional.ofNullable(formatString);
     }
 
+    /**
+     * Returns true if this is the identity attribute
+     *
+     * @return True if identity attribute
+     */
     public boolean isIdentity() {
         return identity;
     }
 
+    /**
+     * Returns true if this is the marker attribute
+     *
+     * @return true if marker attribute
+     */
     public boolean isMarker() {
         return marker;
     }
 
+    /**
+     * Returns true if this is the title attribute
+     *
+     * @return True if title attribute
+     */
     public boolean isTitle() {
         return title;
     }
