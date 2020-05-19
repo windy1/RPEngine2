@@ -23,12 +23,19 @@ public class DuelListener implements Listener {
 
     private final Duels duels;
     private final RpPlayerRepo playerRepo;
+    private final DuelInvites invites;
     private final Logger log;
 
     @Inject
-    public DuelListener(Duels duels, RpPlayerRepo playerRepo, @PluginLogger Logger log) {
+    public DuelListener(
+        Duels duels,
+        RpPlayerRepo playerRepo,
+        DuelInvites invites,
+        @PluginLogger Logger log
+    ) {
         this.duels = Objects.requireNonNull(duels);
         this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.invites = Objects.requireNonNull(invites);
         this.log = Objects.requireNonNull(log);
     }
 
@@ -59,6 +66,12 @@ public class DuelListener implements Listener {
         if (!(damager instanceof Player)) {
             // damaged by non-player
             e.setCancelled(false);
+            return;
+        }
+
+        if (!activeDuel.hasStarted()) {
+            // countdown in progress
+            e.setCancelled(true);
             return;
         }
 
@@ -97,7 +110,24 @@ public class DuelListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent e) {
+        Player mcPlayer = e.getPlayer();
+        UUID playerId = mcPlayer.getUniqueId();
+        invites.clear(playerId);
+
         // If a dueler quits mid-duel, they forfeit
+        Duel duel = duels.getActiveDuel(playerId).orElse(null);
+        Result<RpPlayer> player = playerRepo.getPlayer(mcPlayer);
+
+        if (duel == null) {
+            return;
+        }
+
+        Optional<String> err = player.getError();
+        if (err.isPresent()) {
+            log.warning(err.get());
+        } else {
+            duels.forfeitDuel(player.get());
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)

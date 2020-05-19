@@ -27,17 +27,20 @@ public class DuelInvites {
         this.plugin = Objects.requireNonNull(plugin);
     }
 
-    public boolean hasInvite(UUID playerId, UUID targetId) {
-        System.out.println("invites " + invites);
+    public boolean has(UUID playerId, UUID targetId) {
         return getInvites(playerId).contains(new DuelInvite(targetId));
     }
 
-    public void clearInvites(UUID playerId) {
+    public void clear(UUID playerId) {
         getInvites(playerId).clear();
     }
 
-    public void addInvite(UUID playerId, UUID targetId) {
+    public void add(UUID playerId, UUID targetId) {
         getInvites(playerId).add(new DuelInvite(targetId));
+    }
+
+    public boolean decline(UUID playerId, UUID targetId) {
+        return getInvites(playerId).remove(new DuelInvite(targetId));
     }
 
     public void startWatching() {

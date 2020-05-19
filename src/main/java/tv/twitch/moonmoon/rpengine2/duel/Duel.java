@@ -6,6 +6,7 @@ public class Duel {
 
     private final Dueler player1;
     private final Dueler player2;
+    private boolean started = false;
 
     public Duel(Dueler player1, Dueler player2) {
         this.player1 = Objects.requireNonNull(player1);
@@ -18,5 +19,13 @@ public class Duel {
 
     public Dueler getPlayer2() {
         return player2;
+    }
+
+    public boolean hasStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 }

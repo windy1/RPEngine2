@@ -14,6 +14,8 @@ public interface Duels {
 
     Optional<Duel> getActiveDuel(UUID playerId);
 
+    void forfeitDuel(RpPlayer player);
+
     void handlePlayerJoined(RpPlayer player);
 
     Result<Void> init();

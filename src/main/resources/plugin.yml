@@ -82,3 +82,12 @@ commands:
     description: Invites a player to duel or accepts an active invitation
     usage: /duel <player>
     permission: rpengine.duel
+  dueldecline:
+    description: Declines a duel invitation
+    usage: /dueldecline <player>
+    permission: rpengine.dueldecline
+  forfeit:
+    description: Forfeits a players active duel
+    usage: /forfeit
+    aliases: [yield, concede]
+    permission: rpengine.forfeit

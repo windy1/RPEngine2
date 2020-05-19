@@ -91,3 +91,7 @@ duels:
       enabled: true
     duel:
       enabled: true
+    dueldecline:
+      enabled: true
+    forfeit:
+      enabled: true

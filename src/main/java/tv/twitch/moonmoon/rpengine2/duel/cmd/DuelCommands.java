@@ -18,11 +18,15 @@ public class DuelCommands implements Commands {
     public DuelCommands(
         JavaPlugin plugin,
         DuelRulesCommand duelRulesCommand,
-        DuelCommand duelCommand
+        DuelCommand duelCommand,
+        DuelDeclineCommand duelDeclineCommand,
+        ForfeitCommand forfeitCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("duelrules", duelRulesCommand);
         executors.put("duel", duelCommand);
+        executors.put("dueldecline", duelDeclineCommand);
+        executors.put("forfeit", forfeitCommand);
     }
 
     @Override

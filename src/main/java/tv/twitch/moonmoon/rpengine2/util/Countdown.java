@@ -1,10 +1,9 @@
-package tv.twitch.moonmoon.rpengine2.cmd;
+package tv.twitch.moonmoon.rpengine2.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

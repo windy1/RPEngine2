@@ -19,7 +19,7 @@ public class DuelRulesCommand extends AbstractCoreCommandExecutor {
 
     private final String[] rules = new String[] {
         "1. You must be within %d blocks of the player you would like to duel with",
-        "2. The player you would like to duel must accept by also running /duel <you>",
+        "2. The player you would like to duel must accept the duel",
         "3. The first person's health to reach zero loses",
         "4. Upon loss, you will not die, and you will not lose the items in your inventory",
         "5. Once over, both players will be teleported back to the location where you started " +

@@ -1,5 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.duel.cmd;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -98,25 +100,46 @@ public class DuelCommand extends AbstractCoreCommandExecutor {
         playerId = mcPlayer.getUniqueId();
         targetId = mcTarget.getUniqueId();
 
-        if (invites.hasInvite(playerId, targetId)) {
-            invites.clearInvites(playerId);
-            invites.clearInvites(targetId);
+        if (invites.has(playerId, targetId)) {
+            invites.clear(playerId);
+            invites.clear(targetId);
             duels.startDuel(player, target);
-        } else {
-            invites.addInvite(targetId, playerId);
-
-            mcTarget.sendMessage(
-                ChatColor.DARK_RED + playerIdent + ChatColor.DARK_RED +
-                    " has invited you to duel. Run " + ChatColor.GRAY + ChatColor.ITALIC
-                    + "`/duel " + mcPlayer.getName() + "`" + ChatColor.RESET + ChatColor.DARK_RED
-                    + " to accept"
-            );
-
-            mcPlayer.sendMessage(
-                ChatColor.GREEN + "Invited " + playerRepo.getIdentity(target) + ChatColor.GREEN
-                    + " to duel"
-            );
+            return true;
         }
+
+        invites.add(targetId, playerId);
+
+        mcTarget.sendMessage(
+            ChatColor.DARK_RED + playerIdent + ChatColor.DARK_RED +
+                " has challenged you to a duel"
+        );
+
+        TextComponent reply = new TextComponent();
+        TextComponent accept = new TextComponent("[Accept]");
+        TextComponent decline = new TextComponent("[Decline]");
+
+        accept.setColor(net.md_5.bungee.api.ChatColor.DARK_GREEN);
+        accept.setBold(true);
+        accept.setClickEvent(new ClickEvent(
+            ClickEvent.Action.RUN_COMMAND, "/duel " + mcPlayer.getName())
+        );
+
+        decline.setColor(net.md_5.bungee.api.ChatColor.DARK_RED);
+        decline.setBold(true);
+        decline.setClickEvent(new ClickEvent(
+            ClickEvent.Action.RUN_COMMAND, "/dueldecline " + mcPlayer.getName())
+        );
+
+        reply.addExtra(accept);
+        reply.addExtra(" ");
+        reply.addExtra(decline);
+
+        mcTarget.spigot().sendMessage(reply);
+
+        mcPlayer.sendMessage(
+            ChatColor.GREEN + "Challenged " + playerRepo.getIdentity(target) + ChatColor.GREEN
+                + " to a duel"
+        );
 
         return true;
     }
