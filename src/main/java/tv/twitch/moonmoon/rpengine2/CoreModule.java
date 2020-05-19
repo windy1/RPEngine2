@@ -10,6 +10,8 @@ import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
 import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
+import tv.twitch.moonmoon.rpengine2.combatlog.CombatLogModule;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepoImpl;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
@@ -69,10 +71,15 @@ public class CoreModule extends AbstractModule {
         OptionalBinder.newOptionalBinder(binder(), Chat.class);
         OptionalBinder.newOptionalBinder(binder(), ChatConfigRepo.class);
         OptionalBinder.newOptionalBinder(binder(), ChatChannelConfigRepo.class);
+
         OptionalBinder.newOptionalBinder(binder(), ProtocolLibPlugin.class);
+
         OptionalBinder.newOptionalBinder(binder(), NametagEditPlugin.class);
+
         OptionalBinder.newOptionalBinder(binder(), Duels.class);
         OptionalBinder.newOptionalBinder(binder(), DuelConfigRepo.class);
+
+        OptionalBinder.newOptionalBinder(binder(), CombatLog.class);
 
         FileConfiguration config = plugin.getConfig();
 
@@ -82,6 +89,10 @@ public class CoreModule extends AbstractModule {
 
         if (config.getBoolean("duels.enabled")) {
             install(new DuelModule());
+        }
+
+        if (config.getBoolean("combatlog.enabled")) {
+            install(new CombatLogModule(plugin));
         }
 
         try {

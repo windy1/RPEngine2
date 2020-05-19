@@ -95,3 +95,25 @@ duels:
       enabled: true
     forfeit:
       enabled: true
+
+combatlog:
+  enabled: true
+
+  # showdamage -- display damage as floating text
+  # Requires Holograms plugin
+  showdamage:
+    enabled: true           # Requires Holograms plugin
+    staySecs: 0.5           # The amount of seconds to show last damage
+    numberFormat: '%.1f'    # Format string for damage display
+    damage: true            # Display damage
+    regen: true             # Display regen
+
+    # The amount of ticks to wait before sweeping the spawned holograms (20 ticks ~= 1s)
+    # Note: If the tick throttle takes longer than the set `staySecs`,
+    # the holograms will stay spawned for longer (until the next cycle)
+    tickThrottle: 10
+
+    # Only display damage output when the target is a player
+    # damage will never be displayed if the damage source is
+    # not a player regardless of this setting
+    playersOnly: false

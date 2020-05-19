@@ -17,7 +17,8 @@ import tv.twitch.moonmoon.rpengine2.duel.model.DuelConfig;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
 public class DuelCommand extends AbstractCoreCommandExecutor {
 

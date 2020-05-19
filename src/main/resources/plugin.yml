@@ -5,7 +5,7 @@ api-version: '1.13'
 authors: [Kasvot]
 description: RPEngine rewrite
 load: STARTUP
-softdepend: [ProtocolLib, NametagEdit]
+softdepend: [ProtocolLib, NametagEdit, Holograms]
 commands:
   rpengine:
     description: Admin command for RPEngine2

@@ -1,15 +1,17 @@
 package tv.twitch.moonmoon.rpengine2;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.cmd.CoreCommands;
+import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.data.DataManager;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibPlugin;
 import tv.twitch.moonmoon.rpengine2.nte.NametagEditPlugin;
-import tv.twitch.moonmoon.rpengine2.util.Result;
+import tv.twitch.moonmoon.rpengine2.util.ModuleLoader;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,7 +20,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 @Singleton
-public class Engine {
+public class Engine implements ModuleLoader {
 
     private final JavaPlugin plugin;
     private final CoreListener listener;
@@ -28,6 +30,7 @@ public class Engine {
     private final Duels duels;
     private final ProtocolLibPlugin protocol;
     private final NametagEditPlugin nte;
+    private final CombatLog combatLog;
     private final Logger log;
 
     @Inject
@@ -39,7 +42,9 @@ public class Engine {
         Optional<Chat> chat,
         Optional<Duels> duels,
         Optional<ProtocolLibPlugin> protocol,
-        Optional<NametagEditPlugin> nte) {
+        Optional<NametagEditPlugin> nte,
+        Optional<CombatLog> combatLog
+    ) {
         this.plugin = Objects.requireNonNull(plugin);
         this.listener = Objects.requireNonNull(listener);
         this.commands = Objects.requireNonNull(commands);
@@ -47,6 +52,7 @@ public class Engine {
         this.chat = chat.orElse(null);
         this.duels = duels.orElse(null);
         this.protocol = protocol.orElse(null);
+        this.combatLog = combatLog.orElse(null);
         this.nte = nte.orElse(null);
         log = plugin.getLogger();
     }
@@ -73,6 +79,10 @@ public class Engine {
             return;
         }
 
+        if (combatLog != null && !requireOk(combatLog.init())) {
+            return;
+        }
+
         if (protocol != null) {
             protocol.init();
         }
@@ -84,13 +94,13 @@ public class Engine {
         log.info("Done");
     }
 
-    private <T> boolean requireOk(Result<T> r) {
-        Optional<String> err = r.getError();
-        if (err.isPresent()) {
-            log.warning(err.get());
-            Bukkit.getPluginManager().disablePlugin(plugin);
-            return false;
-        }
-        return true;
+    @Override
+    public Logger getLogger() {
+        return log;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return plugin;
     }
 }
