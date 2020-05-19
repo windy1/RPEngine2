@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 import tv.twitch.moonmoon.rpengine2.util.Countdown;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.duel.cmd.DuelCommands;
@@ -12,6 +13,8 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -25,6 +28,8 @@ public class DuelsImpl implements Duels {
     private final DuelInvites invites;
     private final Set<Duel> activeDuels = Collections.synchronizedSet(new HashSet<>());
     private final Logger log;
+
+    private BukkitTask duelWatcher;
 
     @Inject
     public DuelsImpl(
@@ -51,9 +56,7 @@ public class DuelsImpl implements Duels {
 
         activeDuels.add(duel);
 
-        Countdown.from(plugin.getConfig(), playerIds, 3, () ->
-            duel.setStarted(true)
-        ).start();
+        Countdown.from(plugin.getConfig(), playerIds, 3, duel::start).start();
     }
 
     @Override
@@ -127,9 +130,52 @@ public class DuelsImpl implements Duels {
         Bukkit.getPluginManager().registerEvents(listener, plugin);
 
         invites.startWatching();
+        startWatchingDuels();
 
         return configRepo.load().getError()
             .<Result<Void>>map(Result::error)
             .orElseGet(() -> Result.ok(null));
+    }
+
+    private void startWatchingDuels() {
+        int maxSecs = plugin.getConfig().getInt("duels.maxSecs", 300);
+        duelWatcher = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            synchronized (activeDuels) {
+                Iterator<Duel> it = activeDuels.iterator();
+
+                while (it.hasNext()) {
+                    Duel duel = it.next();
+                    Optional<Instant> startTime = duel.getStartTime();
+
+                    if (!startTime.isPresent()) {
+                        continue;
+                    }
+
+                    Instant now = Instant.now();
+                    long elapsedSecs = Duration.between(startTime.get(), now).toMillis() / 1000;
+
+                    if (elapsedSecs > maxSecs) {
+                        Bukkit.broadcastMessage(
+                            ChatColor.GOLD + "A duel between " +
+                                playerRepo.getIdentity(duel.getPlayer1().getPlayer()) +
+                                ChatColor.GOLD + " and " +
+                                playerRepo.getIdentity(duel.getPlayer2().getPlayer()) +
+                                ChatColor.GOLD + " has been declared a tie"
+                        );
+
+                        duel.getPlayer1().resetPlayer();
+                        duel.getPlayer2().resetPlayer();
+                        it.remove();
+                    }
+                }
+            }
+        }, 0, 10);
+    }
+
+    @Override
+    protected void finalize() {
+        if (duelWatcher != null && !duelWatcher.isCancelled()) {
+            duelWatcher.cancel();
+        }
     }
 }

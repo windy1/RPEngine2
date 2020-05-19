@@ -65,6 +65,11 @@ public class DuelCommand extends AbstractCoreCommandExecutor {
             return true;
         }
 
+        if (targetName.equals(mcPlayer.getName())) {
+            sender.sendMessage(ChatColor.RED + "You cannot duel yourself");
+            return true;
+        }
+
         if (!config.hasReadRules()) {
             sender.sendMessage(
                 ChatColor.RED + "You must first consult the rules of dueling before " +
