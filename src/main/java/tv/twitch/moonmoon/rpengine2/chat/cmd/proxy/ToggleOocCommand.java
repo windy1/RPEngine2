@@ -2,7 +2,7 @@ package tv.twitch.moonmoon.rpengine2.chat.cmd.proxy;
 
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
-import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
+import tv.twitch.moonmoon.rpengine2.cmd.parser.CommandPlayerParser;
 
 import javax.inject.Inject;
 

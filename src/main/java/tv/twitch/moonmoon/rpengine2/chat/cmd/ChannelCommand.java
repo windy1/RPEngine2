@@ -10,10 +10,10 @@ import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.chat.CommandChatConfigParser;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatConfig;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
-import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.cmd.help.Help;
+import tv.twitch.moonmoon.rpengine2.cmd.parser.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
@@ -77,7 +77,7 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
         }
 
         if (args.length == 0) {
-            return handleGetChannel(sender, player);
+            return handleGetChannel(sender);
         }
 
         switch (args[0]) {
@@ -94,7 +94,7 @@ public class ChannelCommand extends AbstractCoreCommandExecutor {
         }
     }
 
-    private boolean handleGetChannel(CommandSender sender, RpPlayer player) {
+    private boolean handleGetChannel(CommandSender sender) {
         ChatConfig chatConfig = configParser.parse(sender).orElse(null);
 
         if (chatConfig == null) {

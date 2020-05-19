@@ -1,9 +1,8 @@
-package tv.twitch.moonmoon.rpengine2.cmd;
+package tv.twitch.moonmoon.rpengine2.cmd.parser;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import tv.twitch.moonmoon.rpengine2.cmd.parser.CommandParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;

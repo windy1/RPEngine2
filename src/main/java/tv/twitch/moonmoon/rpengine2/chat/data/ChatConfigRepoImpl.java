@@ -42,9 +42,9 @@ public class ChatConfigRepoImpl implements ChatConfigRepo {
         Callback<Void> callback
     ) {
         int playerId = player.getId();
-        configDbo.updateChannelAsync(playerId, channel.getName(), r -> {
-            callback.accept(reloadConfig(playerId));
-        });
+        configDbo.updateChannelAsync(playerId, channel.getName(), r ->
+            callback.accept(reloadConfig(playerId))
+        );
     }
 
     @Override

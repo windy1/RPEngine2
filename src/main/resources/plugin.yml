@@ -1,7 +1,7 @@
 name: RPEngine2
 version: @version@
 main: tv.twitch.moonmoon.rpengine2.RpEngine2
-api-version: 1.13
+api-version: '1.13'
 authors: [Kasvot]
 description: RPEngine rewrite
 load: STARTUP
