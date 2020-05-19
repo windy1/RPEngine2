@@ -10,9 +10,7 @@ import tv.twitch.moonmoon.rpengine2.util.Result;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
-import java.util.function.Function;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @Singleton
 public class ChatChannelConfigRepoImpl implements ChatChannelConfigRepo {

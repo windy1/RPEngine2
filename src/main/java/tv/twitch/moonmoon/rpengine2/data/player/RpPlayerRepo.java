@@ -15,7 +15,7 @@ public interface RpPlayerRepo extends Repo {
 
     Result<RpPlayer> getPlayer(OfflinePlayer player);
 
-    Optional<RpPlayer> getPlayer(String name);
+    Optional<RpPlayer> getLoadedPlayer(String name);
 
     String getIdentity(RpPlayer player);
 

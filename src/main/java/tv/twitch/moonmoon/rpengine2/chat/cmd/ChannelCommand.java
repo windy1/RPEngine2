@@ -8,7 +8,6 @@ import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.chat.CommandChatConfigParser;
-import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatConfig;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.cmd.CommandPlayerParser;

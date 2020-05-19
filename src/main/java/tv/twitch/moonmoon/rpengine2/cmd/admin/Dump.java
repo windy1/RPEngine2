@@ -135,7 +135,7 @@ public class Dump {
 
         String name = args[0];
 
-        Optional<RpPlayer> p = playerRepo.getPlayer(name);
+        Optional<RpPlayer> p = playerRepo.getLoadedPlayer(name);
         if (!p.isPresent()) {
             sender.sendMessage(ChatColor.RED + "Player not found");
         } else {
@@ -232,7 +232,7 @@ public class Dump {
             return true;
         }
 
-        Optional<RpPlayer> p = playerRepo.getPlayer(args[0]);
+        Optional<RpPlayer> p = playerRepo.getLoadedPlayer(args[0]);
         Optional<ChatChannel> c = chat.getChannel(args[1]);
         RpPlayer player;
         ChatChannel channel;

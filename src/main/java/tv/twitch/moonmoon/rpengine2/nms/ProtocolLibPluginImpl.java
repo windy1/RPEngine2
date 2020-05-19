@@ -75,8 +75,6 @@ public class ProtocolLibPluginImpl implements ProtocolLibPlugin {
                     continue;
                 }
 
-                System.out.println("player " + player);
-
                 Result<RpPlayer> p = playerRepo.getPlayer(player);
 
                 Optional<String> err = p.getError();

@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
@@ -28,7 +27,7 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     private final SelectRepo selectRepo;
     private final Logger log;
 
-    private Map<String, RpPlayer> players;
+    private Map<UUID, RpPlayer> players;
     private Map<String, RpPlayer> playerNameMap;
 
     @Inject
@@ -51,14 +50,13 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     @Override
     public Result<RpPlayer> getPlayer(OfflinePlayer player) {
         Objects.requireNonNull(player);
-        System.out.println("playerId " + player.getUniqueId());
-        return Optional.ofNullable(players.get(player.getUniqueId().toString()))
+        return Optional.ofNullable(players.get(player.getUniqueId()))
             .map(Result::ok)
             .orElseGet(() -> handleResult(() -> createPlayer(player)));
     }
 
     @Override
-    public Optional<RpPlayer> getPlayer(String name) {
+    public Optional<RpPlayer> getLoadedPlayer(String name) {
         return Optional.ofNullable(playerNameMap.get(name));
     }
 
@@ -148,7 +146,7 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
 
         if (newPlayerId.get() == 0) {
             // player already existed
-            return Result.ok(players.get(playerId.toString()));
+            return Result.ok(players.get(playerId));
         }
 
         Result<RpPlayer> p = reloadPlayer(playerId);
@@ -189,7 +187,7 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
     }
 
     private void updatePlayer(RpPlayer player) {
-        players.put(player.getUUID().toString(), player);
+        players.put(player.getUUID(), player);
         playerNameMap.put(player.getUsername(), player);
     }
 
@@ -209,7 +207,7 @@ public class RpPlayerRepoImpl implements RpPlayerRepo {
 
     private void onLoad(Set<RpPlayer> loadedPlayers) {
         players = Collections.synchronizedMap(loadedPlayers.stream()
-            .collect(Collectors.toMap(p -> p.getUUID().toString(), Function.identity())));
+            .collect(Collectors.toMap(RpPlayer::getUUID, Function.identity())));
         playerNameMap = Collections.synchronizedMap(loadedPlayers.stream()
             .collect(Collectors.toMap(RpPlayer::getUsername, Function.identity())));
     }

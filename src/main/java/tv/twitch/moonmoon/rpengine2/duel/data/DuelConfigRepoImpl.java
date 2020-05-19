@@ -33,7 +33,6 @@ public class DuelConfigRepoImpl implements DuelConfigRepo {
 
     @Override
     public Result<Void> load() {
-
         Result<Set<DuelConfig>> r = configDbo.selectConfigs();
 
         Optional<String> err = r.getError();
