@@ -60,12 +60,7 @@ public class RpPlayerAttribute {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RpPlayerAttribute that = (RpPlayerAttribute) o;
-        return id == that.id &&
-            attributeId == that.attributeId &&
-            Objects.equals(created, that.created) &&
-            type == that.type &&
-            Objects.equals(name, that.name) &&
-            Objects.equals(value, that.value);
+        return Objects.equals(name, that.name);
     }
 
     @Override

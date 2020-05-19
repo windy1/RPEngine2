@@ -60,12 +60,7 @@ public class Option {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Option option = (Option) o;
-        return id == option.id &&
-            selectId == option.selectId &&
-            Objects.equals(created, option.created) &&
-            Objects.equals(name, option.name) &&
-            Objects.equals(display, option.display) &&
-            color == option.color;
+        return Objects.equals(name, option.name);
     }
 
     @Override

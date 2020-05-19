@@ -50,10 +50,7 @@ public class ChatChannelConfig {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatChannelConfig that = (ChatChannelConfig) o;
-        return id == that.id &&
-            playerId == that.playerId &&
-            muted == that.muted &&
-            Objects.equals(created, that.created) &&
+        return playerId == that.playerId &&
             Objects.equals(channelName, that.channelName);
     }
 

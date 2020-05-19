@@ -84,6 +84,7 @@ duels:
   enabled: true
   startRange: 35
   maxSecs: 300
+  inviteExpireSecs: 60
 
   commands:
     duelrules:

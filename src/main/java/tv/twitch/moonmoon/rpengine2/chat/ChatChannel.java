@@ -52,11 +52,7 @@ public class ChatChannel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatChannel that = (ChatChannel) o;
-        return range == that.range &&
-            Objects.equals(name, that.name) &&
-            Objects.equals(prefix, that.prefix) &&
-            Objects.equals(permission, that.permission) &&
-            messageColor == that.messageColor;
+        return Objects.equals(name, that.name);
     }
 
     @Override

@@ -38,10 +38,7 @@ public class DuelConfig {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DuelConfig that = (DuelConfig) o;
-        return id == that.id &&
-            playerId == that.playerId &&
-            readRules == that.readRules &&
-            Objects.equals(created, that.created);
+        return playerId == that.playerId;
     }
 
     @Override

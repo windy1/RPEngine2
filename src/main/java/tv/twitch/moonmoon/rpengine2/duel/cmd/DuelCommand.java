@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.cmd.parser.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.duel.DuelInvites;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.duel.cmd.parser.CommandDuelConfigParser;
 import tv.twitch.moonmoon.rpengine2.duel.model.DuelConfig;
@@ -22,20 +23,23 @@ public class DuelCommand extends AbstractCoreCommandExecutor {
     private final CommandPlayerParser playerParser;
     private final CommandDuelConfigParser configParser;
     private final Duels duels;
-    private final Map<UUID, Set<UUID>> invites = new HashMap<>();
+    private final DuelInvites invites;
 
     @Inject
     public DuelCommand(
         Plugin plugin,
         RpPlayerRepo playerRepo,
         CommandPlayerParser playerParser,
-        CommandDuelConfigParser configParser, Duels duels
+        CommandDuelConfigParser configParser,
+        Duels duels,
+        DuelInvites invites
     ) {
         super(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.playerParser = Objects.requireNonNull(playerParser);
         this.configParser = Objects.requireNonNull(configParser);
         this.duels = Objects.requireNonNull(duels);
+        this.invites = Objects.requireNonNull(invites);
     }
 
     @Override
@@ -93,16 +97,13 @@ public class DuelCommand extends AbstractCoreCommandExecutor {
         playerIdent = playerRepo.getIdentity(player);
         playerId = mcPlayer.getUniqueId();
         targetId = mcTarget.getUniqueId();
-        boolean isResponse = getInvites(playerId).contains(targetId);
 
-        // TODO: expire invites
-        // TODO: cancel invites
-
-        if (isResponse) {
-            System.out.println("DEBUG1");
+        if (invites.hasInvite(playerId, targetId)) {
+            invites.clearInvites(playerId);
+            invites.clearInvites(targetId);
             duels.startDuel(player, target);
         } else {
-            getInvites(targetId).add(playerId);
+            invites.addInvite(targetId, playerId);
 
             mcTarget.sendMessage(
                 ChatColor.DARK_RED + playerIdent + ChatColor.DARK_RED +
@@ -118,10 +119,6 @@ public class DuelCommand extends AbstractCoreCommandExecutor {
         }
 
         return true;
-    }
-
-    private Set<UUID> getInvites(UUID invitedPlayerId) {
-        return invites.computeIfAbsent(invitedPlayerId, k -> new HashSet<>());
     }
 
     @Override

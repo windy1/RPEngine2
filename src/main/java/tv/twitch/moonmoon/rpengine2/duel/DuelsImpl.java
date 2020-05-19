@@ -21,6 +21,7 @@ public class DuelsImpl implements Duels {
     private final DuelListener listener;
     private final DuelConfigRepo configRepo;
     private final RpPlayerRepo playerRepo;
+    private final DuelInvites invites;
     private final Set<Duel> activeDuels = Collections.synchronizedSet(new HashSet<>());
     private final Logger log;
 
@@ -30,13 +31,15 @@ public class DuelsImpl implements Duels {
         DuelCommands commands,
         DuelListener listener,
         DuelConfigRepo configRepo,
-        RpPlayerRepo playerRepo
+        RpPlayerRepo playerRepo,
+        DuelInvites invites
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         this.commands = Objects.requireNonNull(commands);
         this.listener = Objects.requireNonNull(listener);
         this.configRepo = Objects.requireNonNull(configRepo);
         this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.invites = Objects.requireNonNull(invites);
         log = plugin.getLogger();
     }
 
@@ -85,6 +88,8 @@ public class DuelsImpl implements Duels {
     public Result<Void> init() {
         commands.register();
         Bukkit.getPluginManager().registerEvents(listener, plugin);
+
+        invites.startWatching();
 
         return configRepo.load().getError()
             .<Result<Void>>map(Result::error)

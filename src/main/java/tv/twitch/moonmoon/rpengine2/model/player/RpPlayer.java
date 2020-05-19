@@ -64,11 +64,8 @@ public class RpPlayer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RpPlayer rpPlayer = (RpPlayer) o;
-        return id == rpPlayer.id &&
-            Objects.equals(created, rpPlayer.created) &&
-            Objects.equals(username, rpPlayer.username) &&
-            Objects.equals(uuid, rpPlayer.uuid) &&
-            Objects.equals(attributes, rpPlayer.attributes);
+        return Objects.equals(username, rpPlayer.username) &&
+            Objects.equals(uuid, rpPlayer.uuid);
     }
 
     @Override

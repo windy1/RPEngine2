@@ -79,15 +79,7 @@ public class Attribute {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Attribute attribute = (Attribute) o;
-        return id == attribute.id &&
-            identity == attribute.identity &&
-            marker == attribute.marker &&
-            Objects.equals(created, attribute.created) &&
-            Objects.equals(name, attribute.name) &&
-            Objects.equals(display, attribute.display) &&
-            type == attribute.type &&
-            Objects.equals(defaultValue, attribute.defaultValue) &&
-            Objects.equals(formatString, attribute.formatString);
+        return Objects.equals(name, attribute.name);
     }
 
     @Override

@@ -90,12 +90,8 @@ public class OptionArgs {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OptionArgs that = (OptionArgs) o;
-        return selectId == that.selectId &&
-            Objects.equals(selectName, that.selectName) &&
-            Objects.equals(option, that.option) &&
-            Objects.equals(display, that.display) &&
-            color == that.color &&
-            Objects.equals(select, that.select);
+        return Objects.equals(selectName, that.selectName) &&
+            Objects.equals(option, that.option);
     }
 
     @Override

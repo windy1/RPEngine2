@@ -52,10 +52,7 @@ public class Select {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Select select = (Select) o;
-        return id == select.id &&
-            Objects.equals(created, select.created) &&
-            Objects.equals(name, select.name) &&
-            Objects.equals(options, select.options);
+        return Objects.equals(name, select.name);
     }
 
     @Override

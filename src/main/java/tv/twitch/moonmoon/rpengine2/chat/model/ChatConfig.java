@@ -41,10 +41,7 @@ public class ChatConfig {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatConfig that = (ChatConfig) o;
-        return id == that.id &&
-            playerId == that.playerId &&
-            Objects.equals(created, that.created) &&
-            Objects.equals(channel, that.channel);
+        return playerId == that.playerId;
     }
 
     @Override
