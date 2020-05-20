@@ -23,7 +23,7 @@ import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibModule;
 import tv.twitch.moonmoon.rpengine2.nms.RpProtocolLib;
-import tv.twitch.moonmoon.rpengine2.nte.NametagEditModule;
+import tv.twitch.moonmoon.rpengine2.nte.RpNametagEditModule;
 import tv.twitch.moonmoon.rpengine2.nte.RpNametagEdit;
 import tv.twitch.moonmoon.rpengine2.util.DbPath;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
@@ -103,7 +103,7 @@ public class CoreModule extends AbstractModule {
 
         try {
             Class.forName("com.nametagedit.plugin.NametagEdit");
-            install(new NametagEditModule());
+            install(new RpNametagEditModule());
         } catch (ClassNotFoundException ignored) {
         }
     }

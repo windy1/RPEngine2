@@ -19,13 +19,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-public class NametagEditPluginImpl implements RpNametagEdit {
+public class RpNametagEditImpl implements RpNametagEdit {
 
     private final Plugin plugin;
     private final NametagEditListener listener;
 
     @Inject
-    public NametagEditPluginImpl(Plugin plugin, NametagEditListener listener) {
+    public RpNametagEditImpl(Plugin plugin, NametagEditListener listener) {
         this.plugin = Objects.requireNonNull(plugin);
         this.listener = Objects.requireNonNull(listener);
     }
