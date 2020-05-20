@@ -23,12 +23,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-public class ProtocolLibPluginImpl implements RpProtocolLib {
+public class RpProtocolLibImpl implements RpProtocolLib {
 
     private final PlayerInfoPacketAdapter playerInfoAdapter;
 
     @Inject
-    public ProtocolLibPluginImpl(PlayerInfoPacketAdapter playerInfoAdapter) {
+    public RpProtocolLibImpl(PlayerInfoPacketAdapter playerInfoAdapter) {
         this.playerInfoAdapter = Objects.requireNonNull(playerInfoAdapter);
     }
 

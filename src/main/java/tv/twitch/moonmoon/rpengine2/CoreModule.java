@@ -21,7 +21,7 @@ import tv.twitch.moonmoon.rpengine2.data.select.SelectRepoImpl;
 import tv.twitch.moonmoon.rpengine2.duel.DuelModule;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
-import tv.twitch.moonmoon.rpengine2.nms.ProtocolLibModule;
+import tv.twitch.moonmoon.rpengine2.nms.RpProtocolLibModule;
 import tv.twitch.moonmoon.rpengine2.nms.RpProtocolLib;
 import tv.twitch.moonmoon.rpengine2.nte.RpNametagEditModule;
 import tv.twitch.moonmoon.rpengine2.nte.RpNametagEdit;
@@ -97,7 +97,7 @@ public class CoreModule extends AbstractModule {
 
         try {
             Class.forName("com.comphenix.protocol.ProtocolLibrary");
-            install(new ProtocolLibModule());
+            install(new RpProtocolLibModule());
         } catch (ClassNotFoundException ignored) {
         }
 
