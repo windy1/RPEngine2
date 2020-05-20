@@ -68,10 +68,10 @@ public class RpProtocolLibImpl implements RpProtocolLib {
                 Player player;
 
                 if (data == null
-                    || data.getProfile() == null
-                    || (player = Bukkit.getPlayer(data.getProfile().getUUID())) == null
-                    || !player.isOnline()) {
-                    newData.add(data);
+                        || data.getProfile() == null
+                        || (player = Bukkit.getPlayer(data.getProfile().getUUID())) == null
+                        || !player.isOnline()) {
+                        newData.add(data);
                     continue;
                 }
 
