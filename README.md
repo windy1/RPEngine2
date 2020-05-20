@@ -20,6 +20,7 @@ A rewrite of the Bukkit plugin RPEngine. Fully modular and configurable.
     * [Core Commands](#core-commands)
     * [Chat Commands](#chat-commands)
     * [Duel Commands](#duel-commands)
+* [Developers](#developers)
 
 ## New Features
 
@@ -187,3 +188,11 @@ command can be assigned a cooldown.
 | duel | Challenges a player to duel or accepts an active challenge | `rpengine.duels.duel` | `/duel <player>` |
 | dueldecline | Declines a duel challenge | `rpengine.duels.dueldecline` | `/dueldecline <player>` | `ddecline` |
 | forfeit | Forfeits an active duel | `rpengine.duels.forfeit` | `/forfeit` | `yield,concede` |
+
+## Developers
+
+Developers can obtain a handle to the plugin's main management object with
+
+```java
+Engine engine = RpEngine2.getEngine().orElse(null);
+```
