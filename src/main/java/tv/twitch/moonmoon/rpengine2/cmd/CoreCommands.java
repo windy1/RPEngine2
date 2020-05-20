@@ -11,6 +11,7 @@ import tv.twitch.moonmoon.rpengine2.cmd.card.InspectCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.help.ColorListCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.util.CountdownCommand;
 import tv.twitch.moonmoon.rpengine2.cmd.util.PlayedCommand;
+import tv.twitch.moonmoon.rpengine2.cmd.util.RollCommand;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -34,7 +35,8 @@ public class CoreCommands implements Commands {
         InspectCommand inspectCommand,
         PlayerActionMenuCommand playerActionMenuCommand,
         CountdownCommand countdownCommand,
-        PlayedCommand playedCommand
+        PlayedCommand playedCommand,
+        RollCommand rollCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
         executors.put("rpengine", adminCommand);
@@ -46,6 +48,7 @@ public class CoreCommands implements Commands {
         executors.put("playeractionmenu", playerActionMenuCommand);
         executors.put("countdown", countdownCommand);
         executors.put("played", playedCommand);
+        executors.put("roll", rollCommand);
     }
 
     @Override

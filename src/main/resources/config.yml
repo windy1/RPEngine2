@@ -20,8 +20,16 @@ commands:
     enabled: true
   played:
     enabled: true
+  roll:
+    enabled: true
 
-inspectRange: 35
+inspect:
+  range: 35
+
+# Generate a random number in a range
+roll:
+  range: 35
+  prefix: '[Roll] '
 
 # Start a countdown in the center of surrounding player's screens
 countdown:
@@ -42,11 +50,6 @@ chat:
   birdSpeed: 20       # Blocks per second
   actionMenu: true    # Brings up an action menu when you click on a players name in chat
   defaultChannel: rp
-
-  # Generate a random number in a range
-  roll:
-    range: 35
-    prefix: '[Roll] '
 
   channels:
     rp:
@@ -78,8 +81,6 @@ chat:
     ooc:
       enabled: true
     toggleooc:
-      enabled: true
-    roll:
       enabled: true
     emote:
       enabled: true

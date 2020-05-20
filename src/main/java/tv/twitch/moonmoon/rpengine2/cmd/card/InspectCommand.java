@@ -45,7 +45,7 @@ public class InspectCommand extends AbstractCoreCommandExecutor {
         Player mcPlayer = (Player) sender;
         Player mcTarget = Bukkit.getPlayer(args[0]);
         RpPlayer target;
-        int range = plugin.getConfig().getInt("inspectRange", 0);
+        int range = plugin.getConfig().getInt("inspect.range", 0);
 
         if (mcTarget == null) {
             sender.sendMessage(ChatColor.RED + "Player not found");

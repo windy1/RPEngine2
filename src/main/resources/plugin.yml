@@ -13,8 +13,8 @@ commands:
     usage: /rpengine help
   card:
     description: Display RP character card
-    usage: /card
     permission: rpengine.card
+    usage: /card
   cardset:
     description: Sets a card attribute
     usage: /cardset help
@@ -31,72 +31,74 @@ commands:
     description: Lists available colors
     usage: /colorlist
     permission: rpengine.colorlist
-  channel:
-    description: Channel management command
-    usage: /channel help
-    permission: rpengine.channel
-  whisper:
-    description: Speak softly and carry a big stick
-    usage: /whisper <message>
-    permission: rpengine.whisper
-    aliases: [w]
-  shout:
-    description: Et tu brute
-    usage: /shout <message>
-    permission: rpengine.shout
-    aliases: [yell]
-  bird:
-    description: A delayed message determined by the distance between players
-    usage: /bird <player> <message>
-    permission: rpengine.bird
   playeractionmenu:
     description: Displays the player action menu (internal)
     usage: /playeractionmenu <player>
     permission: rpengine.playeractionmenu
-  ooc:
-    description: Alias for /channel join ooc (legacy)
-    usage: /ooc
-    permission: rpengine.ooc
-  rp:
-    description: Alias for /channel join rp (legacy)
-    usage: /rp
-    permission: rpengine.rp
-  toggleooc:
-    description: Alias for /channel mute ooc (legacy)
-    usage: /toggleooc
-    permission: rpengine.toggleooc
+  countdown:
+    description: Starts a countdown for nearby players
+    usage: /countdown [seconds]
+    permission: rpengine.countdown
   roll:
     description: Generates a random number
     usage: /roll [max | min [max]]
     permission: rpengine.roll
-  countdown:
-    description: Starts a countdown for players
-    usage: /countdown [seconds]
-    permission: rpengine.countdown
-  duelrules:
-    description: Prints the duel rules
-    usage: /duelrules
-    aliases: [drules]
-    permission: rpengine.duelrules
-  duel:
-    description: Invites a player to duel or accepts an active invitation
-    usage: /duel <player>
-    permission: rpengine.duel
-  dueldecline:
-    description: Declines a duel invitation
-    usage: /dueldecline <player>
-    permission: rpengine.dueldecline
-  forfeit:
-    description: Forfeits a players active duel
-    usage: /forfeit
-    aliases: [yield, concede]
-    permission: rpengine.forfeit
-  emote:
-    description: You feel as though...
-    usage: /emote <phrase>
-    aliases: [em, me]
-    permission: rpengine.emote
+    aliases: [rand, rnd]
   played:
     description: Prints play time on server
     usage: /played
     permission: rpengine.played
+  channel:
+    description: Channel management command (join, mute, etc.)
+    usage: /channel help
+    permission: rpengine.chat.channel
+  whisper:
+    description: Speak softly and carry a big stick
+    usage: /whisper <message>
+    permission: rpengine.chat.whisper
+    aliases: [w]
+  shout:
+    description: Et tu brute
+    usage: /shout <message>
+    permission: rpengine.chat.shout
+    aliases: [yell]
+  bird:
+    description: A delayed message determined by the distance between players
+    usage: /bird <player> <message>
+    permission: rpengine.chat.bird
+  ooc:
+    description: Alias for /channel join ooc (legacy)
+    usage: /ooc
+    permission: rpengine.chat.ooc
+  rp:
+    description: Alias for /channel join rp (legacy)
+    usage: /rp
+    permission: rpengine.chat.rp
+  toggleooc:
+    description: Alias for /channel mute ooc (legacy)
+    usage: /toggleooc
+    permission: rpengine.chat.toggleooc
+  emote:
+    description: You feel as though...
+    usage: /emote <phrase>
+    aliases: [em, me]
+    permission: rpengine.chat.emote
+  duelrules:
+    description: Prints the duel rules
+    usage: /duelrules
+    aliases: [drules]
+    permission: rpengine.duels.duelrules
+  duel:
+    description: Challenges a player to duel or accepts an active challenge
+    usage: /duel <player>
+    permission: rpengine.duels.duel
+  dueldecline:
+    description: Declines a duel challenge
+    usage: /dueldecline <player>
+    permission: rpengine.duels.dueldecline
+    aliases: [ddecline]
+  forfeit:
+    description: Forfeits an active duel
+    usage: /forfeit
+    aliases: [yield, concede]
+    permission: rpengine.duels.forfeit

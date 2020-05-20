@@ -4,6 +4,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.cmd.proxy.*;
 import tv.twitch.moonmoon.rpengine2.cmd.Commands;
+import tv.twitch.moonmoon.rpengine2.cmd.util.RollCommand;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -25,7 +26,6 @@ public class ChatCommands implements Commands {
         OocCommand oocCommand,
         RpCommand rpCommand,
         ToggleOocCommand toggleOocCommand,
-        RollCommand rollCommand,
         EmoteCommand emoteCommand
     ) {
         this.plugin = Objects.requireNonNull(plugin);
@@ -36,7 +36,6 @@ public class ChatCommands implements Commands {
         executors.put("ooc", oocCommand);
         executors.put("rp", rpCommand);
         executors.put("toggleooc", toggleOocCommand);
-        executors.put("roll", rollCommand);
         executors.put("emote", emoteCommand);
     }
 

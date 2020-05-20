@@ -1,4 +1,4 @@
-package tv.twitch.moonmoon.rpengine2.chat.cmd;
+package tv.twitch.moonmoon.rpengine2.cmd.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,7 +30,7 @@ public class RollCommand extends AbstractCoreCommandExecutor {
 
     @Override
     public boolean handle(CommandSender sender, String[] args) {
-        ConfigurationSection c = plugin.getConfig().getConfigurationSection("chat.roll");
+        ConfigurationSection c = plugin.getConfig().getConfigurationSection("roll");
         if (c == null) {
             sender.sendMessage(ChatColor.RED + "Invalid configuration (missing roll section)");
             return true;
@@ -82,7 +82,7 @@ public class RollCommand extends AbstractCoreCommandExecutor {
 
     @Override
     public String getConfigPath() {
-        return "chat.commands.roll";
+        return "commands.roll";
     }
 
     @Override
