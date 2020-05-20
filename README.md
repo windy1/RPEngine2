@@ -11,9 +11,9 @@ A rewrite of the Bukkit plugin RPEngine. Fully modular and configurable.
         * [Selects](#selects)
         * [Special Attributes](#special-attributes)
     * [Inspect](#inspect--action-menu)
+    * [Countdown](#countdown)
     * [Duels](#duels)
     * [Combat Log](#combat-log)
-    * [Countdown](#countdown)
     * [Nametag Support](#nametag-support)
     * [Chat Channels](#chat-channels)
 * [Commands](#commands)
@@ -91,22 +91,6 @@ You can inspect other players cards with the button in the action menu or with
 /inspect <player>
 ```
 
-### Duels
-
-![duel](https://i.imgur.com/w0ruDAg.gif)
-
-Players can duel each other (without the penalty of death or loss of items) with the `/duel` 
-command. More information about how duels work can be viewed with `/duelrules`
-
-### Combat Log
-
-![https://i.imgur.com/SXO5qF1.gif](https://i.imgur.com/SXO5qF1.gif)
-
-Additionally, this plugin adds a new feature to display damage / regen above entities heads when
-regenerating health or if damaged by another player.
-
-This feature depends on the (optional) `Holograms` plugin
-
 ### Countdown
 
 ![countdown](https://i.imgur.com/4OmJZpd.gif)
@@ -114,6 +98,22 @@ This feature depends on the (optional) `Holograms` plugin
 The `/countdown [seconds]` command will broadcast a countdown to players within a configurable 
 block range. The colors of the text as well as the sound that played on each number are 
 configurable as well.
+
+### Duels
+
+[Preview](https://i.imgur.com/w0ruDAg.mp4)
+
+Players can duel each other (without the penalty of death or loss of items) with the `/duel` 
+command. More information about how duels work can be viewed with `/duelrules`
+
+### Combat Log
+
+[Preview](https://i.imgur.com/SXO5qF1.mp4)
+
+Additionally, this plugin adds a new feature to display damage / regen above entities heads when
+regenerating health or if damaged by another player.
+
+This feature depends on the (optional) `Holograms` plugin
 
 ### Nametag Support
 
@@ -163,7 +163,7 @@ command can be assigned a cooldown.
 | colorlist | Lists available colors | `rpengine.colorlist` | `/colorlist` |
 | playeractionmenu | Displays the player action menu (internal) | `rpengine.playeractionmenu` | `/playeractionmenu <player>` |
 | countdown | Starts a countdown for nearby players | `rpengine.countdown` | `/countdown [seconds]` |
-| roll | Generates a random number | `rpengine.roll` | `/roll [max | min [max]]` | `rand,rnd`
+| roll | Generates a random number | `rpengine.roll` | `/roll [max \| min [max]]` | `rand,rnd`
 | played | Prints play time on server | `rpengine.played` | `/played` |
 
 ### Chat Commands
@@ -172,7 +172,7 @@ command can be assigned a cooldown.
 | ---- | ----------- | ---------- | ----- | ------- |
 | channel | Channel management command (join, mute, etc.) | `rpengine.chat.channel` | `/channel help` |
 | whisper | Speak softly and carry a big stick | `rpengine.chat.whisper` | `/whisper <message>` | `w` |
-| shout | Et tu brute | `rpengine.chat.shout` | `/shout <message>` | `rpengine.chat.shout` | `yell` |
+| shout | Et tu brute | `rpengine.chat.shout` | `/shout <message>` | `yell` |
 | bird | A delayed message determined by the distance between players | `rpengine.chat.bird` | `/bird <player> <message>` |
 | ooc | Alias for /channel join ooc (legacy) | `rpengine.chat.ooc` | `/ooc` |
 | rp | Alias for /channel join rp (legacy) | `rpengine.chat.rp` | `/rp` |
