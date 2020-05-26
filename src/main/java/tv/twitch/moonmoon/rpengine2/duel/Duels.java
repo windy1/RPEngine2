@@ -1,6 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.duel;
 
-import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 

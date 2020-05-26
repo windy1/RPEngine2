@@ -1,0 +1,3 @@
+rootProject.name = 'rpengine2'
+include 'rpengine2-spigot'
+

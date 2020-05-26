@@ -1,17 +1,12 @@
 package tv.twitch.moonmoon.rpengine2.chat;
 
-import org.bukkit.command.CommandSender;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.Optional;
 import java.util.Set;
 
-/**
- * Module responsible for managing chat-related functionality
- */
 public interface Chat {
-
     /**
      * Returns the {@link ChatChannel} with the specified name
      *
@@ -68,8 +63,6 @@ public interface Chat {
      * @param channel Channel to set
      */
     void setChatChannelAsync(RpPlayer player, ChatChannel channel);
-
-    void toggleMutedAsync(RpPlayer player, ChatChannel channel, CommandSender sender);
 
     Result<Void> init();
 

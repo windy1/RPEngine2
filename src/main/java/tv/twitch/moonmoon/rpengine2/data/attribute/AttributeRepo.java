@@ -1,6 +1,8 @@
 package tv.twitch.moonmoon.rpengine2.data.attribute;
 
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.Repo;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
@@ -79,7 +81,7 @@ public interface AttributeRepo extends Repo {
 
     /**
      * Removes an attribute asynchronously. Note: this also moves the corresponding
-     * {@link tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute} for all players
+     * {@link RpPlayerAttribute} for all players
      *
      * @param name Attribute name
      * @param callback Callback invoked upon completion
@@ -116,7 +118,7 @@ public interface AttributeRepo extends Repo {
     /**
      * Sets the specified attribute as the `identity` attribute asynchronously
      *
-     * @see tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo#getIdentity(RpPlayer)
+     * @see RpPlayerRepo#getIdentity(RpPlayer)
      * @param name Attribute name
      * @param callback Callback invoked upon completion
      */
@@ -125,7 +127,7 @@ public interface AttributeRepo extends Repo {
     /**
      * Sets the specified attribute as the `identity` attribute
      *
-     * @see tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo#getIdentity(RpPlayer)
+     * @see RpPlayerRepo#getIdentity(RpPlayer)
      * @param name Attribute name
      */
     void setIdentity(String name);
@@ -162,7 +164,7 @@ public interface AttributeRepo extends Repo {
     /**
      * Sets the specified attribute as the `title` attribute asynchronously
      *
-     * @see tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo#getTitle(RpPlayer)
+     * @see RpPlayerRepo#getTitle(RpPlayer)
      * @param name Attribute name
      * @param callback Callback invoked upon completion
      */

@@ -1,54 +1,33 @@
-plugins {
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
-}
+buildscript {
+    allprojects {
+        apply plugin: 'java'
 
-apply plugin: 'java'
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
 
-group = pluginGroup
-version = pluginVersion
+        group 'tv.twitch.moonmoon'
+        version '2.0'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-repositories {
-    mavenCentral()
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
-    maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
-    flatDir {
-        dirs 'libs'
+        repositories {
+            mavenCentral()
+            maven {
+                name = 'spigotmc-repo'
+                url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+            }
+            maven {
+                name = 'sonatype'
+                url = 'https://oss.sonatype.org/content/groups/public/'
+            }
+            maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
+            flatDir {
+                dirs 'libs'
+            }
+        }
     }
 }
 
 dependencies {
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.31.1'
     compile group: 'com.google.inject', name: 'guice', version: '4.2.3'
-    compileOnly group: 'com.nametagedit', name: 'nametagedit', version: '4.4.6'
-    compileOnly group: 'com.comphenix.protocol', name: 'ProtocolLib', version: '4.5.0'
-    compileOnly group: 'com.sainttx.holograms', name: 'Holograms', version: '2.12'
-    compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
-import org.apache.tools.ant.filters.ReplaceTokens
-
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        filter ReplaceTokens, tokens: [version: version]
-    }
-}
-
-shadowJar {
-    dependencies {
-        exclude(dependency('org.spigotmc:spigot-api:*'))
-        exclude(dependency('com.comphenix.protocol:ProtocolLib:*'))
-        exclude(dependency('com.nametagedit:nametagedit:*'))
-        exclude(dependency('com.sainttx.holograms:Holograms-API:*'))
-    }
 }

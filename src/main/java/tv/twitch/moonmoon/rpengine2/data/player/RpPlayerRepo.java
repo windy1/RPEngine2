@@ -1,18 +1,19 @@
 package tv.twitch.moonmoon.rpengine2.data.player;
 
-import org.bukkit.OfflinePlayer;
 import tv.twitch.moonmoon.rpengine2.data.Repo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.time.Duration;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Manages the {@link RpPlayer} and
- * {@link tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute} models
+ * {@link RpPlayerAttribute} models
  */
 public interface RpPlayerRepo extends Repo {
 
@@ -27,10 +28,10 @@ public interface RpPlayerRepo extends Repo {
      * Returns the {@link RpPlayer} instance if loaded or creates a new instance in the database
      * and memory if not found (with a possible error)
      *
-     * @param player Bukkit player to lookup
+     * @param player player to lookup
      * @return Result of player lookup
      */
-    Result<RpPlayer> getPlayer(OfflinePlayer player);
+    Result<RpPlayer> getPlayer(UUID player);
 
     /**
      * Returns the {@link RpPlayer} with the specified name but does not attempt to create one if
@@ -131,5 +132,4 @@ public interface RpPlayerRepo extends Repo {
      * Handles shutdown logic
      */
     void shutdown();
-
 }

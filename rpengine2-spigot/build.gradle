@@ -1,0 +1,21 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+dependencies {
+    compile project(':')
+    compileOnly group: 'com.nametagedit', name: 'nametagedit', version: '4.4.6'
+    compileOnly group: 'com.comphenix.protocol', name: 'ProtocolLib', version: '4.5.0'
+    compileOnly group: 'com.sainttx.holograms', name: 'Holograms', version: '2.12'
+    compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+shadowJar {
+    dependencies {
+        exclude(dependency('org.spigotmc:spigot-api:*'))
+        exclude(dependency('com.comphenix.protocol:ProtocolLib:*'))
+        exclude(dependency('com.nametagedit:nametagedit:*'))
+        exclude(dependency('com.sainttx.holograms:Holograms-API:*'))
+    }
+}

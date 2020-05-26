@@ -1,6 +1,5 @@
 package tv.twitch.moonmoon.rpengine2.model.select;
 
-import org.bukkit.ChatColor;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.Objects;
@@ -11,7 +10,6 @@ public class OptionArgs {
     private final String selectName;
     private final String option;
     private final String display;
-    private final ChatColor color;
 
     private final Select select;
     private final int selectId;
@@ -20,14 +18,12 @@ public class OptionArgs {
         String selectName,
         String option,
         String display,
-        ChatColor color,
         Select select,
         int selectId
     ) {
         this.selectName = Objects.requireNonNull(selectName);
         this.option = Objects.requireNonNull(option);
         this.display = Objects.requireNonNull(display);
-        this.color = color;
         this.select = select;
         this.selectId = selectId;
     }
@@ -36,10 +32,9 @@ public class OptionArgs {
         String selectName,
         String option,
         String display,
-        ChatColor color,
         Select select
     ) {
-        this(selectName, option, display, color, select, 0);
+        this(selectName, option, display, select, 0);
     }
 
     public String getSelectName() {
@@ -52,10 +47,6 @@ public class OptionArgs {
 
     public String getDisplay() {
         return display;
-    }
-
-    public Optional<ChatColor> getColor() {
-        return Optional.ofNullable(color);
     }
 
     public Optional<Select> getSelect() {
@@ -79,7 +70,6 @@ public class OptionArgs {
            selectName,
            option,
            display,
-           color,
            select,
            select.getId()
         ));
@@ -105,7 +95,6 @@ public class OptionArgs {
             "selectName='" + selectName + '\'' +
             ", option='" + option + '\'' +
             ", display='" + display + '\'' +
-            ", color=" + color +
             ", select=" + select +
             ", selectId=" + selectId +
             '}';

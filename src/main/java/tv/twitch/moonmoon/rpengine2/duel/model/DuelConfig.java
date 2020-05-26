@@ -1,7 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.duel.model;
 
-import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerConfig;
-import tv.twitch.moonmoon.rpengine2.model.Model;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerConfig;
 
 import java.time.Instant;
 import java.util.Objects;
