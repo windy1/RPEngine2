@@ -13,6 +13,7 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
@@ -22,14 +23,19 @@ import java.util.UUID;
 public class BirdCommand extends AbstractCoreCommandExecutor {
 
     private final Chat chat;
-    private final RpPlayerRepo playerRepo;
+    private final SpigotRpPlayerRepo playerRepo;
     private final CommandPlayerParser playerParser;
 
     @Inject
-    public BirdCommand(Plugin plugin, Chat chat, RpPlayerRepo playerRepo, CommandPlayerParser playerParser) {
+    public BirdCommand(
+        Plugin plugin,
+        Chat chat,
+        RpPlayerRepo playerRepo,
+        CommandPlayerParser playerParser
+    ) {
         super(plugin);
         this.chat = Objects.requireNonNull(chat);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerRepo = (SpigotRpPlayerRepo) Objects.requireNonNull(playerRepo);
         this.playerParser = Objects.requireNonNull(playerParser);
     }
 

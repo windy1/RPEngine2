@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
@@ -38,12 +39,12 @@ public class RpNametagEditImpl implements RpNametagEdit {
 
     static class NametagEditListener implements Listener {
 
-        private final RpPlayerRepo playerRepo;
+        private final SpigotRpPlayerRepo playerRepo;
         private final Logger log;
 
         @Inject
         public NametagEditListener(RpPlayerRepo playerRepo, @PluginLogger Logger log) {
-            this.playerRepo = Objects.requireNonNull(playerRepo);
+            this.playerRepo = (SpigotRpPlayerRepo) Objects.requireNonNull(playerRepo);
             this.log = Objects.requireNonNull(log);
         }
 

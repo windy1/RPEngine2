@@ -7,7 +7,6 @@ import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
-import tv.twitch.moonmoon.rpengine2.spigot.data.select.SpigotSelectRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotUtils;
 
 import javax.inject.Inject;
@@ -46,11 +45,11 @@ public class SelectAdmin {
         USAGES.add(new CommandUsage("list"));
     }
 
-    private final SpigotSelectRepo selectRepo;
+    private final SelectRepo selectRepo;
 
     @Inject
     public SelectAdmin(SelectRepo selectRepo) {
-        this.selectRepo = (SpigotSelectRepo) Objects.requireNonNull(selectRepo);
+        this.selectRepo = Objects.requireNonNull(selectRepo);
     }
 
     public boolean handle(CommandSender sender, String[] args) {
@@ -127,7 +126,9 @@ public class SelectAdmin {
             displayName = args[3];
         }
 
-        selectRepo.createOptionAsync(selectName, name, displayName, color, r ->
+        String colorName = color != null ? color.name() : null;
+
+        selectRepo.createOptionAsync(selectName, name, displayName, colorName, r ->
             sender.sendMessage(Commands.mapResult(r, "Option created"))
         );
 

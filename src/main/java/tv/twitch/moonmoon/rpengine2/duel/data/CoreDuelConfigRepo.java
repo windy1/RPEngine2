@@ -83,6 +83,11 @@ public class CoreDuelConfigRepo implements DuelConfigRepo {
     }
 
     @Override
+    public void onWarning(String message) {
+        log.warning(message);
+    }
+
+    @Override
     public Result<Void> load() {
         Result<Set<DuelConfig>> r = configDbo.selectConfigs();
 
@@ -123,8 +128,4 @@ public class CoreDuelConfigRepo implements DuelConfigRepo {
         }
     }
 
-    @Override
-    public Logger getLogger() {
-        return log;
-    }
 }

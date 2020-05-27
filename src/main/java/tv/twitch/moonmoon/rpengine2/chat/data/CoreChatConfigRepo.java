@@ -53,6 +53,11 @@ public class CoreChatConfigRepo implements ChatConfigRepo {
     }
 
     @Override
+    public void onWarning(String message) {
+        log.warning(message);
+    }
+
+    @Override
     public Result<Void> load() {
         Result<Set<ChatConfig>> r = configDbo.selectConfigs();
 
@@ -107,8 +112,4 @@ public class CoreChatConfigRepo implements ChatConfigRepo {
         }
     }
 
-    @Override
-    public Logger getLogger() {
-        return log;
-    }
 }

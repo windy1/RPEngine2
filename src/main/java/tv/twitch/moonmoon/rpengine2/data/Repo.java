@@ -9,18 +9,18 @@ import java.util.logging.Logger;
 
 public interface Repo {
 
-    Logger getLogger();
-
     default <T> Result<T> handleResult(Supplier<Result<T>> f) {
         Result<T> r = f.get();
         Optional<String> err = r.getError();
         if (err.isPresent()) {
-            getLogger().warning(err.get());
+            onWarning(err.get());
             return Result.error(StringUtils.GENERIC_ERROR);
         } else {
             return r;
         }
     }
+
+    void onWarning(String message);
 
     Result<Void> load();
 }

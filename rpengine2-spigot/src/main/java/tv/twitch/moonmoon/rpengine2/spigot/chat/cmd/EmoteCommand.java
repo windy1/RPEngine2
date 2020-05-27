@@ -10,6 +10,7 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 
 import javax.inject.Inject;
@@ -18,7 +19,7 @@ import java.util.Objects;
 public class EmoteCommand extends AbstractCoreCommandExecutor {
 
     private final CommandPlayerParser playerParser;
-    private final RpPlayerRepo playerRepo;
+    private final SpigotRpPlayerRepo playerRepo;
 
     @Inject
     public EmoteCommand(
@@ -28,7 +29,7 @@ public class EmoteCommand extends AbstractCoreCommandExecutor {
     ) {
         super(plugin);
         this.playerParser = Objects.requireNonNull(playerParser);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerRepo = (SpigotRpPlayerRepo) Objects.requireNonNull(playerRepo);
     }
 
     @Override

@@ -33,6 +33,7 @@ public class SpigotEngine extends AbstractEngine implements ModuleLoader {
     private final CoreCommands commands;
     private final RpProtocolLib protocol;
     private final RpNametagEdit nte;
+    private final Logger log;
 
     @Inject
     public SpigotEngine(
@@ -53,7 +54,7 @@ public class SpigotEngine extends AbstractEngine implements ModuleLoader {
     ) {
         super(
             db, migrations, defaults, playerRepo, attributeRepo, selectRepo, chat, duels,
-            combatLog, plugin.getLogger()
+            combatLog
         );
 
         this.plugin = Objects.requireNonNull(plugin);
@@ -61,6 +62,7 @@ public class SpigotEngine extends AbstractEngine implements ModuleLoader {
         this.commands = Objects.requireNonNull(commands);
         this.protocol = protocol.orElse(null);
         this.nte = nte.orElse(null);
+        log = plugin.getLogger();
     }
 
     void init() {
@@ -72,20 +74,13 @@ public class SpigotEngine extends AbstractEngine implements ModuleLoader {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(listener, plugin);
 
-        if (initDb().getError().isPresent()) {
-            pluginManager.disablePlugin(plugin);
+        log.info("Connecting to database");
+
+        if (!requireOk(initDb())) {
             return;
         }
 
-        if (chat != null && !requireOk(chat.init())) {
-            return;
-        }
-
-        if (duels != null && !requireOk(duels.init())) {
-            return;
-        }
-
-        if (combatLog != null && !requireOk(combatLog.init())) {
+        if (!requireOk(initModules())) {
             return;
         }
 
@@ -97,12 +92,6 @@ public class SpigotEngine extends AbstractEngine implements ModuleLoader {
             nte.init();
         }
 
-        log.info("Done");
-    }
-
-    void shutdown() {
-        log.info("Shutting down");
-        playerRepo.shutdown();
         log.info("Done");
     }
 

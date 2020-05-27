@@ -10,6 +10,7 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ public class PlayerActionMenuCommand extends AbstractCoreCommandExecutor {
 
     private static final String FOOTER = ChatColor.BLUE + "===============";
 
-    private final RpPlayerRepo playerRepo;
+    private final SpigotRpPlayerRepo playerRepo;
     private final CommandPlayerParser playerParser;
     private final Chat chat;
 
@@ -32,7 +33,7 @@ public class PlayerActionMenuCommand extends AbstractCoreCommandExecutor {
         Optional<Chat> chat
     ) {
         super(plugin);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerRepo = (SpigotRpPlayerRepo) Objects.requireNonNull(playerRepo);
         this.playerParser = Objects.requireNonNull(playerParser);
         this.chat = chat.orElse(null);
     }

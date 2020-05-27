@@ -9,29 +9,39 @@ import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLogModule;
-import tv.twitch.moonmoon.rpengine2.data.Defaults;
 import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeDbo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.attribute.CoreAttributeDbo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.CoreAttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.player.CoreRpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.data.select.CoreSelectDbo;
+import tv.twitch.moonmoon.rpengine2.data.select.CoreSelectRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectDbo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.duel.DuelsModule;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
+import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
+import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
+import tv.twitch.moonmoon.rpengine2.util.PluginOut;
 
 public abstract class PluginModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bindDefaults(bind(Defaults.class));
-        bindAttributeRepo(bind(AttributeRepo.class));
-        bindAttributeDbo(bind(AttributeDbo.class));
         bindPlayerRepo(bind(RpPlayerRepo.class));
         bindPlayerDbo(bind(RpPlayerDbo.class));
+        bindPlayerFactory(bind(RpPlayerFactory.class));
+        bindAttributeRepo(bind(AttributeRepo.class));
+        bindAttributeDbo(bind(AttributeDbo.class));
         bindSelectRepo(bind(SelectRepo.class));
         bindSelectDbo(bind(SelectDbo.class));
+        bindOptionFactory(bind(OptionFactory.class));
+        bindAsyncExecutor(bind(AsyncExecutor.class));
+        bindPluginOut(bind(PluginOut.class));
 
         OptionalBinder.newOptionalBinder(binder(), Chat.class);
         OptionalBinder.newOptionalBinder(binder(), ChatConfigRepo.class);
@@ -55,21 +65,35 @@ public abstract class PluginModule extends AbstractModule {
         }
     }
 
+    protected abstract void bindPlayerRepo(AnnotatedBindingBuilder<RpPlayerRepo> b);
+
+    protected void bindPlayerDbo(AnnotatedBindingBuilder<RpPlayerDbo> b) {
+        b.to(CoreRpPlayerDbo.class);
+    }
+
+    protected abstract void bindPlayerFactory(AnnotatedBindingBuilder<RpPlayerFactory> b);
+
     protected void bindAttributeRepo(AnnotatedBindingBuilder<AttributeRepo> b) {
         b.to(CoreAttributeRepo.class);
     }
 
-    protected abstract void bindAttributeDbo(AnnotatedBindingBuilder<AttributeDbo> b);
+    protected void bindAttributeDbo(AnnotatedBindingBuilder<AttributeDbo> b) {
+        b.to(CoreAttributeDbo.class);
+    }
 
-    protected abstract void bindDefaults(AnnotatedBindingBuilder<Defaults> b);
+    protected void bindSelectRepo(AnnotatedBindingBuilder<SelectRepo> b) {
+        b.to(CoreSelectRepo.class);
+    }
 
-    protected abstract void bindPlayerRepo(AnnotatedBindingBuilder<RpPlayerRepo> b);
+    protected void bindSelectDbo(AnnotatedBindingBuilder<SelectDbo> b) {
+        b.to(CoreSelectDbo.class);
+    }
 
-    protected abstract void bindSelectRepo(AnnotatedBindingBuilder<SelectRepo> b);
+    protected abstract void bindOptionFactory(AnnotatedBindingBuilder<OptionFactory> b);
 
-    protected abstract void bindSelectDbo(AnnotatedBindingBuilder<SelectDbo> b);
+    protected abstract void bindAsyncExecutor(AnnotatedBindingBuilder<AsyncExecutor> b);
 
-    protected abstract void bindPlayerDbo(AnnotatedBindingBuilder<RpPlayerDbo> b);
+    protected abstract void bindPluginOut(AnnotatedBindingBuilder<PluginOut> b);
 
     protected abstract ChatModule createChatModule();
 

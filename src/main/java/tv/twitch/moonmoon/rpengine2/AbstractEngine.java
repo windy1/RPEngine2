@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 public abstract class AbstractEngine implements Engine {
 
@@ -29,7 +28,6 @@ public abstract class AbstractEngine implements Engine {
     protected final Chat chat;
     protected final Duels duels;
     protected final CombatLog combatLog;
-    protected final Logger log;
 
     private final List<Repo> repos;
 
@@ -42,8 +40,7 @@ public abstract class AbstractEngine implements Engine {
         SelectRepo selectRepo,
         Optional<Chat> chat,
         Optional<Duels> duels,
-        Optional<CombatLog> combatLog,
-        Logger log
+        Optional<CombatLog> combatLog
     ) {
         this.db = Objects.requireNonNull(db);
         this.migrations = Objects.requireNonNull(migrations);
@@ -54,26 +51,19 @@ public abstract class AbstractEngine implements Engine {
         this.chat = chat.orElse(null);
         this.duels = duels.orElse(null);
         this.combatLog = combatLog.orElse(null);
-        this.log = Objects.requireNonNull(log);
         repos = Arrays.asList(playerRepo, attributeRepo, selectRepo);
     }
 
     protected Result<Void> initDb() {
-        log.info("Connecting to database");
-
         Optional<String> err = db.connect().getError();
         if (err.isPresent()) {
             return Result.error(err.get());
         }
 
-        log.info("Running migrations");
-
         err = migrations.migrate().getError();
         if (err.isPresent()) {
             return Result.error(err.get());
         }
-
-        log.info("Loading data");
 
         for (Repo repo : repos) {
             err = repo.load().getError();
@@ -83,6 +73,23 @@ public abstract class AbstractEngine implements Engine {
         }
 
         defaults.saveDefaults();
+
+        return Result.ok(null);
+    }
+
+    protected Result<Void> initModules() {
+        Result<Void> r;
+        if (chat != null && (r = chat.init()).getError().isPresent()) {
+            return r;
+        }
+
+        if (duels != null && (r = duels.init()).getError().isPresent()) {
+            return r;
+        }
+
+        if (combatLog != null && (r = combatLog.init()).getError().isPresent()) {
+            return r;
+        }
 
         return Result.ok(null);
     }
@@ -115,5 +122,9 @@ public abstract class AbstractEngine implements Engine {
     @Override
     public Optional<CombatLog> getCombatLogModule() {
         return Optional.ofNullable(combatLog);
+    }
+
+    public void shutdown() {
+        playerRepo.shutdown();
     }
 }

@@ -4,9 +4,11 @@ import com.google.inject.AbstractModule;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigDbo;
 import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigRepo;
+import tv.twitch.moonmoon.rpengine2.chat.data.CoreChatConfigDbo;
 import tv.twitch.moonmoon.rpengine2.chat.data.CoreChatConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigDbo;
 import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.chat.data.channel.CoreChatChannelConfigDbo;
 import tv.twitch.moonmoon.rpengine2.chat.data.channel.CoreChatChannelConfigRepo;
 
 public abstract class ChatModule extends AbstractModule {
@@ -22,7 +24,11 @@ public abstract class ChatModule extends AbstractModule {
 
     protected abstract void bindChat(AnnotatedBindingBuilder<Chat> b);
 
-    protected abstract void bindConfigDbo(AnnotatedBindingBuilder<ChatConfigDbo> b);
+    protected void bindConfigDbo(AnnotatedBindingBuilder<ChatConfigDbo> b) {
+        b.to(CoreChatConfigDbo.class);
+    }
 
-    protected abstract void bindChannelConfigDbo(AnnotatedBindingBuilder<ChatChannelConfigDbo> b);
+    protected void bindChannelConfigDbo(AnnotatedBindingBuilder<ChatChannelConfigDbo> b) {
+        b.to(CoreChatChannelConfigDbo.class);
+    }
 }

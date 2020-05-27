@@ -13,6 +13,7 @@ import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.duel.DuelInvites;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.duel.cmd.parser.CommandDuelConfigParser;
 import tv.twitch.moonmoon.rpengine2.duel.model.DuelConfig;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
@@ -23,7 +24,7 @@ import java.util.UUID;
 
 public class DuelCommand extends AbstractCoreCommandExecutor {
 
-    private final RpPlayerRepo playerRepo;
+    private final SpigotRpPlayerRepo playerRepo;
     private final CommandPlayerParser playerParser;
     private final CommandDuelConfigParser configParser;
     private final Duels duels;
@@ -39,7 +40,7 @@ public class DuelCommand extends AbstractCoreCommandExecutor {
         DuelInvites invites
     ) {
         super(plugin);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerRepo = (SpigotRpPlayerRepo) Objects.requireNonNull(playerRepo);
         this.playerParser = Objects.requireNonNull(playerParser);
         this.configParser = Objects.requireNonNull(configParser);
         this.duels = Objects.requireNonNull(duels);

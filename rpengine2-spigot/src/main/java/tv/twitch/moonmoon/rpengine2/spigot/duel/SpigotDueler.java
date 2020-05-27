@@ -37,15 +37,6 @@ public class SpigotDueler implements Dueler {
         return player;
     }
 
-    /**
-     * Returns the {@link Location} the duel started
-     *
-     * @return Location
-     */
-    public Optional<Location> getStartLocation() {
-        return Optional.of(startLocation);
-    }
-
     @Override
     public double getOriginalHealth() {
         return originalHealth;

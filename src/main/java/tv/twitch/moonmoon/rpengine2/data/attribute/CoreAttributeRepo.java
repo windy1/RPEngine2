@@ -398,6 +398,11 @@ public class CoreAttributeRepo implements AttributeRepo {
     }
 
     @Override
+    public void onWarning(String message) {
+        log.warning(message);
+    }
+
+    @Override
     public Result<Void> load() {
         Result<Set<Attribute>> r = attributeDbo.selectAttributes();
 
@@ -546,8 +551,4 @@ public class CoreAttributeRepo implements AttributeRepo {
             .orElseGet(() -> reloadAttribute(attributeName));
     }
 
-    @Override
-    public Logger getLogger() {
-        return log;
-    }
 }

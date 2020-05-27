@@ -58,4 +58,31 @@ public interface SelectRepo extends Repo {
      * @param callback Callback to invoke upon completion
      */
     void removeOptionAsync(String selectName, String option, Callback<Void> callback);
+
+    /**
+     * Creates a new {@link tv.twitch.moonmoon.rpengine2.model.select.Option} asynchronously
+     *
+     * @param selectName Name of select to create option under
+     * @param option Name of new option
+     * @param display Display name
+     * @param color Option color
+     * @param callback Callback to invoke upon completion
+     */
+    void createOptionAsync(
+        String selectName,
+        String option,
+        String display,
+        String color,
+        Callback<Void> callback
+    );
+
+    /**
+     * Creates a new {@link tv.twitch.moonmoon.rpengine2.model.select.Option}
+     *
+     * @param selectName Name of select to create option under
+     * @param option Name of new option
+     * @param display Display name
+     * @param color Option color
+     */
+    void createOption(String selectName, String option, String display, String color);
 }

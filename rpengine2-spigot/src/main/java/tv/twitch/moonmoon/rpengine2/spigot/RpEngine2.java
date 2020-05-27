@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.Engine;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public final class RpEngine2 extends JavaPlugin {
 
@@ -20,12 +21,16 @@ public final class RpEngine2 extends JavaPlugin {
     @Override
     public void onDisable() {
         if (engine != null) {
+            Logger log = getLogger();
+
+            log.info("Shutting down");
             engine.shutdown();
+            log.info("Done");
         }
     }
 
     /**
-     * Returns the {@link SpigotEngine} instance of the plugin if the plugin is enabled, otherwise
+     * Returns the {@link Engine} instance of the plugin if the plugin is enabled, otherwise
      * returns empty.
      *
      * @return Engine instance

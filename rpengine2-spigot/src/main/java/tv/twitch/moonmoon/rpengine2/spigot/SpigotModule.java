@@ -8,28 +8,26 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.PluginModule;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLogModule;
-import tv.twitch.moonmoon.rpengine2.data.Defaults;
-import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeDbo;
-import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.data.select.SelectDbo;
-import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.DuelsModule;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
+import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.spigot.chat.SpigotChatModule;
 import tv.twitch.moonmoon.rpengine2.spigot.combatlog.SpigotCombatLogModule;
-import tv.twitch.moonmoon.rpengine2.spigot.data.SpigotDefaults;
-import tv.twitch.moonmoon.rpengine2.spigot.data.attribute.SpigotAttributeDbo;
-import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.spigot.data.select.SpigotSelectDbo;
-import tv.twitch.moonmoon.rpengine2.spigot.data.select.SpigotSelectRepoImpl;
+import tv.twitch.moonmoon.rpengine2.spigot.data.select.SpigotOptionFactory;
 import tv.twitch.moonmoon.rpengine2.spigot.duel.SpigotDuelsModule;
+import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayerFactory;
 import tv.twitch.moonmoon.rpengine2.spigot.nms.RpProtocolLib;
 import tv.twitch.moonmoon.rpengine2.spigot.nms.RpProtocolLibModule;
 import tv.twitch.moonmoon.rpengine2.spigot.nte.RpNametagEdit;
 import tv.twitch.moonmoon.rpengine2.spigot.nte.RpNametagEditModule;
+import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotAsyncExecutor;
+import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotPluginOut;
+import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
 import tv.twitch.moonmoon.rpengine2.util.DbPath;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
+import tv.twitch.moonmoon.rpengine2.util.PluginOut;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -86,33 +84,28 @@ public class SpigotModule extends PluginModule {
     }
 
     @Override
-    protected void bindAttributeDbo(AnnotatedBindingBuilder<AttributeDbo> b) {
-        b.to(SpigotAttributeDbo.class);
-    }
-
-    @Override
-    protected void bindDefaults(AnnotatedBindingBuilder<Defaults> b) {
-        b.to(SpigotDefaults.class);
-    }
-
-    @Override
     protected void bindPlayerRepo(AnnotatedBindingBuilder<RpPlayerRepo> b) {
         b.to(SpigotRpPlayerRepo.class);
     }
 
     @Override
-    protected void bindPlayerDbo(AnnotatedBindingBuilder<RpPlayerDbo> b) {
-        b.to(SpigotRpPlayerDbo.class);
+    protected void bindPlayerFactory(AnnotatedBindingBuilder<RpPlayerFactory> b) {
+        b.to(SpigotRpPlayerFactory.class);
     }
 
     @Override
-    protected void bindSelectRepo(AnnotatedBindingBuilder<SelectRepo> b) {
-        b.to(SpigotSelectRepoImpl.class);
+    protected void bindOptionFactory(AnnotatedBindingBuilder<OptionFactory> b) {
+        b.to(SpigotOptionFactory.class);
     }
 
     @Override
-    protected void bindSelectDbo(AnnotatedBindingBuilder<SelectDbo> b) {
-        b.to(SpigotSelectDbo.class);
+    protected void bindAsyncExecutor(AnnotatedBindingBuilder<AsyncExecutor> b) {
+        b.to(SpigotAsyncExecutor.class);
+    }
+
+    @Override
+    protected void bindPluginOut(AnnotatedBindingBuilder<PluginOut> b) {
+        b.to(SpigotPluginOut.class);
     }
 
     @Override

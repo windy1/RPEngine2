@@ -7,6 +7,7 @@ import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 
 import java.util.Objects;
@@ -19,7 +20,7 @@ public class Card {
     private static final String SUB_HEADER =
         "" + ChatColor.GRAY + ChatColor.ITALIC + "Click a line to edit";
 
-    private final RpPlayerRepo playerRepo;
+    private final SpigotRpPlayerRepo playerRepo;
     private final AttributeRepo attributeRepo;
     private final SelectRepo selectRepo;
     private final RpPlayer player;
@@ -32,7 +33,7 @@ public class Card {
         RpPlayer player,
         boolean readOnly
     ) {
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerRepo = (SpigotRpPlayerRepo) Objects.requireNonNull(playerRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
         this.selectRepo = Objects.requireNonNull(selectRepo);
         this.player = Objects.requireNonNull(player);

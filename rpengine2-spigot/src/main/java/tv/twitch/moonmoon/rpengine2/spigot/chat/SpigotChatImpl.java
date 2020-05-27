@@ -15,6 +15,7 @@ import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatConfig;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotUtils;
@@ -24,11 +25,10 @@ import javax.inject.Singleton;
 import java.util.*;
 import java.util.logging.Logger;
 
-@Singleton
 public class SpigotChatImpl implements SpigotChat {
 
     private final JavaPlugin plugin;
-    private final RpPlayerRepo playerRepo;
+    private final SpigotRpPlayerRepo playerRepo;
     private final ChatListener listener;
     private final ChatCommands commands;
     private final ChatConfigRepo configRepo;
@@ -49,7 +49,7 @@ public class SpigotChatImpl implements SpigotChat {
         ChatConfigRepo configRepo, ChatChannelConfigRepo channelConfigRepo
     ) {
         this.plugin = Objects.requireNonNull(plugin);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerRepo = (SpigotRpPlayerRepo) Objects.requireNonNull(playerRepo);
         this.listener = Objects.requireNonNull(listener);
         this.commands = Objects.requireNonNull(commands);
         this.configRepo = Objects.requireNonNull(configRepo);

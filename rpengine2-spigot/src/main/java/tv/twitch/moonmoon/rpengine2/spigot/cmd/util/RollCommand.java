@@ -11,6 +11,7 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 
 import javax.inject.Inject;
@@ -19,13 +20,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RollCommand extends AbstractCoreCommandExecutor {
 
-    private final RpPlayerRepo playerRepo;
+    private final SpigotRpPlayerRepo playerRepo;
     private final CommandPlayerParser playerParser;
 
     @Inject
     public RollCommand(Plugin plugin, RpPlayerRepo playerRepo, CommandPlayerParser playerParser) {
         super(plugin);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerRepo = (SpigotRpPlayerRepo) Objects.requireNonNull(playerRepo);
         this.playerParser = Objects.requireNonNull(playerParser);
     }
 

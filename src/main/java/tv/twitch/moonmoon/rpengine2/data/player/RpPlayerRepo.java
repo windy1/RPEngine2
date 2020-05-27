@@ -43,14 +43,6 @@ public interface RpPlayerRepo extends Repo {
     Optional<RpPlayer> getLoadedPlayer(String name);
 
     /**
-     * Returns the player's `identity`, or, `display name` within the plugin
-     *
-     * @param player Player to get identity of
-     * @return Player identity
-     */
-    String getIdentity(RpPlayer player);
-
-    /**
      * Returns a player's plain identity (no prefix, title, etc) as marked by
      * `/rpengine at setident {attribute}`
      *
@@ -58,14 +50,6 @@ public interface RpPlayerRepo extends Repo {
      * @return Player identity
      */
     String getIdentityPlain(RpPlayer player);
-
-    /**
-     * Returns the player's prefix as marked by `/rpengine at setmarker {attribute}`
-     *
-     * @param player Player
-     * @return Player prefix
-     */
-    String getPrefix(RpPlayer player);
 
     /**
      * Returns the player's title as marked by `/rpengine at settitle {attribute}`

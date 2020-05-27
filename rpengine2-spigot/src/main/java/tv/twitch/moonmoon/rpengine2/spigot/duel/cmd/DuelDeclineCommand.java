@@ -10,6 +10,7 @@ import tv.twitch.moonmoon.rpengine2.spigot.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.duel.DuelInvites;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 
 import javax.inject.Inject;
@@ -19,7 +20,7 @@ public class DuelDeclineCommand extends AbstractCoreCommandExecutor {
 
     private final DuelInvites invites;
     private final CommandPlayerParser playerParser;
-    private final RpPlayerRepo playerRepo;
+    private final SpigotRpPlayerRepo playerRepo;
 
     @Inject
     public DuelDeclineCommand(
@@ -31,7 +32,7 @@ public class DuelDeclineCommand extends AbstractCoreCommandExecutor {
         super(plugin);
         this.invites = Objects.requireNonNull(invites);
         this.playerParser = Objects.requireNonNull(playerParser);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
+        this.playerRepo = (SpigotRpPlayerRepo) Objects.requireNonNull(playerRepo);
     }
 
     @Override

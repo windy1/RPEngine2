@@ -5,33 +5,31 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
+import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.duel.AbstractDuels;
 import tv.twitch.moonmoon.rpengine2.duel.Duel;
 import tv.twitch.moonmoon.rpengine2.duel.DuelInvites;
 import tv.twitch.moonmoon.rpengine2.duel.Dueler;
-import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.duel.cmd.DuelCommands;
-import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.util.Countdown;
+import tv.twitch.moonmoon.rpengine2.util.Lang;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Logger;
 
-public class SpigotDuels implements Duels {
+public class SpigotDuels extends AbstractDuels {
 
     private final Plugin plugin;
     private final DuelCommands commands;
     private final DuelListener listener;
-    private final DuelConfigRepo configRepo;
-    private final RpPlayerRepo playerRepo;
-    private final DuelInvites invites;
-    private final Set<Duel> activeDuels = Collections.synchronizedSet(new HashSet<>());
     private final Logger log;
 
     private BukkitTask duelWatcher;
@@ -45,51 +43,51 @@ public class SpigotDuels implements Duels {
         RpPlayerRepo playerRepo,
         DuelInvites invites
     ) {
+        super(configRepo, playerRepo, invites);
         this.plugin = Objects.requireNonNull(plugin);
         this.commands = Objects.requireNonNull(commands);
         this.listener = Objects.requireNonNull(listener);
-        this.configRepo = Objects.requireNonNull(configRepo);
-        this.playerRepo = Objects.requireNonNull(playerRepo);
-        this.invites = Objects.requireNonNull(invites);
         log = plugin.getLogger();
     }
 
     @Override
-    public void startDuel(RpPlayer p1, RpPlayer p2) {
-        Set<UUID> playerIds = new HashSet<>(Arrays.asList(p1.getUUID(), p2.getUUID()));
-        Duel duel = new Duel(new SpigotDueler(p1), new SpigotDueler(p2));
-
-        activeDuels.add(duel);
-
-        Countdown.from(plugin.getConfig(), playerIds, 3, duel::start).start();
+    protected void startCountdown(Set<UUID> playerIds, Runnable onComplete) {
+        Countdown.from(plugin.getConfig(), playerIds, 3, onComplete).start();
     }
 
     @Override
-    public void endDuel(Duel duel, Dueler winner, Dueler loser) {
-        Objects.requireNonNull(duel);
-        duel.getPlayer1().resetPlayer();
-        duel.getPlayer2().resetPlayer();
-        activeDuels.remove(duel);
-
-        Bukkit.broadcastMessage(
-            playerRepo.getIdentity(winner.getPlayer()) + ChatColor.GOLD
-                + " has defeated " + playerRepo.getIdentity(loser.getPlayer()) + ChatColor.GOLD
-                + " in a duel"
-        );
+    protected Dueler createDueler(RpPlayer p) {
+        return new SpigotDueler(p);
     }
 
     @Override
-    public Optional<Duel> getActiveDuel(UUID playerId) {
-        Objects.requireNonNull(playerId);
+    protected void onDuelEnd(Dueler winner, Dueler loser) {
+        SpigotRpPlayerRepo players = (SpigotRpPlayerRepo) playerRepo;
+        String message =
+            players.getIdentity(winner.getPlayer()) +
+                ChatColor.GOLD +
+                Lang.getString("duels.duelEnd1") +
+                players.getIdentity(loser.getPlayer()) +
+                ChatColor.GOLD +
+                Lang.getString("duels.duelEnd2");
 
-        for (Duel duel : activeDuels) {
-            if (duel.getPlayer1().getPlayer().getUUID().equals(playerId)
-                    || duel.getPlayer2().getPlayer().getUUID().equals(playerId)) {
-                return Optional.of(duel);
-            }
-        }
+        Bukkit.broadcastMessage(message);
+    }
 
-        return Optional.empty();
+    @Override
+    protected void onDuelTimeout(Duel duel) {
+        SpigotRpPlayerRepo players = (SpigotRpPlayerRepo) playerRepo;
+        String message =
+            ChatColor.GOLD +
+                Lang.getString("duels.duelTimeout1") +
+                players.getIdentity(duel.getPlayer1().getPlayer()) +
+                ChatColor.GOLD +
+                Lang.getString("duels.duelTimeout2") +
+                players.getIdentity(duel.getPlayer2().getPlayer()) +
+                ChatColor.GOLD +
+                Lang.getString("duels.duelTimeout3");
+
+        Bukkit.broadcastMessage(message);
     }
 
     @Override
@@ -103,7 +101,7 @@ public class SpigotDuels implements Duels {
         }
 
         if (duel == null) {
-            mcPlayer.sendMessage(ChatColor.RED + "No active duel");
+            mcPlayer.sendMessage(ChatColor.RED + Lang.getString("duels.noActiveDuel"));
             return;
         }
 
@@ -118,25 +116,17 @@ public class SpigotDuels implements Duels {
             winner = duel.getPlayer1().getPlayer();
         }
 
-        Bukkit.broadcastMessage(
-            playerRepo.getIdentity(player) + ChatColor.GOLD + " has fled from "
-                + playerRepo.getIdentity(winner) + ChatColor.GOLD + " in a duel"
-        );
-    }
+        SpigotRpPlayerRepo players = (SpigotRpPlayerRepo) playerRepo;
 
-    @Override
-    public DuelConfigRepo getConfigRepo() {
-        return configRepo;
-    }
+        String message =
+            players.getIdentity(player) +
+                ChatColor.GOLD +
+                Lang.getString("duels.forfeit1") +
+                players.getIdentity(winner) +
+                ChatColor.GOLD +
+                Lang.getString("duels.forfeit2");
 
-    @Override
-    public DuelInvites getInvites() {
-        return invites;
-    }
-
-    @Override
-    public Set<Duel> getActiveDuels() {
-        return activeDuels;
+        Bukkit.broadcastMessage(message);
     }
 
     @Override
@@ -159,37 +149,10 @@ public class SpigotDuels implements Duels {
 
     private void startWatchingDuels() {
         int maxSecs = plugin.getConfig().getInt("duels.maxSecs", 300);
-        duelWatcher = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            synchronized (activeDuels) {
-                Iterator<Duel> it = activeDuels.iterator();
-
-                while (it.hasNext()) {
-                    Duel duel = it.next();
-                    Optional<Instant> startTime = duel.getStartTime();
-
-                    if (!startTime.isPresent()) {
-                        continue;
-                    }
-
-                    Instant now = Instant.now();
-                    long elapsedSecs = Duration.between(startTime.get(), now).toMillis() / 1000;
-
-                    if (elapsedSecs > maxSecs) {
-                        Bukkit.broadcastMessage(
-                            ChatColor.GOLD + "A duel between " +
-                                playerRepo.getIdentity(duel.getPlayer1().getPlayer()) +
-                                ChatColor.GOLD + " and " +
-                                playerRepo.getIdentity(duel.getPlayer2().getPlayer()) +
-                                ChatColor.GOLD + " has been declared a tie"
-                        );
-
-                        duel.getPlayer1().resetPlayer();
-                        duel.getPlayer2().resetPlayer();
-                        it.remove();
-                    }
-                }
-            }
-        }, 0, 10);
+        duelWatcher = Bukkit.getScheduler().runTaskTimer(plugin, () ->
+            cleanDuels(maxSecs),
+            0, 10
+        );
     }
 
     @Override

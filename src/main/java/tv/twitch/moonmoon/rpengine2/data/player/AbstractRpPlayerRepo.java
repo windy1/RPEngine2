@@ -8,13 +8,13 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.util.Lang;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
@@ -22,7 +22,6 @@ public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
     protected final RpPlayerDbo playerDbo;
     protected final AttributeRepo attributeRepo;
     protected final SelectRepo selectRepo;
-    protected final Logger log;
 
     protected Map<UUID, RpPlayer> players;
     protected Map<String, RpPlayer> playerNameMap;
@@ -30,16 +29,14 @@ public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
     public AbstractRpPlayerRepo(
         RpPlayerDbo playerDbo,
         AttributeRepo attributeRepo,
-        SelectRepo selectRepo,
-        Logger log
+        SelectRepo selectRepo
     ) {
         this.playerDbo = Objects.requireNonNull(playerDbo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
         this.selectRepo = Objects.requireNonNull(selectRepo);
-        this.log = Objects.requireNonNull(log);
     }
 
-    protected abstract String getPlayerName(UUID playerId);
+    protected abstract Optional<String> getPlayerName(UUID playerId);
 
     protected Optional<Option> getMarkerOption(RpPlayer player) {
         RpPlayerAttribute marker = attributeRepo.getMarker()
@@ -59,7 +56,11 @@ public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
     }
 
     private Result<RpPlayer> createPlayer(UUID playerId) {
-        String playerName = getPlayerName(playerId);
+        String playerName = getPlayerName(playerId).orElse(null);
+        if (playerName == null) {
+            return Result.error("player not found");
+        }
+
         Result<Long> newPlayerId = playerDbo.insertPlayer(playerName, playerId);
 
         Optional<String> err = newPlayerId.getError();
@@ -71,11 +72,7 @@ public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
             // player already existed
             RpPlayer existing = playerNameMap.get(playerName);
             if (existing != null && !playerId.equals(existing.getUUID())) {
-                log.warning(
-                    "A player was found in the RPEngine database with a different unique ID " +
-                        "than a player that is currently logged in (offline mode?). " +
-                        "Using the existing player."
-                );
+                onWarning(Lang.getString("playerIdConflict"));
                 return Result.ok(existing);
             }
 
@@ -94,7 +91,7 @@ public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
         for (Attribute attribute : attributeRepo.getAttributes()) {
             Object defaultValue = attribute.getDefaultValue().orElse(null);
             setAttributeAsync(newPlayer, attribute.getId(), defaultValue, r ->
-                r.getError().ifPresent(log::warning)
+                r.getError().ifPresent(this::onWarning)
             );
         }
 
@@ -117,19 +114,6 @@ public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
     @Override
     public Optional<RpPlayer> getLoadedPlayer(String name) {
         return Optional.ofNullable(playerNameMap.get(name));
-    }
-
-    @Override
-    public String getIdentity(RpPlayer player) {
-        StringBuilder ident = new StringBuilder(getPrefix(player));
-        String title = getTitle(player);
-        if (!title.equals("")) {
-            ident.append(title);
-            ident.append(" ");
-        }
-        ident.append(getIdentityPlain(player));
-
-        return ident.toString();
     }
 
     @Override
@@ -197,7 +181,7 @@ public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
     @Override
     public void startSessionAsync(RpPlayer player) {
         playerDbo.setSessionAsync(player.getId(), Instant.now(), r ->
-            handleAndReloadPlayer(player.getUUID(), r).getError().ifPresent(log::warning)
+            handleAndReloadPlayer(player.getUUID(), r).getError().ifPresent(this::onWarning)
         );
     }
 
@@ -206,7 +190,7 @@ public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
         handleAndReloadPlayer(
             player.getUUID(),
             playerDbo.setSession(player.getId(), null)
-        ).getError().ifPresent(log::warning);
+        ).getError().ifPresent(this::onWarning);
     }
 
     @Override
@@ -214,7 +198,7 @@ public abstract class AbstractRpPlayerRepo implements RpPlayerRepo {
         handleAndReloadPlayer(
             player.getUUID(),
             playerDbo.setPlayed(player.getId(), duration)
-        ).getError().ifPresent(log::warning);
+        ).getError().ifPresent(this::onWarning);
     }
 
     @Override
