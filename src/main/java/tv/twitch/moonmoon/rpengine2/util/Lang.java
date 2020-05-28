@@ -9,7 +9,7 @@ public class Lang {
 
     static {
         try {
-            langFile.load(Lang.class.getResourceAsStream("lang.properties"));
+            langFile.load(Lang.class.getResourceAsStream("/lang.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
