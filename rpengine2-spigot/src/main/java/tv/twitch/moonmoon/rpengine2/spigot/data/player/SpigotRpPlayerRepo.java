@@ -5,7 +5,7 @@ import com.google.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
-import tv.twitch.moonmoon.rpengine2.data.player.AbstractRpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.data.player.impl.AbstractRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;

@@ -1,5 +1,7 @@
-package tv.twitch.moonmoon.rpengine2.data.attribute;
+package tv.twitch.moonmoon.rpengine2.data.attribute.impl;
 
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeDbo;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
@@ -18,7 +20,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Singleton
-public class CoreAttributeRepo implements AttributeRepo {
+public class DefaultAttributeRepo implements AttributeRepo {
 
     private final AttributeDbo attributeDbo;
     private final RpPlayerRepo playerRepo;
@@ -30,7 +32,7 @@ public class CoreAttributeRepo implements AttributeRepo {
     private Attribute title;
 
     @Inject
-    public CoreAttributeRepo(
+    public DefaultAttributeRepo(
         AttributeDbo attributeDbo,
         RpPlayerRepo playerRepo,
         SelectRepo selectRepo,

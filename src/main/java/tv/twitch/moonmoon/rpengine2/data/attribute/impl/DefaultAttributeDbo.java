@@ -1,6 +1,7 @@
-package tv.twitch.moonmoon.rpengine2.data.attribute;
+package tv.twitch.moonmoon.rpengine2.data.attribute.impl;
 
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeDbo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.attribute.impl.DefaultAttribute;
@@ -20,14 +21,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class CoreAttributeDbo implements AttributeDbo {
+public class DefaultAttributeDbo implements AttributeDbo {
 
     private final RpDb db;
     private final AsyncExecutor asyncExecutor;
     private final Messenger log;
 
     @Inject
-    public CoreAttributeDbo(RpDb db, AsyncExecutor asyncExecutor, Messenger log) {
+    public DefaultAttributeDbo(RpDb db, AsyncExecutor asyncExecutor, Messenger log) {
         this.db = Objects.requireNonNull(db);
         this.asyncExecutor = Objects.requireNonNull(asyncExecutor);
         this.log = Objects.requireNonNull(log);

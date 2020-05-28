@@ -2,7 +2,7 @@ package tv.twitch.moonmoon.rpengine2.duel;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.binder.AnnotatedBindingBuilder;
-import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.duel.data.impl.DefaultDuelConfigDbo;
 import tv.twitch.moonmoon.rpengine2.duel.data.impl.DefaultDuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigDbo;

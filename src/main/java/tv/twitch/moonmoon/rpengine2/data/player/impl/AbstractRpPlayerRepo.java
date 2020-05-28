@@ -1,6 +1,8 @@
-package tv.twitch.moonmoon.rpengine2.data.player;
+package tv.twitch.moonmoon.rpengine2.data.player.impl;
 
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerDbo;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;

@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import tv.twitch.moonmoon.rpengine2.countdown.CountdownFactory;
-import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.duel.impl.DefaultDuels;
 import tv.twitch.moonmoon.rpengine2.duel.DuelInvites;

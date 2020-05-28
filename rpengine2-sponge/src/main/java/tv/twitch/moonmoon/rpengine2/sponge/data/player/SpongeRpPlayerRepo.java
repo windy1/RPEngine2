@@ -7,7 +7,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
-import tv.twitch.moonmoon.rpengine2.data.player.AbstractRpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.data.player.impl.AbstractRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;

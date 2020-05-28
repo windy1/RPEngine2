@@ -1,6 +1,7 @@
-package tv.twitch.moonmoon.rpengine2.data.select;
+package tv.twitch.moonmoon.rpengine2.data.select.impl;
 
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectDbo;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
@@ -21,7 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class CoreSelectDbo implements SelectDbo {
+public class DefaultSelectDbo implements SelectDbo {
 
     private final RpDb db;
     private final AsyncExecutor asyncExecutor;
@@ -29,7 +30,7 @@ public class CoreSelectDbo implements SelectDbo {
     private final Messenger log;
 
     @Inject
-    public CoreSelectDbo(
+    public DefaultSelectDbo(
         RpDb db,
         AsyncExecutor asyncExecutor,
         OptionFactory optionFactory,

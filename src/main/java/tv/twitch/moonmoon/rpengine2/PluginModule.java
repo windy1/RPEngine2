@@ -10,16 +10,16 @@ import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLogModule;
 import tv.twitch.moonmoon.rpengine2.countdown.CountdownFactory;
-import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeDbo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
-import tv.twitch.moonmoon.rpengine2.data.attribute.CoreAttributeDbo;
-import tv.twitch.moonmoon.rpengine2.data.attribute.CoreAttributeRepo;
-import tv.twitch.moonmoon.rpengine2.data.player.CoreRpPlayerDbo;
+import tv.twitch.moonmoon.rpengine2.data.attribute.impl.DefaultAttributeDbo;
+import tv.twitch.moonmoon.rpengine2.data.attribute.impl.DefaultAttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.player.impl.DefaultRpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.data.select.CoreSelectDbo;
-import tv.twitch.moonmoon.rpengine2.data.select.CoreSelectRepo;
+import tv.twitch.moonmoon.rpengine2.data.select.impl.DefaultSelectDbo;
+import tv.twitch.moonmoon.rpengine2.data.select.impl.DefaultSelectRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectDbo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
@@ -76,25 +76,25 @@ public abstract class PluginModule extends AbstractModule {
     protected abstract void bindPlayerRepo(AnnotatedBindingBuilder<RpPlayerRepo> b);
 
     protected void bindPlayerDbo(AnnotatedBindingBuilder<RpPlayerDbo> b) {
-        b.to(CoreRpPlayerDbo.class);
+        b.to(DefaultRpPlayerDbo.class);
     }
 
     protected abstract void bindPlayerFactory(AnnotatedBindingBuilder<RpPlayerFactory> b);
 
     protected void bindAttributeRepo(AnnotatedBindingBuilder<AttributeRepo> b) {
-        b.to(CoreAttributeRepo.class);
+        b.to(DefaultAttributeRepo.class);
     }
 
     protected void bindAttributeDbo(AnnotatedBindingBuilder<AttributeDbo> b) {
-        b.to(CoreAttributeDbo.class);
+        b.to(DefaultAttributeDbo.class);
     }
 
     protected void bindSelectRepo(AnnotatedBindingBuilder<SelectRepo> b) {
-        b.to(CoreSelectRepo.class);
+        b.to(DefaultSelectRepo.class);
     }
 
     protected void bindSelectDbo(AnnotatedBindingBuilder<SelectDbo> b) {
-        b.to(CoreSelectDbo.class);
+        b.to(DefaultSelectDbo.class);
     }
 
     protected abstract void bindOptionFactory(AnnotatedBindingBuilder<OptionFactory> b);

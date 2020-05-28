@@ -1,6 +1,8 @@
-package tv.twitch.moonmoon.rpengine2.data.select;
+package tv.twitch.moonmoon.rpengine2.data.select.impl;
 
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectDbo;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionArgs;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
@@ -15,7 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Singleton
-public class CoreSelectRepo implements SelectRepo {
+public class DefaultSelectRepo implements SelectRepo {
 
     private final AttributeRepo attributeRepo;
     private final SelectDbo selectDbo;
@@ -23,7 +25,7 @@ public class CoreSelectRepo implements SelectRepo {
     private Map<String, Select> selects;
 
     @Inject
-    public CoreSelectRepo(AttributeRepo attributeRepo, SelectDbo selectDbo, Messenger log) {
+    public DefaultSelectRepo(AttributeRepo attributeRepo, SelectDbo selectDbo, Messenger log) {
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
         this.selectDbo = Objects.requireNonNull(selectDbo);
         this.log = Objects.requireNonNull(log);

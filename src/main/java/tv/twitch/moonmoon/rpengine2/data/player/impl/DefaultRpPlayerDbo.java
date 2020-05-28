@@ -1,6 +1,7 @@
-package tv.twitch.moonmoon.rpengine2.data.player;
+package tv.twitch.moonmoon.rpengine2.data.player.impl;
 
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
@@ -20,7 +21,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-public class CoreRpPlayerDbo implements RpPlayerDbo {
+public class DefaultRpPlayerDbo implements RpPlayerDbo {
 
     private final RpDb db;
     private final AsyncExecutor asyncExecutor;
@@ -28,7 +29,7 @@ public class CoreRpPlayerDbo implements RpPlayerDbo {
     private final RpPlayerFactory playerFactory;
 
     @Inject
-    public CoreRpPlayerDbo(
+    public DefaultRpPlayerDbo(
         RpDb db,
         AsyncExecutor asyncExecutor,
         Messenger log,

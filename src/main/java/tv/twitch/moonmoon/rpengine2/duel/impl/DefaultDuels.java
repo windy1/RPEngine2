@@ -1,7 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.duel.impl;
 
 import tv.twitch.moonmoon.rpengine2.countdown.CountdownFactory;
-import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duel;
 import tv.twitch.moonmoon.rpengine2.duel.DuelInvites;
