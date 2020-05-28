@@ -4,15 +4,16 @@ import tv.twitch.moonmoon.rpengine2.data.Repo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
+import tv.twitch.moonmoon.rpengine2.model.attribute.impl.DefaultAttribute;
+import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 
 import java.util.Optional;
 import java.util.Set;
 
 /**
- * Manages the {@link Attribute} model
+ * Manages the {@link DefaultAttribute} model
  */
 public interface AttributeRepo extends Repo {
 
@@ -81,7 +82,7 @@ public interface AttributeRepo extends Repo {
 
     /**
      * Removes an attribute asynchronously. Note: this also moves the corresponding
-     * {@link RpPlayerAttribute} for all players
+     * {@link DefaultRpPlayerAttribute} for all players
      *
      * @param name Attribute name
      * @param callback Callback invoked upon completion

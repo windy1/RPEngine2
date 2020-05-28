@@ -1,4 +1,7 @@
-package tv.twitch.moonmoon.rpengine2.model.player;
+package tv.twitch.moonmoon.rpengine2.model.player.impl;
+
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -9,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Represents a plugin-tracker player
  */
-public class CoreRpPlayer implements RpPlayer {
+public class DefaultRpPlayer implements RpPlayer {
 
     protected final int id;
     protected final Instant created;
@@ -19,7 +22,7 @@ public class CoreRpPlayer implements RpPlayer {
     protected final Duration played;
     protected final Instant sessionStart;
 
-    public CoreRpPlayer(
+    public DefaultRpPlayer(
         int id,
         Instant created,
         String username,
@@ -91,7 +94,7 @@ public class CoreRpPlayer implements RpPlayer {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CoreRpPlayer rpPlayer = (CoreRpPlayer) o;
+        DefaultRpPlayer rpPlayer = (DefaultRpPlayer) o;
         return Objects.equals(username, rpPlayer.username) &&
             Objects.equals(uuid, rpPlayer.uuid);
     }

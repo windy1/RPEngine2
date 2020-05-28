@@ -2,7 +2,7 @@ package tv.twitch.moonmoon.rpengine2.sponge.model.player;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import tv.twitch.moonmoon.rpengine2.model.player.CoreRpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 
 import java.time.Duration;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public class SpongeRpPlayer extends CoreRpPlayer {
+public class SpongeRpPlayer extends DefaultRpPlayer {
 
     public SpongeRpPlayer(
         int id,

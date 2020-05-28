@@ -2,6 +2,7 @@ package tv.twitch.moonmoon.rpengine2.data.player;
 
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
+import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
@@ -278,7 +279,7 @@ public class CoreRpPlayerDbo implements RpPlayerDbo {
                     }
 
 
-                    attributes.add(new RpPlayerAttribute(
+                    attributes.add(new DefaultRpPlayerAttribute(
                         results.getInt("instance_id"),
                         results.getInt("attribute_id"),
                         Instant.parse(results.getString("created")),

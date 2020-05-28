@@ -1,12 +1,12 @@
 package tv.twitch.moonmoon.rpengine2.spigot.model.select;
 
 import org.bukkit.ChatColor;
-import tv.twitch.moonmoon.rpengine2.model.select.CoreOption;
+import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultOption;
 
 import java.time.Instant;
 import java.util.Optional;
 
-public class SpigotOption extends CoreOption {
+public class SpigotOption extends DefaultOption {
 
     private final ChatColor color;
 

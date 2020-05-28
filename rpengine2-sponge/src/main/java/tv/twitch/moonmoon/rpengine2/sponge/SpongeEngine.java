@@ -1,6 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.sponge;
 
-import tv.twitch.moonmoon.rpengine2.DefaultEngine;
+import tv.twitch.moonmoon.rpengine2.impl.DefaultEngine;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.data.Defaults;

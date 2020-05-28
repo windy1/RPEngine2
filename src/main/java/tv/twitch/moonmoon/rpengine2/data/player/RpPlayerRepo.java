@@ -1,8 +1,8 @@
 package tv.twitch.moonmoon.rpengine2.data.player;
 
 import tv.twitch.moonmoon.rpengine2.data.Repo;
+import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 /**
  * Manages the {@link RpPlayer} and
- * {@link RpPlayerAttribute} models
+ * {@link DefaultRpPlayerAttribute} models
  */
 public interface RpPlayerRepo extends Repo {
 

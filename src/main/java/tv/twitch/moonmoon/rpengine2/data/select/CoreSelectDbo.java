@@ -1,6 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.data.select;
 
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
+import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultSelect;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
@@ -206,7 +207,7 @@ public class CoreSelectDbo implements SelectDbo {
             options = o.get();
         }
 
-        return new Select(
+        return new DefaultSelect(
             selectId,
             Instant.parse(results.getString("created")),
             results.getString("name"),

@@ -1,5 +1,7 @@
-package tv.twitch.moonmoon.rpengine2;
+package tv.twitch.moonmoon.rpengine2.impl;
 
+import tv.twitch.moonmoon.rpengine2.Engine;
+import tv.twitch.moonmoon.rpengine2.RpModule;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.data.Defaults;

@@ -1,12 +1,12 @@
 package tv.twitch.moonmoon.rpengine2.sponge.model.select;
 
 import org.spongepowered.api.text.format.TextColor;
-import tv.twitch.moonmoon.rpengine2.model.select.CoreOption;
+import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultOption;
 
 import java.time.Instant;
 import java.util.Optional;
 
-public class SpongeOption extends CoreOption {
+public class SpongeOption extends DefaultOption {
 
     private final TextColor color;
 

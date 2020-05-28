@@ -1,7 +1,8 @@
 package tv.twitch.moonmoon.rpengine2.data.select;
 
 import tv.twitch.moonmoon.rpengine2.data.Repo;
-import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
+import tv.twitch.moonmoon.rpengine2.model.attribute.impl.DefaultAttribute;
+import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultSelect;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 
@@ -17,7 +18,7 @@ public interface SelectRepo extends Repo {
     Set<Select> getSelects();
 
     /**
-     * Returns the {@link Select} with the specified name, or empty if not found
+     * Returns the {@link DefaultSelect} with the specified name, or empty if not found
      *
      * @param name Select name
      * @return Select
@@ -41,7 +42,7 @@ public interface SelectRepo extends Repo {
 
     /**
      * Removes the specified select asynchronously. Note: this method will fail if the select is
-     * currently added as an {@link Attribute}.
+     * currently added as an {@link DefaultAttribute}.
      *
      * @param name Select name
      * @param callback Callback to invoke upon completion
@@ -51,7 +52,7 @@ public interface SelectRepo extends Repo {
     /**
      * Removes the option with the specified select name and option name asynchronously. Note: this
      * method will fail if the select you are trying to remove the option from is currently added
-     * as an {@link Attribute}.
+     * as an {@link DefaultAttribute}.
      *
      * @param selectName Name of select
      * @param option Name of option

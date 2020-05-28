@@ -1,12 +1,14 @@
-package tv.twitch.moonmoon.rpengine2.model.select;
+package tv.twitch.moonmoon.rpengine2.model.select.impl;
+
+import tv.twitch.moonmoon.rpengine2.model.select.Option;
 
 import java.time.Instant;
 import java.util.Objects;
 
 /**
- * A single choice within a {@link Select}
+ * A single choice within a {@link DefaultSelect}
  */
-public class CoreOption implements Option {
+public class DefaultOption implements Option {
 
     protected final int id;
     protected final int selectId;
@@ -14,7 +16,7 @@ public class CoreOption implements Option {
     protected final String name;
     protected final String display;
 
-    public CoreOption(
+    public DefaultOption(
         int id,
         int selectId,
         Instant created,
@@ -57,7 +59,7 @@ public class CoreOption implements Option {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CoreOption option = (CoreOption) o;
+        DefaultOption option = (DefaultOption) o;
         return Objects.equals(name, option.name);
     }
 

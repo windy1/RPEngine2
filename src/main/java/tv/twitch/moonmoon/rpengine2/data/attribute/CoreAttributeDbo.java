@@ -3,6 +3,7 @@ package tv.twitch.moonmoon.rpengine2.data.attribute;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
+import tv.twitch.moonmoon.rpengine2.model.attribute.impl.DefaultAttribute;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
@@ -388,7 +389,7 @@ public class CoreAttributeDbo implements AttributeDbo {
             }
         }
 
-        return new Attribute(
+        return new DefaultAttribute(
             results.getInt("id"),
             Instant.parse(results.getString("created")),
             results.getString("name"),

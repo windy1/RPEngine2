@@ -1,10 +1,11 @@
 package tv.twitch.moonmoon.rpengine2.model.select;
 
 import tv.twitch.moonmoon.rpengine2.model.Model;
+import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultSelect;
 
 public interface Option extends Model {
     /**
-     * Returns this option's {@link Select} parent ID
+     * Returns this option's {@link DefaultSelect} parent ID
      *
      * @return Parent ID
      */

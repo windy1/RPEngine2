@@ -23,6 +23,7 @@ import tv.twitch.moonmoon.rpengine2.data.select.SelectDbo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.duel.DuelsModule;
+import tv.twitch.moonmoon.rpengine2.impl.DefaultEngine;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
