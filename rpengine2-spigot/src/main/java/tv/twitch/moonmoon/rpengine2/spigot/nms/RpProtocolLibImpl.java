@@ -33,8 +33,9 @@ public class RpProtocolLibImpl implements RpProtocolLib {
     }
 
     @Override
-    public void init() {
+    public Result<Void> init() {
         ProtocolLibrary.getProtocolManager().addPacketListener(playerInfoAdapter);
+        return Result.ok(null);
     }
 
     static class PlayerInfoPacketAdapter extends PacketAdapter {

@@ -1,6 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.spigot.nms;
 
-public interface RpProtocolLib {
+import tv.twitch.moonmoon.rpengine2.RpModule;
 
-    void init();
+public interface RpProtocolLib extends RpModule {
 }

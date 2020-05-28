@@ -8,20 +8,19 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
-import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.spigot.chat.cmd.ChatCommands;
 import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatConfig;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.spigot.chat.cmd.ChatCommands;
 import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotUtils;
+import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.*;
 import java.util.logging.Logger;
 

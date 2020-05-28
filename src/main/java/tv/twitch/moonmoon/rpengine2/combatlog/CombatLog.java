@@ -1,11 +1,11 @@
 package tv.twitch.moonmoon.rpengine2.combatlog;
 
-import tv.twitch.moonmoon.rpengine2.util.Result;
+import tv.twitch.moonmoon.rpengine2.RpModule;
 
 /**
  * Module that manages combat-log related functionality
  */
-public interface CombatLog {
+public interface CombatLog extends RpModule {
 
 //    /**
 //     * Returns {@link ShowDamage} module if enabled, empty otherwise
@@ -13,6 +13,4 @@ public interface CombatLog {
 //     * @return ShowDamage module
 //     */
 //    Optional<ShowDamage> getShowDamageModule();
-
-    Result<Void> init();
 }

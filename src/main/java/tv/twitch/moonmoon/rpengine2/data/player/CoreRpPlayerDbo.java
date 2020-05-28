@@ -7,7 +7,7 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
-import tv.twitch.moonmoon.rpengine2.util.PluginOut;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -23,14 +23,14 @@ public class CoreRpPlayerDbo implements RpPlayerDbo {
 
     private final RpDb db;
     private final AsyncExecutor asyncExecutor;
-    private final PluginOut log;
+    private final Messenger log;
     private final RpPlayerFactory playerFactory;
 
     @Inject
     public CoreRpPlayerDbo(
         RpDb db,
         AsyncExecutor asyncExecutor,
-        PluginOut log,
+        Messenger log,
         RpPlayerFactory playerFactory
     ) {
         this.db = Objects.requireNonNull(db);

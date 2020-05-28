@@ -4,15 +4,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
-import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
-import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.spigot.util.CommandDispatcher;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 

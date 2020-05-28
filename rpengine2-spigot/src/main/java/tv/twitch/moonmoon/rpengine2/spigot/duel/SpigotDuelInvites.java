@@ -11,9 +11,8 @@ import tv.twitch.moonmoon.rpengine2.util.Lang;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Manages pending challenges to duel

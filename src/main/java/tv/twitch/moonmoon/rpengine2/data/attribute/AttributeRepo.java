@@ -1,11 +1,11 @@
 package tv.twitch.moonmoon.rpengine2.data.attribute;
 
-import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.Repo;
-import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 
 import java.util.Optional;

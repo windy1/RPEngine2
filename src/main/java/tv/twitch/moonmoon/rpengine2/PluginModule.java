@@ -26,12 +26,13 @@ import tv.twitch.moonmoon.rpengine2.duel.DuelsModule;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
-import tv.twitch.moonmoon.rpengine2.util.PluginOut;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 
 public abstract class PluginModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bindEngine(bind(Engine.class));
         bindPlayerRepo(bind(RpPlayerRepo.class));
         bindPlayerDbo(bind(RpPlayerDbo.class));
         bindPlayerFactory(bind(RpPlayerFactory.class));
@@ -41,7 +42,7 @@ public abstract class PluginModule extends AbstractModule {
         bindSelectDbo(bind(SelectDbo.class));
         bindOptionFactory(bind(OptionFactory.class));
         bindAsyncExecutor(bind(AsyncExecutor.class));
-        bindPluginOut(bind(PluginOut.class));
+        bindMessenger(bind(Messenger.class));
 
         OptionalBinder.newOptionalBinder(binder(), Chat.class);
         OptionalBinder.newOptionalBinder(binder(), ChatConfigRepo.class);
@@ -63,6 +64,10 @@ public abstract class PluginModule extends AbstractModule {
         if (isCombatLogEnabled()) {
             install(createCombatLogModule());
         }
+    }
+
+    protected void bindEngine(AnnotatedBindingBuilder<Engine> b) {
+        b.to(DefaultEngine.class);
     }
 
     protected abstract void bindPlayerRepo(AnnotatedBindingBuilder<RpPlayerRepo> b);
@@ -93,7 +98,7 @@ public abstract class PluginModule extends AbstractModule {
 
     protected abstract void bindAsyncExecutor(AnnotatedBindingBuilder<AsyncExecutor> b);
 
-    protected abstract void bindPluginOut(AnnotatedBindingBuilder<PluginOut> b);
+    protected abstract void bindMessenger(AnnotatedBindingBuilder<Messenger> b);
 
     protected abstract ChatModule createChatModule();
 

@@ -5,8 +5,6 @@ import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Set;
 
 public interface SelectDbo {

@@ -1,8 +1,8 @@
 package tv.twitch.moonmoon.rpengine2.duel;
 
+import tv.twitch.moonmoon.rpengine2.RpModule;
 import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.Optional;
 import java.util.Set;
@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * Module responsible for managing duel-related functionality
  */
-public interface Duels {
+public interface Duels extends RpModule {
 
     /**
      * Starts a duel for the specified players
@@ -67,6 +67,4 @@ public interface Duels {
     Set<Duel> getActiveDuels();
 
     void handlePlayerJoined(RpPlayer player);
-
-    Result<Void> init();
 }

@@ -8,7 +8,6 @@ import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
-import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 
 import java.util.Objects;
 

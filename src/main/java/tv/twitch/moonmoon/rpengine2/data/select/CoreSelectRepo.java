@@ -5,7 +5,7 @@ import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionArgs;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
-import tv.twitch.moonmoon.rpengine2.util.PluginOut;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -19,11 +19,11 @@ public class CoreSelectRepo implements SelectRepo {
 
     private final AttributeRepo attributeRepo;
     private final SelectDbo selectDbo;
-    private final PluginOut log;
+    private final Messenger log;
     private Map<String, Select> selects;
 
     @Inject
-    public CoreSelectRepo(AttributeRepo attributeRepo, SelectDbo selectDbo, PluginOut log) {
+    public CoreSelectRepo(AttributeRepo attributeRepo, SelectDbo selectDbo, Messenger log) {
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
         this.selectDbo = Objects.requireNonNull(selectDbo);
         this.log = Objects.requireNonNull(log);

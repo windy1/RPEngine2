@@ -2,13 +2,13 @@ package tv.twitch.moonmoon.rpengine2.spigot.cmd.admin;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
+import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
+import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.Commands;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.Help;
-import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
-import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
-import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;

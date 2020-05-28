@@ -5,6 +5,7 @@ import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.multibindings.OptionalBinder;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import tv.twitch.moonmoon.rpengine2.Engine;
 import tv.twitch.moonmoon.rpengine2.PluginModule;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLogModule;
@@ -23,11 +24,11 @@ import tv.twitch.moonmoon.rpengine2.spigot.nms.RpProtocolLibModule;
 import tv.twitch.moonmoon.rpengine2.spigot.nte.RpNametagEdit;
 import tv.twitch.moonmoon.rpengine2.spigot.nte.RpNametagEditModule;
 import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotAsyncExecutor;
-import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotPluginOut;
+import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotMessenger;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
 import tv.twitch.moonmoon.rpengine2.util.DbPath;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
-import tv.twitch.moonmoon.rpengine2.util.PluginOut;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -84,6 +85,11 @@ public class SpigotModule extends PluginModule {
     }
 
     @Override
+    protected void bindEngine(AnnotatedBindingBuilder<Engine> b) {
+        b.to(SpigotEngine.class);
+    }
+
+    @Override
     protected void bindPlayerRepo(AnnotatedBindingBuilder<RpPlayerRepo> b) {
         b.to(SpigotRpPlayerRepo.class);
     }
@@ -104,8 +110,8 @@ public class SpigotModule extends PluginModule {
     }
 
     @Override
-    protected void bindPluginOut(AnnotatedBindingBuilder<PluginOut> b) {
-        b.to(SpigotPluginOut.class);
+    protected void bindMessenger(AnnotatedBindingBuilder<Messenger> b) {
+        b.to(SpigotMessenger.class);
     }
 
     @Override

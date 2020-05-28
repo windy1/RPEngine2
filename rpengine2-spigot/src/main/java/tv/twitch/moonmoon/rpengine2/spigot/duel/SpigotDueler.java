@@ -7,7 +7,6 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Duel tracking player

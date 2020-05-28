@@ -5,7 +5,6 @@ import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
-import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;

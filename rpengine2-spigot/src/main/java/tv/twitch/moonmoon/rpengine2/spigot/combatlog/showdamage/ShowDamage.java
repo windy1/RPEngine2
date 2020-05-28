@@ -1,12 +1,12 @@
 package tv.twitch.moonmoon.rpengine2.spigot.combatlog.showdamage;
 
 import org.bukkit.entity.Entity;
-import tv.twitch.moonmoon.rpengine2.util.Result;
+import tv.twitch.moonmoon.rpengine2.RpModule;
 
 /**
  * Module that manages damage-display related functionality
  */
-public interface ShowDamage {
+public interface ShowDamage extends RpModule {
 
     /**
      * Returns a tracked {@link DamageHologram} for the specified {@link Entity}
@@ -31,6 +31,4 @@ public interface ShowDamage {
      * @param value Regen amount
      */
     void pushRegen(Entity entity, double value);
-
-    Result<Void> init();
 }

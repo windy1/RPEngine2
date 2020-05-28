@@ -5,7 +5,7 @@ import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
-import tv.twitch.moonmoon.rpengine2.util.PluginOut;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -23,10 +23,10 @@ public class CoreAttributeDbo implements AttributeDbo {
 
     private final RpDb db;
     private final AsyncExecutor asyncExecutor;
-    private final PluginOut log;
+    private final Messenger log;
 
     @Inject
-    public CoreAttributeDbo(RpDb db, AsyncExecutor asyncExecutor, PluginOut log) {
+    public CoreAttributeDbo(RpDb db, AsyncExecutor asyncExecutor, Messenger log) {
         this.db = Objects.requireNonNull(db);
         this.asyncExecutor = Objects.requireNonNull(asyncExecutor);
         this.log = Objects.requireNonNull(log);

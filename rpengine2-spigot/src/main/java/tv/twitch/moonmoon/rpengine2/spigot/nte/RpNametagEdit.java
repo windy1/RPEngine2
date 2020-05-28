@@ -1,6 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.spigot.nte;
 
-public interface RpNametagEdit {
+import tv.twitch.moonmoon.rpengine2.RpModule;
 
-    void init();
+public interface RpNametagEdit extends RpModule {
 }

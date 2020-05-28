@@ -6,7 +6,7 @@ import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
-import tv.twitch.moonmoon.rpengine2.util.PluginOut;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -25,14 +25,14 @@ public class CoreSelectDbo implements SelectDbo {
     private final RpDb db;
     private final AsyncExecutor asyncExecutor;
     private final OptionFactory optionFactory;
-    private final PluginOut log;
+    private final Messenger log;
 
     @Inject
     public CoreSelectDbo(
         RpDb db,
         AsyncExecutor asyncExecutor,
         OptionFactory optionFactory,
-        PluginOut log
+        Messenger log
     ) {
         this.db = Objects.requireNonNull(db);
         this.asyncExecutor = Objects.requireNonNull(asyncExecutor);

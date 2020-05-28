@@ -1,34 +1,26 @@
 package tv.twitch.moonmoon.rpengine2.sponge;
 
-import org.slf4j.Logger;
-import tv.twitch.moonmoon.rpengine2.AbstractEngine;
+import tv.twitch.moonmoon.rpengine2.DefaultEngine;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
+import tv.twitch.moonmoon.rpengine2.data.Defaults;
 import tv.twitch.moonmoon.rpengine2.data.Migrations;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
-import tv.twitch.moonmoon.rpengine2.data.Defaults;
-import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
-import tv.twitch.moonmoon.rpengine2.util.Result;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Objects;
 import java.util.Optional;
 
 @Singleton
-public class SpongeEngine extends AbstractEngine {
-
-    private final Config config;
-    private final Logger log;
+public class SpongeEngine extends DefaultEngine {
 
     @Inject
     public SpongeEngine(
-        Config config,
-        @PluginLogger Logger log,
         RpDb db,
         Migrations migrations,
         Defaults defaults,
@@ -37,38 +29,21 @@ public class SpongeEngine extends AbstractEngine {
         SelectRepo selectRepo,
         Optional<Chat> chat,
         Optional<Duels> duels,
-        Optional<CombatLog> combatLog
+        Optional<CombatLog> combatLog,
+        Messenger messenger
     ) {
         super(
             db, migrations, defaults, playerRepo, attributeRepo, selectRepo, chat, duels,
-            combatLog
+            combatLog, messenger
         );
-
-        this.config = Objects.requireNonNull(config);
-        this.log = Objects.requireNonNull(log);
     }
 
-    void init() {
-        log.info("Connecting to database");
-
-        if (!requireOk(initDb())) {
-            return;
-        }
-
-        if (!requireOk(initModules())) {
-            return;
-        }
-
-        log.info("Done");
+    @Override
+    protected void onFailure() {
     }
 
-    private <T> boolean requireOk(Result<T> r) {
-        Optional<String> err = r.getError();
-        if (err.isPresent()) {
-            log.warn(err.get());
-            return false;
-        }
-
+    @Override
+    protected boolean onStarted() {
         return true;
     }
 }

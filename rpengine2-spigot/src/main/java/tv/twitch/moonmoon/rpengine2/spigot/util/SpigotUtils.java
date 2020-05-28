@@ -2,7 +2,6 @@ package tv.twitch.moonmoon.rpengine2.spigot.util;
 
 import org.bukkit.ChatColor;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class SpigotUtils {

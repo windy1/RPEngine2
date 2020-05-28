@@ -8,7 +8,6 @@ import tv.twitch.moonmoon.rpengine2.chat.model.ChatConfig;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandParser;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
-import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;

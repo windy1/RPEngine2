@@ -51,4 +51,14 @@ public interface Engine {
      * @return CombatLog module
      */
     Optional<CombatLog> getCombatLogModule();
+
+    /**
+     * Initializes the engine and prepares the plugin
+     */
+    void start();
+
+    /**
+     * Cleans up resources and handles any shutdown logic
+     */
+    void shutdown();
 }

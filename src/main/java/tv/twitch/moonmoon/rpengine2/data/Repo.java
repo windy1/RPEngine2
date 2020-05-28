@@ -5,7 +5,6 @@ import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 
 public interface Repo {
 

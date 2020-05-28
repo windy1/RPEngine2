@@ -17,11 +17,11 @@ import tv.twitch.moonmoon.rpengine2.sponge.data.select.SpongeOptionFactory;
 import tv.twitch.moonmoon.rpengine2.sponge.duel.SpongeDuelsModule;
 import tv.twitch.moonmoon.rpengine2.sponge.model.player.SpongeRpPlayerFactory;
 import tv.twitch.moonmoon.rpengine2.sponge.util.SpongeAsyncExecutor;
-import tv.twitch.moonmoon.rpengine2.sponge.util.SpongePluginOut;
+import tv.twitch.moonmoon.rpengine2.sponge.util.SpongeMessenger;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
 import tv.twitch.moonmoon.rpengine2.util.DbPath;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
-import tv.twitch.moonmoon.rpengine2.util.PluginOut;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -83,8 +83,8 @@ public class SpongeModule extends PluginModule {
     }
 
     @Override
-    protected void bindPluginOut(AnnotatedBindingBuilder<PluginOut> b) {
-        b.to(SpongePluginOut.class);
+    protected void bindMessenger(AnnotatedBindingBuilder<Messenger> b) {
+        b.to(SpongeMessenger.class);
     }
 
     @Override

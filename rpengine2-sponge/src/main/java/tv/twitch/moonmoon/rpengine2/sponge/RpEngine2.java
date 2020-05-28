@@ -26,7 +26,7 @@ public class RpEngine2 {
     @DefaultConfig(sharedRoot = false)
     private Path configPath;
 
-    private SpongeEngine engine;
+    private Engine engine;
 
     @Listener
     public void onServerStart(GameStartedServerEvent e) {
@@ -37,8 +37,8 @@ public class RpEngine2 {
 
         Path dbPath = configPath.getParent().resolve("plugin.db");
         engine = Guice.createInjector(new SpongeModule(this, dbPath, config, log))
-            .getInstance(SpongeEngine.class);
-        engine.init();
+            .getInstance(Engine.class);
+        engine.start();
     }
 
     @Listener

@@ -2,11 +2,10 @@ package tv.twitch.moonmoon.rpengine2.spigot.duel.cmd;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.AbstractCoreCommandExecutor;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
-import tv.twitch.moonmoon.rpengine2.duel.Duels;
-import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 
 import javax.inject.Inject;
 import java.util.Objects;

@@ -10,14 +10,12 @@ import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
-public abstract class AbstractEngine implements Engine {
+public class DefaultEngine implements Engine {
 
     protected final RpDb db;
     protected final Migrations migrations;
@@ -28,10 +26,12 @@ public abstract class AbstractEngine implements Engine {
     protected final Chat chat;
     protected final Duels duels;
     protected final CombatLog combatLog;
+    protected final Messenger messenger;
 
-    private final List<Repo> repos;
+    protected final List<Repo> repos;
+    protected final List<RpModule> modules = new ArrayList<>();
 
-    protected AbstractEngine(
+    protected DefaultEngine(
         RpDb db,
         Migrations migrations,
         Defaults defaults,
@@ -40,7 +40,8 @@ public abstract class AbstractEngine implements Engine {
         SelectRepo selectRepo,
         Optional<Chat> chat,
         Optional<Duels> duels,
-        Optional<CombatLog> combatLog
+        Optional<CombatLog> combatLog,
+        Messenger messenger
     ) {
         this.db = Objects.requireNonNull(db);
         this.migrations = Objects.requireNonNull(migrations);
@@ -51,10 +52,49 @@ public abstract class AbstractEngine implements Engine {
         this.chat = chat.orElse(null);
         this.duels = duels.orElse(null);
         this.combatLog = combatLog.orElse(null);
+        this.messenger = Objects.requireNonNull(messenger);
+
         repos = Arrays.asList(playerRepo, attributeRepo, selectRepo);
+
+        if (this.chat != null) {
+            modules.add(this.chat);
+        }
+
+        if (this.duels != null) {
+            modules.add(this.duels);
+        }
+
+        if (this.combatLog != null) {
+            modules.add(this.combatLog);
+        }
+    }
+
+    protected void onFailure() {
+    }
+
+    protected boolean onStart() {
+        return true;
+    }
+
+    protected boolean onStarted() {
+        return true;
+    }
+
+    @Override
+    public void start() {
+        if (onStart() && handleResult(initDb()) && handleResult(initModules()) && onStarted()) {
+            messenger.info("Done");
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        playerRepo.shutdown();
     }
 
     protected Result<Void> initDb() {
+        messenger.info("Connecting to database");
+
         Optional<String> err = db.connect().getError();
         if (err.isPresent()) {
             return Result.error(err.get());
@@ -78,20 +118,25 @@ public abstract class AbstractEngine implements Engine {
     }
 
     protected Result<Void> initModules() {
-        Result<Void> r;
-        if (chat != null && (r = chat.init()).getError().isPresent()) {
-            return r;
-        }
-
-        if (duels != null && (r = duels.init()).getError().isPresent()) {
-            return r;
-        }
-
-        if (combatLog != null && (r = combatLog.init()).getError().isPresent()) {
-            return r;
+        Optional<String> err;
+        for (RpModule module : modules) {
+            err = module.init().getError();
+            if (err.isPresent()) {
+                return Result.error(err.get());
+            }
         }
 
         return Result.ok(null);
+    }
+
+    private <T> boolean handleResult(Result<T> r) {
+        Optional<String> err = r.getError();
+        if (err.isPresent()) {
+            onFailure();
+            messenger.warn(err.get());
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -122,9 +167,5 @@ public abstract class AbstractEngine implements Engine {
     @Override
     public Optional<CombatLog> getCombatLogModule() {
         return Optional.ofNullable(combatLog);
-    }
-
-    public void shutdown() {
-        playerRepo.shutdown();
     }
 }

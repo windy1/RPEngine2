@@ -8,14 +8,12 @@ import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.AbstractRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerDbo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
-import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
-import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.spigot.model.select.SpigotOption;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 @Singleton

@@ -1,12 +1,12 @@
 package tv.twitch.moonmoon.rpengine2.chat;
 
+import tv.twitch.moonmoon.rpengine2.RpModule;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.Optional;
 import java.util.Set;
 
-public interface Chat {
+public interface Chat extends RpModule {
     /**
      * Returns the {@link ChatChannel} with the specified name
      *
@@ -63,8 +63,6 @@ public interface Chat {
      * @param channel Channel to set
      */
     void setChatChannelAsync(RpPlayer player, ChatChannel channel);
-
-    Result<Void> init();
 
     void handlePlayerJoined(RpPlayer player);
 }

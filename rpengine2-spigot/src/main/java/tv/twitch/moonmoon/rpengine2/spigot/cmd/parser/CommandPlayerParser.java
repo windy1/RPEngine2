@@ -5,7 +5,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;

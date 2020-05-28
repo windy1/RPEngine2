@@ -9,13 +9,13 @@ import java.util.logging.Logger;
 
 public final class RpEngine2 extends JavaPlugin {
 
-    private SpigotEngine engine;
+    private Engine engine;
 
     @Override
     public void onEnable() {
         engine = Guice.createInjector(new SpigotModule(this))
-            .getInstance(SpigotEngine.class);
-        engine.init();
+            .getInstance(Engine.class);
+        engine.start();
     }
 
     @Override
