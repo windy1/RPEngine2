@@ -2,7 +2,6 @@ package tv.twitch.moonmoon.rpengine2.spigot;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import tv.twitch.moonmoon.rpengine2.impl.DefaultEngine;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.data.Defaults;
@@ -12,6 +11,7 @@ import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
+import tv.twitch.moonmoon.rpengine2.impl.DefaultEngine;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.CoreCommands;
 import tv.twitch.moonmoon.rpengine2.spigot.nms.RpProtocolLib;
 import tv.twitch.moonmoon.rpengine2.spigot.nte.RpNametagEdit;

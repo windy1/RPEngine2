@@ -1,5 +1,8 @@
 package tv.twitch.moonmoon.rpengine2.spigot.util;
 
+import org.bukkit.ChatColor;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 
@@ -24,5 +27,11 @@ public class SpigotMessenger implements Messenger {
     @Override
     public void info(String message) {
         log.info(message);
+    }
+
+    @Override
+    public void sendError(RpPlayer player, String message) {
+        ((SpigotRpPlayer) player).getPlayer()
+            .ifPresent(p -> p.sendMessage(ChatColor.RED + message));
     }
 }

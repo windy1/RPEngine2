@@ -1,9 +1,9 @@
-package tv.twitch.moonmoon.rpengine2.sponge.duel;
+package tv.twitch.moonmoon.rpengine2.sponge.duel.dueler;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import tv.twitch.moonmoon.rpengine2.duel.Dueler;
+import tv.twitch.moonmoon.rpengine2.duel.dueler.Dueler;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.sponge.model.player.SpongeRpPlayer;
 

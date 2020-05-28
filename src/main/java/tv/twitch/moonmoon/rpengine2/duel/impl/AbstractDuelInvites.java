@@ -1,4 +1,10 @@
-package tv.twitch.moonmoon.rpengine2.duel;
+package tv.twitch.moonmoon.rpengine2.duel.impl;
+
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.duel.DuelInvites;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.util.Lang;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -8,8 +14,13 @@ public abstract class AbstractDuelInvites implements DuelInvites {
 
     protected final Map<UUID, Set<DuelInvite>> invites =
         Collections.synchronizedMap(new HashMap<>());
+    protected final Messenger messenger;
+    protected final RpPlayerRepo playerRepo;
 
-    protected abstract void onInviteExpired(UUID playerId, UUID targetId);
+    protected AbstractDuelInvites(Messenger messenger, RpPlayerRepo playerRepo) {
+        this.messenger = Objects.requireNonNull(messenger);
+        this.playerRepo = Objects.requireNonNull(playerRepo);
+    }
 
     @Override
     public boolean has(UUID playerId, UUID targetId) {
@@ -51,7 +62,15 @@ public abstract class AbstractDuelInvites implements DuelInvites {
                         continue;
                     }
 
-                    onInviteExpired(invite.playerId, entry.getKey());
+                    RpPlayer player = playerRepo.getPlayer(invite.playerId).orElse(null);
+                    RpPlayer target = playerRepo.getPlayer(entry.getKey()).orElse(null);
+
+                    if (player != null) {
+                        String message = Lang.getString(
+                            "duels.inviteExpired", target.getUsername()
+                        );
+                        messenger.sendError(player, message);
+                    }
 
                     inviteIt.remove();
                 }

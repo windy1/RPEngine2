@@ -1,6 +1,7 @@
-package tv.twitch.moonmoon.rpengine2.duel.data;
+package tv.twitch.moonmoon.rpengine2.duel.data.impl;
 
 import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigDbo;
 import tv.twitch.moonmoon.rpengine2.duel.model.DuelConfig;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
@@ -14,14 +15,14 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Singleton
-public class CoreDuelConfigRepo implements DuelConfigRepo {
+public class DefaultDuelConfigRepo implements DuelConfigRepo {
 
     private final DuelConfigDbo configDbo;
     private final Logger log;
     private Map<Integer, DuelConfig> configs;
 
     @Inject
-    public CoreDuelConfigRepo(DuelConfigDbo configDbo, @PluginLogger Logger log) {
+    public DefaultDuelConfigRepo(DuelConfigDbo configDbo, @PluginLogger Logger log) {
         this.configDbo = Objects.requireNonNull(configDbo);
         this.log = Objects.requireNonNull(log);
     }

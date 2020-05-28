@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.AbstractCoreCommandExecutor;
-import tv.twitch.moonmoon.rpengine2.spigot.util.Countdown;
+import tv.twitch.moonmoon.rpengine2.spigot.countdown.SpigotCountdown;
 
 import javax.inject.Inject;
 import java.util.Set;
@@ -47,7 +47,7 @@ public class CountdownCommand extends AbstractCoreCommandExecutor {
             .map(Player::getUniqueId)
             .collect(Collectors.toSet());
 
-        Countdown.from(config, playerIds, timeSecs, null).start();
+        SpigotCountdown.from(config, playerIds, timeSecs).start();
 
         return true;
     }

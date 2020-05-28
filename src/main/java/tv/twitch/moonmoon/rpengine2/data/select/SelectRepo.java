@@ -2,8 +2,8 @@ package tv.twitch.moonmoon.rpengine2.data.select;
 
 import tv.twitch.moonmoon.rpengine2.data.Repo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.impl.DefaultAttribute;
-import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultSelect;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
+import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultSelect;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 
 import java.util.Optional;

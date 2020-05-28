@@ -9,12 +9,14 @@ import tv.twitch.moonmoon.rpengine2.Engine;
 import tv.twitch.moonmoon.rpengine2.PluginModule;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLogModule;
+import tv.twitch.moonmoon.rpengine2.countdown.CountdownFactory;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.duel.DuelsModule;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.spigot.chat.SpigotChatModule;
 import tv.twitch.moonmoon.rpengine2.spigot.combatlog.SpigotCombatLogModule;
+import tv.twitch.moonmoon.rpengine2.spigot.countdown.SpigotCountdownFactory;
 import tv.twitch.moonmoon.rpengine2.spigot.data.player.SpigotRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.spigot.data.select.SpigotOptionFactory;
 import tv.twitch.moonmoon.rpengine2.spigot.duel.SpigotDuelsModule;
@@ -112,6 +114,11 @@ public class SpigotModule extends PluginModule {
     @Override
     protected void bindMessenger(AnnotatedBindingBuilder<Messenger> b) {
         b.to(SpigotMessenger.class);
+    }
+
+    @Override
+    protected void bindCountdownFactory(AnnotatedBindingBuilder<CountdownFactory> b) {
+        b.to(SpigotCountdownFactory.class);
     }
 
     @Override

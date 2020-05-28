@@ -2,10 +2,10 @@ package tv.twitch.moonmoon.rpengine2.data.player;
 
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
-import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
+import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;

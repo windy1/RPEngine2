@@ -1,14 +1,16 @@
-package tv.twitch.moonmoon.rpengine2.spigot.util;
+package tv.twitch.moonmoon.rpengine2.spigot.countdown;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import tv.twitch.moonmoon.rpengine2.countdown.Countdown;
+import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Countdown extends TimerTask {
+public class SpigotCountdown extends TimerTask implements Countdown {
 
     private final Set<UUID> playerIds;
     private final ChatColor color;
@@ -19,10 +21,11 @@ public class Countdown extends TimerTask {
     private final String goSound;
     private final float goVolume;
     private final float goPitch;
-    private final Runnable callback;
+
+    private Runnable callback;
     private int timeSecs;
 
-    public Countdown(
+    public SpigotCountdown(
         Set<UUID> playerIds,
         ChatColor color,
         ChatColor goColor,
@@ -32,8 +35,7 @@ public class Countdown extends TimerTask {
         String goSound,
         float goVolume,
         float goPitch,
-        int timeSecs,
-        Runnable callback
+        int timeSecs
     ) {
         this.playerIds = Objects.requireNonNull(playerIds);
         this.color = Objects.requireNonNull(color);
@@ -45,7 +47,6 @@ public class Countdown extends TimerTask {
         this.goVolume = goVolume;
         this.goPitch = goPitch;
         this.timeSecs = timeSecs;
-        this.callback = callback;
     }
 
     @Override
@@ -78,15 +79,21 @@ public class Countdown extends TimerTask {
         timeSecs--;
     }
 
-    public void start() {
+    @Override
+    public void start(Runnable callback) {
+        this.callback = callback;
         new Timer().scheduleAtFixedRate(this, 0, 1000);
+    }
+
+    @Override
+    public void start() {
+        start(null);
     }
 
     public static Countdown from(
         FileConfiguration config,
         Set<UUID> playerIds,
-        int timeSecs,
-        Runnable callback
+        int timeSecs
     ) {
         float volume = (float) config.getDouble("countdown.volume", 0.5);
         float pitch = (float) config.getDouble("countdown.pitch", 1);
@@ -109,7 +116,7 @@ public class Countdown extends TimerTask {
             config.getString("countdown.goColor", "")
         ).orElse(ChatColor.WHITE);
 
-        return new Countdown(
+        return new SpigotCountdown(
             playerIds,
             color,
             goColor,
@@ -119,8 +126,7 @@ public class Countdown extends TimerTask {
             goSound,
             goVolume,
             goPitch,
-            timeSecs,
-            callback
+            timeSecs
         );
     }
 

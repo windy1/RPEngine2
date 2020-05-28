@@ -6,12 +6,14 @@ import org.slf4j.Logger;
 import tv.twitch.moonmoon.rpengine2.PluginModule;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLogModule;
+import tv.twitch.moonmoon.rpengine2.countdown.CountdownFactory;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.duel.DuelsModule;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.sponge.chat.SpongeChatModule;
 import tv.twitch.moonmoon.rpengine2.sponge.combatlog.SpongeCombatLogModule;
+import tv.twitch.moonmoon.rpengine2.sponge.countdown.SpongeCountdownFactory;
 import tv.twitch.moonmoon.rpengine2.sponge.data.player.SpongeRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.sponge.data.select.SpongeOptionFactory;
 import tv.twitch.moonmoon.rpengine2.sponge.duel.SpongeDuelsModule;
@@ -85,6 +87,11 @@ public class SpongeModule extends PluginModule {
     @Override
     protected void bindMessenger(AnnotatedBindingBuilder<Messenger> b) {
         b.to(SpongeMessenger.class);
+    }
+
+    @Override
+    protected void bindCountdownFactory(AnnotatedBindingBuilder<CountdownFactory> b) {
+        b.to(SpongeCountdownFactory.class);
     }
 
     @Override

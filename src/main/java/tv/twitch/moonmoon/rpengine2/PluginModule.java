@@ -9,6 +9,7 @@ import tv.twitch.moonmoon.rpengine2.chat.data.ChatConfigRepo;
 import tv.twitch.moonmoon.rpengine2.chat.data.channel.ChatChannelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLogModule;
+import tv.twitch.moonmoon.rpengine2.countdown.CountdownFactory;
 import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeDbo;
 import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
@@ -44,6 +45,7 @@ public abstract class PluginModule extends AbstractModule {
         bindOptionFactory(bind(OptionFactory.class));
         bindAsyncExecutor(bind(AsyncExecutor.class));
         bindMessenger(bind(Messenger.class));
+        bindCountdownFactory(bind(CountdownFactory.class));
 
         OptionalBinder.newOptionalBinder(binder(), Chat.class);
         OptionalBinder.newOptionalBinder(binder(), ChatConfigRepo.class);
@@ -100,6 +102,8 @@ public abstract class PluginModule extends AbstractModule {
     protected abstract void bindAsyncExecutor(AnnotatedBindingBuilder<AsyncExecutor> b);
 
     protected abstract void bindMessenger(AnnotatedBindingBuilder<Messenger> b);
+
+    protected abstract void bindCountdownFactory(AnnotatedBindingBuilder<CountdownFactory> b);
 
     protected abstract ChatModule createChatModule();
 

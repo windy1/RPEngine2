@@ -2,12 +2,18 @@ package tv.twitch.moonmoon.rpengine2.spigot.duel;
 
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import tv.twitch.moonmoon.rpengine2.duel.DuelInvites;
+import tv.twitch.moonmoon.rpengine2.duel.DuelMessenger;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.duel.DuelsModule;
-import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigDbo;
-import tv.twitch.moonmoon.rpengine2.spigot.duel.data.SpigotDuelConfigDbo;
+import tv.twitch.moonmoon.rpengine2.duel.dueler.DuelerFactory;
+import tv.twitch.moonmoon.rpengine2.spigot.duel.dueler.SpigotDuelerFactory;
 
 public class SpigotDuelsModule extends DuelsModule {
+
+    @Override
+    protected void bindDuelerFactory(AnnotatedBindingBuilder<DuelerFactory> b) {
+        b.to(SpigotDuelerFactory.class);
+    }
 
     @Override
     protected void bindDuels(AnnotatedBindingBuilder<Duels> b) {
@@ -15,12 +21,12 @@ public class SpigotDuelsModule extends DuelsModule {
     }
 
     @Override
-    protected void bindConfigDbo(AnnotatedBindingBuilder<DuelConfigDbo> b) {
-        b.to(SpigotDuelConfigDbo.class);
+    protected void bindInvites(AnnotatedBindingBuilder<DuelInvites> b) {
+        b.to(SpigotDuelInvites.class);
     }
 
     @Override
-    protected void bindInvites(AnnotatedBindingBuilder<DuelInvites> b) {
-        b.to(SpigotDuelInvites.class);
+    protected void bindMessenger(AnnotatedBindingBuilder<DuelMessenger> b) {
+        b.to(SpigotDuelMessenger.class);
     }
 }

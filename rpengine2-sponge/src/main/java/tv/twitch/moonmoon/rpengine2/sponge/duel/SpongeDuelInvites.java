@@ -1,19 +1,16 @@
 package tv.twitch.moonmoon.rpengine2.sponge.duel;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
-import tv.twitch.moonmoon.rpengine2.duel.AbstractDuelInvites;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.duel.impl.AbstractDuelInvites;
 import tv.twitch.moonmoon.rpengine2.sponge.Config;
 import tv.twitch.moonmoon.rpengine2.sponge.RpEngine2;
-import tv.twitch.moonmoon.rpengine2.util.Lang;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -24,7 +21,13 @@ public class SpongeDuelInvites extends AbstractDuelInvites {
     private SpongeExecutorService task;
 
     @Inject
-    public SpongeDuelInvites(RpEngine2 plugin, Config config) {
+    public SpongeDuelInvites(
+        RpEngine2 plugin,
+        Config config,
+        Messenger messenger,
+        RpPlayerRepo playerRepo
+    ) {
+        super(messenger, playerRepo);
         this.plugin = Objects.requireNonNull(plugin);
         this.config = Objects.requireNonNull(config);
     }
@@ -40,17 +43,6 @@ public class SpongeDuelInvites extends AbstractDuelInvites {
             pruneExpiredInvites(inviteExpireSecs),
             0, 500, TimeUnit.MILLISECONDS
         );
-    }
-
-    @Override
-    protected void onInviteExpired(UUID playerId, UUID targetId) {
-        Player player = Sponge.getServer().getPlayer(playerId).orElse(null);
-        Player target = Sponge.getServer().getPlayer(targetId).orElse(null);
-        if (player != null && target != null && player.isOnline()) {
-            player.sendMessage(Text.of(
-                TextColors.RED, Lang.getString("duels.inviteExpired", target.getName())
-            ));
-        }
     }
 
     @Override

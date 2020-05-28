@@ -2,8 +2,8 @@ package tv.twitch.moonmoon.rpengine2.spigot.model.player;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
+import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayer;
 
 import java.time.Duration;
 import java.time.Instant;

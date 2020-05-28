@@ -2,6 +2,8 @@ package tv.twitch.moonmoon.rpengine2.duel;
 
 import tv.twitch.moonmoon.rpengine2.RpModule;
 import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.duel.dueler.Dueler;
+import tv.twitch.moonmoon.rpengine2.duel.impl.DefaultDuel;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 
 import java.util.Optional;
@@ -60,7 +62,7 @@ public interface Duels extends RpModule {
     DuelInvites getInvites();
 
     /**
-     * Returns a set of active {@link Duel}s
+     * Returns a set of active {@link DefaultDuel}s
      *
      * @return Active duels
      */

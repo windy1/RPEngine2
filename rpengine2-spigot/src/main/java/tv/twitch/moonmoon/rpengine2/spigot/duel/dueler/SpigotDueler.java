@@ -1,8 +1,8 @@
-package tv.twitch.moonmoon.rpengine2.spigot.duel;
+package tv.twitch.moonmoon.rpengine2.spigot.duel.dueler;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import tv.twitch.moonmoon.rpengine2.duel.Dueler;
+import tv.twitch.moonmoon.rpengine2.duel.dueler.Dueler;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.model.player.SpigotRpPlayer;
 

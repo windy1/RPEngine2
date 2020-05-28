@@ -7,6 +7,7 @@ import tv.twitch.moonmoon.rpengine2.util.Result;
 import java.util.Set;
 
 public interface DuelConfigDbo {
+
     Result<Set<DuelConfig>> selectConfigs();
 
     Result<DuelConfig> selectConfig(int playerId);

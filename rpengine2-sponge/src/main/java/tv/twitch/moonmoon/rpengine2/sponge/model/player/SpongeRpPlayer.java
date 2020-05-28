@@ -2,8 +2,8 @@ package tv.twitch.moonmoon.rpengine2.sponge.model.player;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
+import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayer;
 
 import java.time.Duration;
 import java.time.Instant;

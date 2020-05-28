@@ -1,6 +1,10 @@
 package tv.twitch.moonmoon.rpengine2.sponge.util;
 
 import org.slf4j.Logger;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.sponge.model.player.SpongeRpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 
@@ -24,5 +28,11 @@ public class SpongeMessenger implements Messenger {
     @Override
     public void info(String message) {
         log.info(message);
+    }
+
+    @Override
+    public void sendError(RpPlayer player, String message) {
+        ((SpongeRpPlayer) player).getPlayer()
+            .ifPresent(p -> p.sendMessage(Text.of(TextColors.RED, message)));
     }
 }

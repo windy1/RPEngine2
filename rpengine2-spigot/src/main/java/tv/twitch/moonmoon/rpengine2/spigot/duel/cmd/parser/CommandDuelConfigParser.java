@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tv.twitch.moonmoon.rpengine2.data.DuelConfigRepo;
+import tv.twitch.moonmoon.rpengine2.duel.model.impl.DefaultDuelConfig;
 import tv.twitch.moonmoon.rpengine2.duel.model.DuelConfig;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandParser;

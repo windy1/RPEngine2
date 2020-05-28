@@ -1,18 +1,15 @@
 package tv.twitch.moonmoon.rpengine2.spigot.duel;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
-import tv.twitch.moonmoon.rpengine2.duel.AbstractDuelInvites;
-import tv.twitch.moonmoon.rpengine2.util.Lang;
+import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
+import tv.twitch.moonmoon.rpengine2.duel.impl.AbstractDuelInvites;
+import tv.twitch.moonmoon.rpengine2.util.Messenger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Manages pending challenges to duel
@@ -24,7 +21,8 @@ public class SpigotDuelInvites extends AbstractDuelInvites {
     private BukkitTask task;
 
     @Inject
-    public SpigotDuelInvites(Plugin plugin) {
+    public SpigotDuelInvites(Plugin plugin, Messenger messenger, RpPlayerRepo playerRepo) {
+        super(messenger, playerRepo);
         this.plugin = Objects.requireNonNull(plugin);
     }
 
@@ -35,17 +33,6 @@ public class SpigotDuelInvites extends AbstractDuelInvites {
             pruneExpiredInvites(inviteExpireSecs),
             0, 10
         );
-    }
-
-    @Override
-    protected void onInviteExpired(UUID playerId, UUID targetId) {
-        Player player = Bukkit.getPlayer(playerId);
-        OfflinePlayer target = Bukkit.getOfflinePlayer(targetId);
-        if (player != null) {
-            player.sendMessage(
-                ChatColor.RED + Lang.getString("duels.inviteExpired", target.getName())
-            );
-        }
     }
 
     @Override

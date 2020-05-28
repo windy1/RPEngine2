@@ -1,10 +1,10 @@
 package tv.twitch.moonmoon.rpengine2.data.select;
 
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
-import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultSelect;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
+import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultSelect;
 import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;

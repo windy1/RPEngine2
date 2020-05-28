@@ -1,9 +1,14 @@
-package tv.twitch.moonmoon.rpengine2.duel.data;
+package tv.twitch.moonmoon.rpengine2.duel.data.impl;
 
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
+import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigDbo;
+import tv.twitch.moonmoon.rpengine2.duel.model.impl.DefaultDuelConfig;
 import tv.twitch.moonmoon.rpengine2.duel.model.DuelConfig;
+import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
+import tv.twitch.moonmoon.rpengine2.util.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
+import javax.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,12 +18,22 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class AbstractDuelConfigDbo implements DuelConfigDbo {
+public class DefaultDuelConfigDbo implements DuelConfigDbo {
 
-    protected final RpDb db;
+    private final RpDb db;
+    private final AsyncExecutor asyncExecutor;
 
-    protected AbstractDuelConfigDbo(RpDb db) {
+    @Inject
+    public DefaultDuelConfigDbo(RpDb db, AsyncExecutor asyncExecutor) {
         this.db = Objects.requireNonNull(db);
+        this.asyncExecutor = Objects.requireNonNull(asyncExecutor);
+    }
+
+    @Override
+    public void setReadRulesAsync(int playerId, Callback<Void> callback) {
+        asyncExecutor.execute(() ->
+            callback.accept(setReadRules(playerId))
+        );
     }
 
     @Override
@@ -87,7 +102,7 @@ public abstract class AbstractDuelConfigDbo implements DuelConfigDbo {
         }
     }
 
-    protected Result<Void> setReadRules(int playerId) {
+    private Result<Void> setReadRules(int playerId) {
         final String query = "UPDATE rp_duel_config SET read_rules = 1 WHERE player_id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
@@ -101,7 +116,7 @@ public abstract class AbstractDuelConfigDbo implements DuelConfigDbo {
     }
 
     private DuelConfig readConfig(ResultSet results) throws SQLException {
-        return new DuelConfig(
+        return new DefaultDuelConfig(
             results.getInt("id"),
             Instant.parse(results.getString("created")),
             results.getInt("player_id"),

@@ -1,5 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.data;
 
+import tv.twitch.moonmoon.rpengine2.duel.model.impl.DefaultDuelConfig;
 import tv.twitch.moonmoon.rpengine2.duel.model.DuelConfig;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Result;
@@ -7,12 +8,12 @@ import tv.twitch.moonmoon.rpengine2.util.Result;
 import java.util.Set;
 
 /**
- * Manages {@link DuelConfig} model
+ * Manages {@link DefaultDuelConfig} model
  */
 public interface DuelConfigRepo extends Repo {
 
     /**
-     * Returns or creates a {@link DuelConfig} for the specified {@link RpPlayer}
+     * Returns or creates a {@link DefaultDuelConfig} for the specified {@link RpPlayer}
      *
      * @param player Player to get config for
      * @return Duel config
@@ -20,7 +21,7 @@ public interface DuelConfigRepo extends Repo {
     Result<DuelConfig> getConfig(RpPlayer player);
 
     /**
-     * Returns a set of loaded {@link DuelConfig}s
+     * Returns a set of loaded {@link DefaultDuelConfig}s
      *
      * @return DuelConfigs
      */

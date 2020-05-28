@@ -1,6 +1,5 @@
 package tv.twitch.moonmoon.rpengine2.sponge;
 
-import tv.twitch.moonmoon.rpengine2.impl.DefaultEngine;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.data.Defaults;
@@ -10,6 +9,7 @@ import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
+import tv.twitch.moonmoon.rpengine2.impl.DefaultEngine;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 
 import javax.inject.Inject;
