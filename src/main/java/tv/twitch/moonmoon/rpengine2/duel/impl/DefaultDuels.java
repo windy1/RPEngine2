@@ -1,5 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.duel.impl;
 
+import tv.twitch.moonmoon.rpengine2.Config;
 import tv.twitch.moonmoon.rpengine2.countdown.CountdownFactory;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duel;
@@ -10,10 +11,13 @@ import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.duel.dueler.Dueler;
 import tv.twitch.moonmoon.rpengine2.duel.dueler.DuelerFactory;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
+import tv.twitch.moonmoon.rpengine2.task.Task;
+import tv.twitch.moonmoon.rpengine2.task.TaskFactory;
 import tv.twitch.moonmoon.rpengine2.util.Lang;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
+import javax.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -28,15 +32,22 @@ public class DefaultDuels implements Duels {
     protected final DuelMessenger duelMessenger;
     protected final Messenger messenger;
     protected final Set<Duel> activeDuels = Collections.synchronizedSet(new HashSet<>());
+    protected final Config config;
+    protected final TaskFactory taskFactory;
 
-    protected DefaultDuels(
+    private Task duelWatcher;
+
+    @Inject
+    public DefaultDuels(
         DuelConfigRepo configRepo,
         RpPlayerRepo playerRepo,
         DuelInvites invites,
         DuelerFactory duelerFactory,
         CountdownFactory countdownFactory,
         DuelMessenger duelMessenger,
-        Messenger messenger
+        Messenger messenger,
+        Config config,
+        TaskFactory taskFactory
     ) {
         this.configRepo = Objects.requireNonNull(configRepo);
         this.playerRepo = Objects.requireNonNull(playerRepo);
@@ -45,6 +56,8 @@ public class DefaultDuels implements Duels {
         this.countdownFactory = Objects.requireNonNull(countdownFactory);
         this.duelMessenger = Objects.requireNonNull(duelMessenger);
         this.messenger = Objects.requireNonNull(messenger);
+        this.config = Objects.requireNonNull(config);
+        this.taskFactory = Objects.requireNonNull(taskFactory);
     }
 
     public Result<Void> onStarted() {
@@ -114,6 +127,7 @@ public class DefaultDuels implements Duels {
     @Override
     public Result<Void> init() {
         invites.startWatching();
+        startWatchingDuels();
 
         Optional<String> err = configRepo.load().getError()
             .<Result<Void>>map(Result::error)
@@ -139,6 +153,12 @@ public class DefaultDuels implements Duels {
         return activeDuels;
     }
 
+    private void startWatchingDuels() {
+        int maxSecs = config.getInt("duels.maxSecs", 300);
+        duelWatcher = taskFactory.newInstance();
+        duelWatcher.setInterval(() -> cleanDuels(maxSecs), 0, 500);
+    }
+
     protected void cleanDuels(int maxSecs) {
         synchronized (activeDuels) {
             Iterator<Duel> it = activeDuels.iterator();
@@ -162,6 +182,13 @@ public class DefaultDuels implements Duels {
                     it.remove();
                 }
             }
+        }
+    }
+
+    @Override
+    protected void finalize() {
+        if (duelWatcher != null && !duelWatcher.isCancelled()) {
+            duelWatcher.cancel();
         }
     }
 }

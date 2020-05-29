@@ -52,11 +52,6 @@ public class SpongeModule extends PluginModule {
     }
 
     @Provides
-    public SpongeConfig provideConfig() {
-        return config;
-    }
-
-    @Provides
     @PluginLogger
     public Logger provideLogger() {
         return log;
