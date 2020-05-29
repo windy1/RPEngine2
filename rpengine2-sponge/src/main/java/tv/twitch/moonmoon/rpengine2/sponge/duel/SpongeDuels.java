@@ -9,8 +9,8 @@ import tv.twitch.moonmoon.rpengine2.duel.DuelMessenger;
 import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.duel.dueler.DuelerFactory;
 import tv.twitch.moonmoon.rpengine2.duel.impl.DefaultDuels;
-import tv.twitch.moonmoon.rpengine2.sponge.Config;
 import tv.twitch.moonmoon.rpengine2.sponge.RpEngine2;
+import tv.twitch.moonmoon.rpengine2.sponge.SpongeConfig;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class SpongeDuels extends DefaultDuels {
 
     private final RpEngine2 plugin;
-    private final Config config;
+    private final SpongeConfig config;
 
     private SpongeExecutorService duelWatcher;
 
@@ -29,7 +29,7 @@ public class SpongeDuels extends DefaultDuels {
         RpPlayerRepo playerRepo,
         DuelInvites invites,
         RpEngine2 plugin,
-        Config config,
+        SpongeConfig config,
         DuelerFactory duelerFactory,
         CountdownFactory countdownFactory,
         DuelMessenger duelMessenger,

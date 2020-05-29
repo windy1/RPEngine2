@@ -5,6 +5,7 @@ import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.multibindings.OptionalBinder;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import tv.twitch.moonmoon.rpengine2.Config;
 import tv.twitch.moonmoon.rpengine2.Engine;
 import tv.twitch.moonmoon.rpengine2.PluginModule;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
@@ -126,6 +127,11 @@ public class SpigotModule extends PluginModule {
     @Override
     protected void bindTaskFactory(AnnotatedBindingBuilder<TaskFactory> b) {
         b.to(SpigotTaskFactory.class);
+    }
+
+    @Override
+    protected void bindConfig(AnnotatedBindingBuilder<Config> b) {
+        b.to(SpigotConfig.class);
     }
 
     @Override

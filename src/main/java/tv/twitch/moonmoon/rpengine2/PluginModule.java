@@ -48,6 +48,7 @@ public abstract class PluginModule extends AbstractModule {
         bindMessenger(bind(Messenger.class));
         bindCountdownFactory(bind(CountdownFactory.class));
         bindTaskFactory(bind(TaskFactory.class));
+        bindConfig(bind(Config.class));
 
         OptionalBinder.newOptionalBinder(binder(), Chat.class);
         OptionalBinder.newOptionalBinder(binder(), ChatConfigRepo.class);
@@ -106,6 +107,8 @@ public abstract class PluginModule extends AbstractModule {
     protected abstract void bindCountdownFactory(AnnotatedBindingBuilder<CountdownFactory> b);
 
     protected abstract void bindTaskFactory(AnnotatedBindingBuilder<TaskFactory> b);
+
+    protected abstract void bindConfig(AnnotatedBindingBuilder<Config> b);
 
     protected abstract ChatModule createChatModule();
 

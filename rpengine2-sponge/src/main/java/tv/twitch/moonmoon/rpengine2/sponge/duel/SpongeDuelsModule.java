@@ -1,7 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.sponge.duel;
 
 import com.google.inject.binder.AnnotatedBindingBuilder;
-import tv.twitch.moonmoon.rpengine2.duel.DuelInvites;
 import tv.twitch.moonmoon.rpengine2.duel.DuelMessenger;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
 import tv.twitch.moonmoon.rpengine2.duel.DuelsModule;
@@ -18,11 +17,6 @@ public class SpongeDuelsModule extends DuelsModule {
     @Override
     protected void bindDuels(AnnotatedBindingBuilder<Duels> b) {
         b.to(SpongeDuels.class);
-    }
-
-    @Override
-    protected void bindInvites(AnnotatedBindingBuilder<DuelInvites> b) {
-        b.to(SpongeDuelInvites.class);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class RpEngine2 {
 
     @Listener
     public void onServerStart(GameStartedServerEvent e) {
-        Config config = loadConfig().orElse(null);
+        SpongeConfig config = loadConfig().orElse(null);
         if (config == null) {
             return;
         }
@@ -50,9 +50,9 @@ public class RpEngine2 {
         }
     }
 
-    private Optional<Config> loadConfig() {
+    private Optional<SpongeConfig> loadConfig() {
         try {
-            return Optional.of(Config.load(configPath));
+            return Optional.of(SpongeConfig.load(configPath));
         } catch (IOException e) {
             String message = "error loading config: `%s`";
             log.warn(String.format(message, e.getMessage()));

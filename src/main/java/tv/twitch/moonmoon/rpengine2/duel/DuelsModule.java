@@ -7,6 +7,7 @@ import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.duel.data.impl.DefaultDuelConfigDbo;
 import tv.twitch.moonmoon.rpengine2.duel.data.impl.DefaultDuelConfigRepo;
 import tv.twitch.moonmoon.rpengine2.duel.dueler.DuelerFactory;
+import tv.twitch.moonmoon.rpengine2.duel.impl.DefaultDuelInvites;
 import tv.twitch.moonmoon.rpengine2.duel.impl.DefaultDuels;
 
 public abstract class DuelsModule extends AbstractModule {
@@ -35,7 +36,9 @@ public abstract class DuelsModule extends AbstractModule {
         b.to(DefaultDuelConfigDbo.class);
     }
 
-    protected abstract void bindInvites(AnnotatedBindingBuilder<DuelInvites> b);
+    protected void bindInvites(AnnotatedBindingBuilder<DuelInvites> b) {
+        b.to(DefaultDuelInvites.class);
+    }
 
     protected abstract void bindMessenger(AnnotatedBindingBuilder<DuelMessenger> b);
 }

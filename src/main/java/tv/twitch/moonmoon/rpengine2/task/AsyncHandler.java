@@ -1,5 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.task;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -9,6 +10,7 @@ public class AsyncHandler {
     private final ConcurrentLinkedQueue<Runnable> queue = new ConcurrentLinkedQueue<>();
     private final Task task;
 
+    @Inject
     public AsyncHandler(TaskFactory taskFactory) {
         task = taskFactory.newInstance();
         task.setInterval(this::flushQueue, 0, 500);

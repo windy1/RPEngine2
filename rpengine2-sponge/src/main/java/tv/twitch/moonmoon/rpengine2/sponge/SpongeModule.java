@@ -3,6 +3,7 @@ package tv.twitch.moonmoon.rpengine2.sponge;
 import com.google.inject.Provides;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import org.slf4j.Logger;
+import tv.twitch.moonmoon.rpengine2.Config;
 import tv.twitch.moonmoon.rpengine2.Engine;
 import tv.twitch.moonmoon.rpengine2.PluginModule;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
@@ -35,10 +36,10 @@ public class SpongeModule extends PluginModule {
 
     private final RpEngine2 plugin;
     private final Path dbPath;
-    private final Config config;
+    private final SpongeConfig config;
     private final Logger log;
 
-    public SpongeModule(RpEngine2 plugin, Path dbPath, Config config, Logger log) {
+    public SpongeModule(RpEngine2 plugin, Path dbPath, SpongeConfig config, Logger log) {
         this.plugin = Objects.requireNonNull(plugin);
         this.dbPath = Objects.requireNonNull(dbPath);
         this.config = Objects.requireNonNull(config);
@@ -51,7 +52,7 @@ public class SpongeModule extends PluginModule {
     }
 
     @Provides
-    public Config provideConfig() {
+    public SpongeConfig provideConfig() {
         return config;
     }
 
@@ -105,6 +106,11 @@ public class SpongeModule extends PluginModule {
     @Override
     protected void bindTaskFactory(AnnotatedBindingBuilder<TaskFactory> b) {
         b.to(SpongeTaskFactory.class);
+    }
+
+    @Override
+    protected void bindConfig(AnnotatedBindingBuilder<Config> b) {
+        b.toProvider(() -> config);
     }
 
     @Override
