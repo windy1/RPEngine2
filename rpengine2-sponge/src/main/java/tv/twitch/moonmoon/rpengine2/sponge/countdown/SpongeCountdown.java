@@ -8,9 +8,4 @@ public class SpongeCountdown implements Countdown {
     public void start(Runnable callback) {
         // TODO
     }
-
-    @Override
-    public void start() {
-        // TODO
-    }
 }

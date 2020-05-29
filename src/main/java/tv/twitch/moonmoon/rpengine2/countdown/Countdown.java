@@ -15,5 +15,7 @@ public interface Countdown {
     /**
      * Starts the countdown
      */
-    void start();
+    default void start() {
+        start(null);
+    }
 }

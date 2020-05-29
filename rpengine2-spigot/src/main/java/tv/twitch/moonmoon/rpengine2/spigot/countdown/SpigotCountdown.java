@@ -85,11 +85,6 @@ public class SpigotCountdown extends TimerTask implements Countdown {
         new Timer().scheduleAtFixedRate(this, 0, 1000);
     }
 
-    @Override
-    public void start() {
-        start(null);
-    }
-
     public static Countdown from(
         FileConfiguration config,
         Set<UUID> playerIds,
