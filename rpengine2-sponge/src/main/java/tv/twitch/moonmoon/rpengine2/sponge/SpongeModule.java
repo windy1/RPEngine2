@@ -3,6 +3,7 @@ package tv.twitch.moonmoon.rpengine2.sponge;
 import com.google.inject.Provides;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import org.slf4j.Logger;
+import tv.twitch.moonmoon.rpengine2.Engine;
 import tv.twitch.moonmoon.rpengine2.PluginModule;
 import tv.twitch.moonmoon.rpengine2.chat.ChatModule;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLogModule;
@@ -62,6 +63,11 @@ public class SpongeModule extends PluginModule {
     @DbPath
     public Path provideDbPath() {
         return dbPath;
+    }
+
+    @Override
+    protected void bindEngine(AnnotatedBindingBuilder<Engine> b) {
+        b.to(SpongeEngine.class);
     }
 
     @Override

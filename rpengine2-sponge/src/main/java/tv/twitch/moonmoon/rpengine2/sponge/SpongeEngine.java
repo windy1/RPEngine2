@@ -1,5 +1,6 @@
 package tv.twitch.moonmoon.rpengine2.sponge;
 
+import org.spongepowered.api.Sponge;
 import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.combatlog.CombatLog;
 import tv.twitch.moonmoon.rpengine2.data.Defaults;
@@ -14,10 +15,14 @@ import tv.twitch.moonmoon.rpengine2.util.Messenger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Objects;
 import java.util.Optional;
 
 @Singleton
 public class SpongeEngine extends DefaultEngine {
+
+    private final RpEngine2 plugin;
+    private final SpongeListener listener;
 
     @Inject
     public SpongeEngine(
@@ -30,12 +35,16 @@ public class SpongeEngine extends DefaultEngine {
         Optional<Chat> chat,
         Optional<Duels> duels,
         Optional<CombatLog> combatLog,
-        Messenger messenger
-    ) {
+        Messenger messenger,
+        RpEngine2 plugin,
+        SpongeListener listener) {
         super(
             db, migrations, defaults, playerRepo, attributeRepo, selectRepo, chat, duels,
             combatLog, messenger
         );
+
+        this.plugin = Objects.requireNonNull(plugin);
+        this.listener = Objects.requireNonNull(listener);
     }
 
     @Override
@@ -44,6 +53,7 @@ public class SpongeEngine extends DefaultEngine {
 
     @Override
     protected boolean onStarted() {
+        Sponge.getEventManager().registerListeners(plugin, listener);
         return true;
     }
 }

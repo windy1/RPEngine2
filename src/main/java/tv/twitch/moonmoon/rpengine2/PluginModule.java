@@ -50,10 +50,8 @@ public abstract class PluginModule extends AbstractModule {
         OptionalBinder.newOptionalBinder(binder(), Chat.class);
         OptionalBinder.newOptionalBinder(binder(), ChatConfigRepo.class);
         OptionalBinder.newOptionalBinder(binder(), ChatChannelConfigRepo.class);
-
         OptionalBinder.newOptionalBinder(binder(), Duels.class);
         OptionalBinder.newOptionalBinder(binder(), DuelConfigRepo.class);
-
         OptionalBinder.newOptionalBinder(binder(), CombatLog.class);
 
         if (isChatEnabled()) {

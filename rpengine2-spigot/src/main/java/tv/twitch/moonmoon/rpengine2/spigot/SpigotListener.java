@@ -7,6 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import tv.twitch.moonmoon.rpengine2.Engine;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
@@ -18,41 +19,27 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-public class CoreListener implements Listener {
+public class SpigotListener implements Listener {
 
+    private final Engine engine;
     private final RpPlayerRepo playerRepo;
     private final Logger log;
 
     @Inject
-    public CoreListener(RpPlayerRepo playerRepo, @PluginLogger Logger log) {
+    public SpigotListener(Engine engine, RpPlayerRepo playerRepo, @PluginLogger Logger log) {
+        this.engine = Objects.requireNonNull(engine);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.log = Objects.requireNonNull(log);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent e) {
-        getPlayer(e.getPlayer()).ifPresent(playerRepo::startSessionAsync);
+        getPlayer(e.getPlayer()).ifPresent(engine::handlePlayerJoined);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent e) {
-        // update played time
-        RpPlayer player = getPlayer(e.getPlayer()).orElse(null);
-        Instant sessionStart;
-
-        if (player == null) {
-            return;
-        }
-
-        sessionStart = player.getSessionStart().orElse(null);
-
-        if (sessionStart == null) {
-            return;
-        }
-
-        Duration sessionDuration = Duration.between(sessionStart, Instant.now());
-        playerRepo.setPlayed(player, player.getPlayed().plus(sessionDuration));
-        playerRepo.clearSession(player);
+        getPlayer(e.getPlayer()).ifPresent(engine::handlePlayerQuit);
     }
 
     private Optional<RpPlayer> getPlayer(Player player) {

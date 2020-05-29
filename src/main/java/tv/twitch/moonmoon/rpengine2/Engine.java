@@ -6,10 +6,12 @@ import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 
 import java.util.Optional;
 
 public interface Engine {
+
     /**
      * Returns the {@link RpPlayerRepo} instance responsible for managing player data
      *
@@ -51,6 +53,20 @@ public interface Engine {
      * @return CombatLog module
      */
     Optional<CombatLog> getCombatLogModule();
+
+    /**
+     * Handles a new player joining the server
+     *
+     * @param player Player that joined
+     */
+    void handlePlayerJoined(RpPlayer player);
+
+    /**
+     * Handles a player leaving the server
+     *
+     * @param player Player that quit
+     */
+    void handlePlayerQuit(RpPlayer player);
 
     /**
      * Initializes the engine and prepares the plugin

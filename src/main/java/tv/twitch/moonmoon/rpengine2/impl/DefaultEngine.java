@@ -12,9 +12,12 @@ import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeRepo;
 import tv.twitch.moonmoon.rpengine2.data.player.RpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.data.select.SelectRepo;
 import tv.twitch.moonmoon.rpengine2.duel.Duels;
+import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 public class DefaultEngine implements Engine {
@@ -169,5 +172,23 @@ public class DefaultEngine implements Engine {
     @Override
     public Optional<CombatLog> getCombatLogModule() {
         return Optional.ofNullable(combatLog);
+    }
+
+    @Override
+    public void handlePlayerJoined(RpPlayer player) {
+        playerRepo.startSessionAsync(player);
+    }
+
+    @Override
+    public void handlePlayerQuit(RpPlayer player) {
+        Instant sessionStart = player.getSessionStart().orElse(null);
+
+        if (sessionStart == null) {
+            return;
+        }
+
+        Duration sessionDuration = Duration.between(sessionStart, Instant.now());
+        playerRepo.setPlayed(player, player.getPlayed().plus(sessionDuration));
+        playerRepo.clearSession(player);
     }
 }

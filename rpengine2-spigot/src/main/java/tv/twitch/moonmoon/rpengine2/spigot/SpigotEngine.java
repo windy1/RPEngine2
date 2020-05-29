@@ -26,7 +26,7 @@ import java.util.Optional;
 public class SpigotEngine extends DefaultEngine {
 
     private final JavaPlugin plugin;
-    private final CoreListener listener;
+    private final SpigotListener listener;
     private final CoreCommands commands;
     private final RpProtocolLib protocol;
     private final RpNametagEdit nte;
@@ -40,7 +40,7 @@ public class SpigotEngine extends DefaultEngine {
         RpPlayerRepo playerRepo,
         AttributeRepo attributeRepo,
         SelectRepo selectRepo,
-        CoreListener listener,
+        SpigotListener listener,
         CoreCommands commands,
         Optional<Chat> chat,
         Optional<Duels> duels,
