@@ -2,7 +2,7 @@ package tv.twitch.moonmoon.rpengine2.data.select;
 
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.Set;

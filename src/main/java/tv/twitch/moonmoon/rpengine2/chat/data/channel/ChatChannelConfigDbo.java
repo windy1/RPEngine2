@@ -1,7 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.chat.data.channel;
 
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.Set;

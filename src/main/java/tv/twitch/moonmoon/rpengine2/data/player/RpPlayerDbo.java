@@ -1,7 +1,7 @@
 package tv.twitch.moonmoon.rpengine2.data.player;
 
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.time.Duration;

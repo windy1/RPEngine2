@@ -9,7 +9,7 @@ import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.select.Option;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
 import tv.twitch.moonmoon.rpengine2.util.Lang;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 

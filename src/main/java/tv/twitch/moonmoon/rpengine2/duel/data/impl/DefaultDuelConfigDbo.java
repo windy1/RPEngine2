@@ -2,10 +2,10 @@ package tv.twitch.moonmoon.rpengine2.duel.data.impl;
 
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
 import tv.twitch.moonmoon.rpengine2.duel.data.DuelConfigDbo;
-import tv.twitch.moonmoon.rpengine2.duel.model.impl.DefaultDuelConfig;
 import tv.twitch.moonmoon.rpengine2.duel.model.DuelConfig;
-import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.duel.model.impl.DefaultDuelConfig;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
+import tv.twitch.moonmoon.rpengine2.task.TaskExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -21,17 +21,17 @@ import java.util.Set;
 public class DefaultDuelConfigDbo implements DuelConfigDbo {
 
     private final RpDb db;
-    private final AsyncExecutor asyncExecutor;
+    private final TaskExecutor taskExecutor;
 
     @Inject
-    public DefaultDuelConfigDbo(RpDb db, AsyncExecutor asyncExecutor) {
+    public DefaultDuelConfigDbo(RpDb db, TaskExecutor taskExecutor) {
         this.db = Objects.requireNonNull(db);
-        this.asyncExecutor = Objects.requireNonNull(asyncExecutor);
+        this.taskExecutor = Objects.requireNonNull(taskExecutor);
     }
 
     @Override
     public void setReadRulesAsync(int playerId, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(setReadRules(playerId))
         );
     }

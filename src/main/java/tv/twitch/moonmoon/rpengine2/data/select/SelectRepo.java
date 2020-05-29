@@ -4,7 +4,7 @@ import tv.twitch.moonmoon.rpengine2.data.Repo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.impl.DefaultAttribute;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultSelect;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
 
 import java.util.Optional;
 import java.util.Set;

@@ -4,8 +4,8 @@ import tv.twitch.moonmoon.rpengine2.chat.Chat;
 import tv.twitch.moonmoon.rpengine2.chat.ChatChannel;
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatConfig;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
-import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
+import tv.twitch.moonmoon.rpengine2.task.TaskExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -22,18 +22,18 @@ public class CoreChatConfigDbo implements ChatConfigDbo {
 
     private final RpDb db;
     private final Chat chat;
-    private final AsyncExecutor asyncExecutor;
+    private final TaskExecutor taskExecutor;
 
     @Inject
-    public CoreChatConfigDbo(RpDb db, Chat chat, AsyncExecutor asyncExecutor) {
+    public CoreChatConfigDbo(RpDb db, Chat chat, TaskExecutor taskExecutor) {
         this.db = Objects.requireNonNull(db);
         this.chat = Objects.requireNonNull(chat);
-        this.asyncExecutor = Objects.requireNonNull(asyncExecutor);
+        this.taskExecutor = Objects.requireNonNull(taskExecutor);
     }
 
     @Override
     public void updateChannelAsync(int playerId, String channelName, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(updateChannel(playerId, channelName))
         );
     }

@@ -25,9 +25,11 @@ import tv.twitch.moonmoon.rpengine2.spigot.nms.RpProtocolLib;
 import tv.twitch.moonmoon.rpengine2.spigot.nms.RpProtocolLibModule;
 import tv.twitch.moonmoon.rpengine2.spigot.nte.RpNametagEdit;
 import tv.twitch.moonmoon.rpengine2.spigot.nte.RpNametagEditModule;
-import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotAsyncExecutor;
+import tv.twitch.moonmoon.rpengine2.spigot.task.SpigotTaskExecutor;
+import tv.twitch.moonmoon.rpengine2.spigot.task.SpigotTaskFactory;
 import tv.twitch.moonmoon.rpengine2.spigot.util.SpigotMessenger;
-import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
+import tv.twitch.moonmoon.rpengine2.task.TaskExecutor;
+import tv.twitch.moonmoon.rpengine2.task.TaskFactory;
 import tv.twitch.moonmoon.rpengine2.util.DbPath;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
@@ -107,8 +109,8 @@ public class SpigotModule extends PluginModule {
     }
 
     @Override
-    protected void bindAsyncExecutor(AnnotatedBindingBuilder<AsyncExecutor> b) {
-        b.to(SpigotAsyncExecutor.class);
+    protected void bindAsyncExecutor(AnnotatedBindingBuilder<TaskExecutor> b) {
+        b.to(SpigotTaskExecutor.class);
     }
 
     @Override
@@ -119,6 +121,11 @@ public class SpigotModule extends PluginModule {
     @Override
     protected void bindCountdownFactory(AnnotatedBindingBuilder<CountdownFactory> b) {
         b.to(SpigotCountdownFactory.class);
+    }
+
+    @Override
+    protected void bindTaskFactory(AnnotatedBindingBuilder<TaskFactory> b) {
+        b.to(SpigotTaskFactory.class);
     }
 
     @Override

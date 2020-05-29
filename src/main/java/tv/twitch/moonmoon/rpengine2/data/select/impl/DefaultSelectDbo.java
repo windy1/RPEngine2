@@ -6,8 +6,8 @@ import tv.twitch.moonmoon.rpengine2.model.select.Option;
 import tv.twitch.moonmoon.rpengine2.model.select.OptionFactory;
 import tv.twitch.moonmoon.rpengine2.model.select.Select;
 import tv.twitch.moonmoon.rpengine2.model.select.impl.DefaultSelect;
-import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
+import tv.twitch.moonmoon.rpengine2.task.TaskExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
@@ -25,19 +25,19 @@ import java.util.Set;
 public class DefaultSelectDbo implements SelectDbo {
 
     private final RpDb db;
-    private final AsyncExecutor asyncExecutor;
+    private final TaskExecutor taskExecutor;
     private final OptionFactory optionFactory;
     private final Messenger log;
 
     @Inject
     public DefaultSelectDbo(
         RpDb db,
-        AsyncExecutor asyncExecutor,
+        TaskExecutor taskExecutor,
         OptionFactory optionFactory,
         Messenger log
     ) {
         this.db = Objects.requireNonNull(db);
-        this.asyncExecutor = Objects.requireNonNull(asyncExecutor);
+        this.taskExecutor = Objects.requireNonNull(taskExecutor);
         this.optionFactory = Objects.requireNonNull(optionFactory);
         this.log = Objects.requireNonNull(log);
     }
@@ -50,14 +50,14 @@ public class DefaultSelectDbo implements SelectDbo {
         String color,
         Callback<Void> callback
     ) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(insertOption(selectId, name, display, color))
         );
     }
 
     @Override
     public void insertSelectAsync(String name, Callback<Long> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(insertSelect(name))
         );
     }
@@ -92,14 +92,14 @@ public class DefaultSelectDbo implements SelectDbo {
 
     @Override
     public void deleteSelectAsync(int selectId, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(deleteSelect(selectId))
         );
     }
 
     @Override
     public void deleteOptionAsync(int optionId, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(deleteOption(optionId))
         );
     }

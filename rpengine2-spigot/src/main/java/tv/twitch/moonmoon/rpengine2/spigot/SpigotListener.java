@@ -13,8 +13,6 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;

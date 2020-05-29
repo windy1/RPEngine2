@@ -1,18 +1,18 @@
-package tv.twitch.moonmoon.rpengine2.spigot.util;
+package tv.twitch.moonmoon.rpengine2.spigot.task;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
+import tv.twitch.moonmoon.rpengine2.task.TaskExecutor;
 
 import javax.inject.Inject;
 import java.util.Objects;
 
-public class SpigotAsyncExecutor implements AsyncExecutor {
+public class SpigotTaskExecutor implements TaskExecutor {
 
     private final Plugin plugin;
 
     @Inject
-    public SpigotAsyncExecutor(Plugin plugin) {
+    public SpigotTaskExecutor(Plugin plugin) {
         this.plugin = Objects.requireNonNull(plugin);
     }
 

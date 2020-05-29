@@ -19,9 +19,11 @@ import tv.twitch.moonmoon.rpengine2.sponge.data.player.SpongeRpPlayerRepo;
 import tv.twitch.moonmoon.rpengine2.sponge.data.select.SpongeOptionFactory;
 import tv.twitch.moonmoon.rpengine2.sponge.duel.SpongeDuelsModule;
 import tv.twitch.moonmoon.rpengine2.sponge.model.player.SpongeRpPlayerFactory;
-import tv.twitch.moonmoon.rpengine2.sponge.util.SpongeAsyncExecutor;
+import tv.twitch.moonmoon.rpengine2.sponge.task.SpongeTaskExecutor;
+import tv.twitch.moonmoon.rpengine2.sponge.task.SpongeTaskFactory;
 import tv.twitch.moonmoon.rpengine2.sponge.util.SpongeMessenger;
-import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
+import tv.twitch.moonmoon.rpengine2.task.TaskExecutor;
+import tv.twitch.moonmoon.rpengine2.task.TaskFactory;
 import tv.twitch.moonmoon.rpengine2.util.DbPath;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.PluginLogger;
@@ -86,8 +88,8 @@ public class SpongeModule extends PluginModule {
     }
 
     @Override
-    protected void bindAsyncExecutor(AnnotatedBindingBuilder<AsyncExecutor> b) {
-        b.to(SpongeAsyncExecutor.class);
+    protected void bindAsyncExecutor(AnnotatedBindingBuilder<TaskExecutor> b) {
+        b.to(SpongeTaskExecutor.class);
     }
 
     @Override
@@ -98,6 +100,11 @@ public class SpongeModule extends PluginModule {
     @Override
     protected void bindCountdownFactory(AnnotatedBindingBuilder<CountdownFactory> b) {
         b.to(SpongeCountdownFactory.class);
+    }
+
+    @Override
+    protected void bindTaskFactory(AnnotatedBindingBuilder<TaskFactory> b) {
+        b.to(SpongeTaskFactory.class);
     }
 
     @Override

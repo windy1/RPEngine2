@@ -1,4 +1,6 @@
-package tv.twitch.moonmoon.rpengine2.util;
+package tv.twitch.moonmoon.rpengine2.task;
+
+import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import java.util.function.Consumer;
 

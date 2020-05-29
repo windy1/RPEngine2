@@ -2,8 +2,8 @@ package tv.twitch.moonmoon.rpengine2.chat.data.channel;
 
 import tv.twitch.moonmoon.rpengine2.chat.model.ChatChannelConfig;
 import tv.twitch.moonmoon.rpengine2.data.RpDb;
-import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
+import tv.twitch.moonmoon.rpengine2.task.TaskExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
 import javax.inject.Inject;
@@ -19,12 +19,12 @@ import java.util.Set;
 public class CoreChatChannelConfigDbo implements ChatChannelConfigDbo {
 
     private final RpDb db;
-    private final AsyncExecutor asyncExecutor;
+    private final TaskExecutor taskExecutor;
 
     @Inject
-    public CoreChatChannelConfigDbo(RpDb db, AsyncExecutor asyncExecutor) {
+    public CoreChatChannelConfigDbo(RpDb db, TaskExecutor taskExecutor) {
         this.db = Objects.requireNonNull(db);
-        this.asyncExecutor = Objects.requireNonNull(asyncExecutor);
+        this.taskExecutor = Objects.requireNonNull(taskExecutor);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class CoreChatChannelConfigDbo implements ChatChannelConfigDbo {
         boolean muted,
         Callback<Void> callback
     ) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(setMuted(playerId, channelName, muted))
         );
     }

@@ -18,7 +18,8 @@ import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
 import tv.twitch.moonmoon.rpengine2.spigot.model.select.SpigotOption;
-import tv.twitch.moonmoon.rpengine2.spigot.util.CommandDispatcher;
+import tv.twitch.moonmoon.rpengine2.spigot.task.CommandExecution;
+import tv.twitch.moonmoon.rpengine2.task.AsyncHandler;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -40,9 +41,8 @@ public class CardSelectCommand extends AbstractCoreCommandExecutor {
     private final SelectRepo selectRepo;
     private final RpPlayerRepo playerRepo;
     private final AttributeRepo attributeRepo;
-    private final CommandDispatcher commandDispatcher;
     private final CommandPlayerParser playerParser;
-
+    private final AsyncHandler handler;
 
     @Inject
     public CardSelectCommand(
@@ -50,15 +50,15 @@ public class CardSelectCommand extends AbstractCoreCommandExecutor {
         SelectRepo selectRepo,
         RpPlayerRepo playerRepo,
         AttributeRepo attributeRepo,
-        CommandDispatcher commandDispatcher,
-        CommandPlayerParser playerParser
+        CommandPlayerParser playerParser,
+        AsyncHandler handler
     ) {
         super(plugin);
         this.selectRepo = Objects.requireNonNull(selectRepo);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
-        this.commandDispatcher = Objects.requireNonNull(commandDispatcher);
         this.playerParser = Objects.requireNonNull(playerParser);
+        this.handler = Objects.requireNonNull(handler);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class CardSelectCommand extends AbstractCoreCommandExecutor {
                 return;
             }
 
-            commandDispatcher.add(mcPlayer.getUniqueId(), "card");
+            handler.post(new CommandExecution(mcPlayer.getUniqueId(), "card"));
         });
 
         return true;

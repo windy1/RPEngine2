@@ -13,7 +13,8 @@ import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.ArgumentLabel;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.CommandUsage;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.help.Help;
 import tv.twitch.moonmoon.rpengine2.spigot.cmd.parser.CommandPlayerParser;
-import tv.twitch.moonmoon.rpengine2.spigot.util.CommandDispatcher;
+import tv.twitch.moonmoon.rpengine2.spigot.task.CommandExecution;
+import tv.twitch.moonmoon.rpengine2.task.AsyncHandler;
 import tv.twitch.moonmoon.rpengine2.util.StringUtils;
 
 import javax.inject.Inject;
@@ -35,21 +36,21 @@ public class CardSetCommand extends AbstractCoreCommandExecutor {
 
     private final RpPlayerRepo playerRepo;
     private final AttributeRepo attributeRepo;
-    private final CommandDispatcher commandDispatcher;
     private final CommandPlayerParser playerParser;
+    private final AsyncHandler handler;
 
     @Inject
     public CardSetCommand(
         Plugin plugin,
         RpPlayerRepo playerRepo,
         AttributeRepo attributeRepo,
-        CommandDispatcher commandDispatcher,
-        CommandPlayerParser playerParser
+        CommandPlayerParser playerParser,
+        AsyncHandler handler
     ) {
         super(plugin);
         this.playerRepo = Objects.requireNonNull(playerRepo);
         this.attributeRepo = Objects.requireNonNull(attributeRepo);
-        this.commandDispatcher = Objects.requireNonNull(commandDispatcher);
+        this.handler = Objects.requireNonNull(handler);
         this.playerParser = Objects.requireNonNull(playerParser);
     }
 
@@ -79,7 +80,7 @@ public class CardSetCommand extends AbstractCoreCommandExecutor {
             if (setErr.isPresent()) {
                 sender.sendMessage(ChatColor.RED + setErr.get());
             } else {
-                commandDispatcher.add(mcPlayer.getUniqueId(), "card");
+                handler.post(new CommandExecution(mcPlayer.getUniqueId(), "card"));
             }
         });
 

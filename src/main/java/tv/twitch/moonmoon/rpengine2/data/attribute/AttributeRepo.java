@@ -7,7 +7,7 @@ import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.attribute.impl.DefaultAttribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayerAttribute;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
 
 import java.util.Optional;
 import java.util.Set;

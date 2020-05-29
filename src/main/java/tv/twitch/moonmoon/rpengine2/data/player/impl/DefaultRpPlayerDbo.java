@@ -7,8 +7,8 @@ import tv.twitch.moonmoon.rpengine2.model.player.RpPlayer;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerAttribute;
 import tv.twitch.moonmoon.rpengine2.model.player.RpPlayerFactory;
 import tv.twitch.moonmoon.rpengine2.model.player.impl.DefaultRpPlayerAttribute;
-import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
+import tv.twitch.moonmoon.rpengine2.task.TaskExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
@@ -24,19 +24,19 @@ import java.util.*;
 public class DefaultRpPlayerDbo implements RpPlayerDbo {
 
     private final RpDb db;
-    private final AsyncExecutor asyncExecutor;
+    private final TaskExecutor taskExecutor;
     private final Messenger log;
     private final RpPlayerFactory playerFactory;
 
     @Inject
     public DefaultRpPlayerDbo(
         RpDb db,
-        AsyncExecutor asyncExecutor,
+        TaskExecutor taskExecutor,
         Messenger log,
         RpPlayerFactory playerFactory
     ) {
         this.db = Objects.requireNonNull(db);
-        this.asyncExecutor = Objects.requireNonNull(asyncExecutor);
+        this.taskExecutor = Objects.requireNonNull(taskExecutor);
         this.log = Objects.requireNonNull(log);
         this.playerFactory = Objects.requireNonNull(playerFactory);
     }
@@ -48,7 +48,7 @@ public class DefaultRpPlayerDbo implements RpPlayerDbo {
         Object value,
         Callback<Void> callback
     ) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(insertPlayerAttribute(playerId, attributeId, value))
         );
     }
@@ -60,21 +60,21 @@ public class DefaultRpPlayerDbo implements RpPlayerDbo {
         Object value,
         Callback<Void> callback
     ) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(updatePlayerAttribute(playerId, attributeId, value))
         );
     }
 
     @Override
     public void deletePlayerAttributesAsync(int attributeId, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(deletePlayerAttributes(attributeId))
         );
     }
 
     @Override
     public void setSessionAsync(int playerId, Instant sessionStart, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(setSession(playerId, sessionStart))
         );
     }

@@ -5,8 +5,8 @@ import tv.twitch.moonmoon.rpengine2.data.attribute.AttributeDbo;
 import tv.twitch.moonmoon.rpengine2.model.attribute.Attribute;
 import tv.twitch.moonmoon.rpengine2.model.attribute.AttributeType;
 import tv.twitch.moonmoon.rpengine2.model.attribute.impl.DefaultAttribute;
-import tv.twitch.moonmoon.rpengine2.util.AsyncExecutor;
-import tv.twitch.moonmoon.rpengine2.util.Callback;
+import tv.twitch.moonmoon.rpengine2.task.Callback;
+import tv.twitch.moonmoon.rpengine2.task.TaskExecutor;
 import tv.twitch.moonmoon.rpengine2.util.Messenger;
 import tv.twitch.moonmoon.rpengine2.util.Result;
 
@@ -24,13 +24,13 @@ import java.util.Set;
 public class DefaultAttributeDbo implements AttributeDbo {
 
     private final RpDb db;
-    private final AsyncExecutor asyncExecutor;
+    private final TaskExecutor taskExecutor;
     private final Messenger log;
 
     @Inject
-    public DefaultAttributeDbo(RpDb db, AsyncExecutor asyncExecutor, Messenger log) {
+    public DefaultAttributeDbo(RpDb db, TaskExecutor taskExecutor, Messenger log) {
         this.db = Objects.requireNonNull(db);
-        this.asyncExecutor = Objects.requireNonNull(asyncExecutor);
+        this.taskExecutor = Objects.requireNonNull(taskExecutor);
         this.log = Objects.requireNonNull(log);
     }
 
@@ -42,68 +42,68 @@ public class DefaultAttributeDbo implements AttributeDbo {
         String defaultValue,
         Callback<Long> callback
     ) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(insertAttribute(name, display, type, defaultValue))
         );
     }
 
     @Override
     public void updateDefaultAsync(int attributeId, String defaultValue, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(updateDefault(attributeId, defaultValue))
         );
     }
 
     @Override
     public void updateDisplayAsync(int attributeId, String display, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(updateDisplay(attributeId, display))
         );
     }
 
     @Override
     public void updateFormatAsync(int attributeId, String formatString, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(updateFormat(attributeId, formatString))
         );
     }
 
     @Override
     public void setIdentityAsync(int attributeId, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(setIdentity(attributeId))
         );
     }
 
     @Override
     public void clearIdentityAsync(Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(clearIdentity())
         );
     }
 
     @Override
     public void setMarkerAsync(int attributeId, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(setMarker(attributeId))
         );
     }
 
     @Override
     public void clearMarkerAsync(Callback<Void> callback) {
-        asyncExecutor.execute(() -> callback.accept(clearMarker()));
+        taskExecutor.execute(() -> callback.accept(clearMarker()));
     }
 
     @Override
     public void setTitleAsync(int attributeId, Callback<Void> callback) {
-        asyncExecutor.execute(() ->
+        taskExecutor.execute(() ->
             callback.accept(setTitle(attributeId))
         );
     }
 
     @Override
     public void clearTitleAsync(Callback<Void> callback) {
-        asyncExecutor.execute(() -> callback.accept(clearTitle()));
+        taskExecutor.execute(() -> callback.accept(clearTitle()));
     }
 
     @Override
